@@ -29,12 +29,6 @@ export default function LandingPage({ onGoToLogin, onGoToRegister }: LandingPage
     }
   ];
 
-  const countries = [
-    { flag: "🇹🇬", name: "Togo", operators: ["Togocel", "Moov"] },
-    { flag: "🇧🇯", name: "Bénin", operators: ["MTN", "Moov"] },
-    { flag: "🇨🇮", name: "Côte d'Ivoire", operators: ["Orange", "MTN", "Moov"] },
-    { flag: "🇧🇫", name: "Burkina Faso", operators: ["Orange", "Telecel"] }
-  ];
 
   const pricingPlans = [
     { amount: "1000", credits: "1000", popular: false },
@@ -64,9 +58,6 @@ export default function LandingPage({ onGoToLogin, onGoToRegister }: LandingPage
             <nav className="hidden md:flex space-x-8">
               <a href="#features" className="text-gray-600 hover:text-primary font-montserrat font-medium transition-colors">
                 Fonctionnalités
-              </a>
-              <a href="#countries" className="text-gray-600 hover:text-primary font-montserrat font-medium transition-colors">
-                Pays
               </a>
               <a href="#pricing" className="text-gray-600 hover:text-primary font-montserrat font-medium transition-colors">
                 Tarifs
@@ -99,7 +90,7 @@ export default function LandingPage({ onGoToLogin, onGoToRegister }: LandingPage
             {/* Badge */}
             <div className="inline-flex items-center bg-white rounded-full px-6 py-2 shadow-md mb-8">
               <span className="text-primary font-montserrat font-semibold text-sm">
-                🚀 Plateforme de numéros virtuels africaine
+                🚀 Numéros virtuels temporaires de vérification
               </span>
             </div>
 
@@ -113,7 +104,7 @@ export default function LandingPage({ onGoToLogin, onGoToRegister }: LandingPage
 
             {/* Sub Heading */}
             <p className="text-xl text-gray-600 font-montserrat max-w-3xl mx-auto mb-10 leading-relaxed">
-              La solution la plus fiable pour recevoir des codes de vérification SMS sur des numéros virtuels africains. 
+              La solution la plus fiable pour recevoir des codes de vérification SMS sur des numéros virtuels temporaires. 
               Simple, rapide et sécurisé.
             </p>
 
@@ -164,7 +155,7 @@ export default function LandingPage({ onGoToLogin, onGoToRegister }: LandingPage
               Pourquoi choisir TagaNum ?
             </h2>
             <p className="text-xl text-gray-600 font-montserrat max-w-2xl mx-auto">
-              Une plateforme pensée pour les utilisateurs africains avec des fonctionnalités modernes.
+              Une plateforme simple et efficace pour vos besoins de vérification SMS.
             </p>
           </div>
 
@@ -184,39 +175,6 @@ export default function LandingPage({ onGoToLogin, onGoToRegister }: LandingPage
         </div>
       </section>
 
-      {/* Countries Section */}
-      <section id="countries" className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-black text-gray-900 font-montserrat mb-4">
-              Pays et opérateurs supportés
-            </h2>
-            <p className="text-xl text-gray-600 font-montserrat max-w-2xl mx-auto">
-              Couverture complète des principaux opérateurs d'Afrique de l'Ouest.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {countries.map((country, index) => (
-              <div key={index} className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-gray-100">
-                <div className="text-center">
-                  <div className="text-4xl mb-3">{country.flag}</div>
-                  <h3 className="text-xl font-bold text-gray-900 font-montserrat mb-3">
-                    {country.name}
-                  </h3>
-                  <div className="space-y-2">
-                    {country.operators.map((operator, opIndex) => (
-                      <div key={opIndex} className="bg-primary-50 text-primary px-3 py-1 rounded-lg text-sm font-montserrat font-semibold">
-                        {operator}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Pricing Section */}
       <section id="pricing" className="py-20 bg-white">
@@ -334,7 +292,7 @@ export default function LandingPage({ onGoToLogin, onGoToRegister }: LandingPage
             </div>
             
             <p className="text-gray-400 font-montserrat mb-8 max-w-2xl mx-auto">
-              La plateforme de référence pour recevoir des codes SMS de vérification sur des numéros virtuels africains.
+              La plateforme de référence pour recevoir des codes SMS de vérification sur des numéros virtuels temporaires.
             </p>
 
             <div className="border-t border-gray-700 pt-8">

@@ -66,7 +66,7 @@ export default function Recharge({ onRecharge, onBack }: RechargeProps) {
     }
   };
 
-  const suggestedAmounts = [1000, 5000, 100000, 200000];
+  const suggestedAmounts = [1000, 5000, 10000, 20000];
 
   return (
     <Layout>

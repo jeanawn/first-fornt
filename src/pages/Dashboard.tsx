@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import type { User } from '../types';
+import type { User, Transaction } from '../types';
 import Layout from '../components/Layout';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { operationsService } from '../services/operations';
+import { transactionService } from '../services/transactions';
 import type { Operation } from '../services/operations';
 
 // Fallbacks pour les services 
@@ -26,8 +27,11 @@ interface DashboardProps {
 
 export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout }: DashboardProps) {
   const [operations, setOperations] = useState<Operation[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoadingOperations, setIsLoadingOperations] = useState(true);
+  const [isLoadingTransactions, setIsLoadingTransactions] = useState(true);
   const [copiedSms, setCopiedSms] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'operations' | 'transactions'>('operations');
 
   // Charger les opérations récentes
   useEffect(() => {
@@ -47,6 +51,31 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout }: D
     };
 
     loadOperations();
+  }, []);
+
+  // Charger les transactions récentes
+  useEffect(() => {
+    const loadTransactions = async () => {
+      try {
+        const recentTransactions = await transactionService.getRecentTransactions(3);
+        setTransactions(recentTransactions || []);
+      } catch (error) {
+        console.error('Erreur chargement transactions:', error);
+        // En cas d'erreur, on ignore silencieusement et on continue sans les transactions
+        setTransactions([]);
+      } finally {
+        setIsLoadingTransactions(false);
+      }
+    };
+
+    // Seulement essayer de charger les transactions si le service est disponible
+    if (transactionService && typeof transactionService.getRecentTransactions === 'function') {
+      loadTransactions();
+    } else {
+      console.warn('Service transactions non disponible');
+      setIsLoadingTransactions(false);
+      setTransactions([]);
+    }
   }, []);
   const getStatusText = (status: string) => {
     switch (status.toLowerCase()) {
@@ -79,6 +108,43 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout }: D
       setCopiedSms(operationId);
       setTimeout(() => setCopiedSms(null), 2000);
     });
+  };
+
+  // Fonctions utilitaires pour les transactions
+  const getTransactionTypeIcon = (type: string) => {
+    switch (type) {
+      case 'deposit': return '💳';
+      case 'refund': return '↩️';
+      case 'withdraw': return '💰';
+      default: return '💱';
+    }
+  };
+
+  const getTransactionTypeText = (type: string) => {
+    switch (type) {
+      case 'deposit': return 'Recharge';
+      case 'refund': return 'Remboursement';
+      case 'withdraw': return 'Retrait';
+      default: return 'Transaction';
+    }
+  };
+
+  const getTransactionStatusColor = (status: string) => {
+    switch (status) {
+      case 'success': return 'bg-green-100 text-green-800';
+      case 'failed': return 'bg-red-100 text-red-800';
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const formatTransactionDate = (dateString: string) => {
+    const date = new Date(dateString);
+    // Format dd/mm/yy
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear().toString().slice(-2);
+    return `${day}/${month}/${year}`;
   };
 
   return (
@@ -158,8 +224,9 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout }: D
           </button>
         </div>
 
-        {/* Recent Operations - Design moderne avec header amélioré */}
+        {/* Activity Card - Operations et Transactions combinées */}
         <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+          {/* Header avec switch */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
@@ -171,29 +238,58 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout }: D
                 Activité récente
               </h3>
             </div>
-            <div className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-              {operations.length} opérations
+            
+            {/* Switch Toggle */}
+            <div className="flex items-center space-x-2">
+              <div className="flex bg-gray-100 rounded-xl p-1">
+                <button
+                  onClick={() => setActiveTab('operations')}
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    activeTab === 'operations'
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  📱 Opérations
+                </button>
+                <button
+                  onClick={() => setActiveTab('transactions')}
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    activeTab === 'transactions'
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  💳 Transactions
+                </button>
+              </div>
+              <div className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                {activeTab === 'operations' ? operations.length : transactions.length}
+              </div>
             </div>
           </div>
           
-          {isLoadingOperations ? (
-            <div className="text-center py-8">
-              <LoadingSpinner size="md" />
-              <p className="mt-3 text-gray-600">Chargement...</p>
-            </div>
-          ) : operations.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
+          {/* Contenu conditionnel selon l'onglet */}
+          {activeTab === 'operations' ? (
+            /* Affichage des Opérations */
+            isLoadingOperations ? (
+              <div className="text-center py-8">
+                <LoadingSpinner size="md" />
+                <p className="mt-3 text-gray-600">Chargement...</p>
               </div>
-              <h4 className="font-semibold text-gray-900 mb-1">Aucune activité</h4>
-              <p className="text-gray-500 text-sm">Vos opérations apparaîtront ici</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {operations.map((operation, index) => (
+            ) : operations.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <h4 className="font-semibold text-gray-900 mb-1">Aucune opération</h4>
+                <p className="text-gray-500 text-sm">Vos numéros virtuels apparaîtront ici</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {operations.map((operation, index) => (
                 <div
                   key={operation.id}
                   className={`relative bg-gradient-to-r from-gray-50 to-white rounded-xl p-4 border border-gray-200 hover:shadow-md transition-all duration-200 hover:border-gray-300 group ${
@@ -260,8 +356,76 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout }: D
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )
+          ) : (
+            /* Affichage des Transactions */
+            isLoadingTransactions ? (
+              <div className="text-center py-8">
+                <LoadingSpinner size="md" />
+                <p className="mt-3 text-gray-600">Chargement des transactions...</p>
+              </div>
+            ) : transactions.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                  </svg>
+                </div>
+                <h4 className="font-semibold text-gray-900 mb-1">Aucune transaction</h4>
+                <p className="text-gray-500 text-sm">Vos transactions apparaîtront ici</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {transactions.map((transaction) => (
+                  <div
+                    key={transaction.id}
+                    className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-white rounded-xl border border-gray-200 hover:shadow-md transition-all duration-200 hover:border-gray-300 group"
+                  >
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm text-lg group-hover:scale-105 transition-transform">
+                        {getTransactionTypeIcon(transaction.type)}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <p className="text-sm font-semibold text-gray-900 truncate">
+                            {getTransactionTypeText(transaction.type)}
+                          </p>
+                          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getTransactionStatusColor(transaction.status)}`}>
+                            {transaction.status === 'success' ? '✓' : 
+                             transaction.status === 'failed' ? '✗' : '○'}
+                          </span>
+                        </div>
+                        {transaction.network && (
+                          <p className="text-xs text-gray-500 truncate">
+                            {transaction.network.replace('_', ' ').toUpperCase()}
+                          </p>
+                        )}
+                        <p className="text-xs text-gray-500">
+                          {formatTransactionDate(transaction.createdAt)}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="text-right flex-shrink-0">
+                      <p className={`text-sm font-bold ${
+                        transaction.type === 'deposit' ? 'text-green-600' : 
+                        transaction.type === 'refund' ? 'text-blue-600' : 'text-red-600'
+                      }`}>
+                        {transaction.type === 'deposit' ? '+' : 
+                         transaction.type === 'refund' ? '+' : '-'}{transaction.amount} crédits
+                      </p>
+                      {transaction.reference && transaction.reference !== 'N/A' && (
+                        <p className="text-xs text-gray-500 font-mono">
+                          #{transaction.reference.slice(-8)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )
           )}
         </div>
 

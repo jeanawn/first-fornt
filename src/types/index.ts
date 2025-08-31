@@ -38,12 +38,17 @@ export interface PhoneNumber {
   createdDate: string;
 }
 
+
 export interface Transaction {
   id: string;
-  type: 'recharge' | 'purchase';
   amount: number;
-  status: 'pending' | 'completed' | 'failed';
-  createdAt: Date;
+  type: 'deposit' | 'withdraw' | 'refund';
+  status: 'pending' | 'success' | 'failed';
+  reference: string;
+  network: string | null;
+  phoneNumber: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 // Types pour l'API

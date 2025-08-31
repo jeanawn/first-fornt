@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import Recharge from './pages/Recharge';
 import BuyNumber from './pages/BuyNumber';
 import NumberDetails from './pages/NumberDetails';
+import PaymentConfirmation from './pages/PaymentConfirmation';
 import ErrorNotification from './components/ErrorNotification';
 import LoadingSpinner from './components/LoadingSpinner';
 import { authService } from './services/auth';
@@ -23,7 +24,8 @@ type Page =
   | 'dashboard' 
   | 'recharge' 
   | 'buy-number' 
-  | 'number-details';
+  | 'number-details'
+  | 'payment-confirmation';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>('landing');
@@ -31,6 +33,7 @@ export default function App() {
   const [currentPhoneNumber, setCurrentPhoneNumber] = useState<PhoneNumber | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
+  const [paymentData, setPaymentData] = useState<{amount: string, phoneNumber: string, networkName: string} | null>(null);
 
   // Vérifier l'authentification au démarrage
   useEffect(() => {
@@ -119,15 +122,20 @@ export default function App() {
   const handleRecharge = async (amount: number, phoneNumber: string, network: Network) => {
     try {
       await balanceService.loadBalance({
-        amount: amount * 100, // Convertir en centimes
+        amount: amount, // Montant direct, pas de conversion
         phoneNumber,
         network: network.id
       });
       
-      // Recharger les infos utilisateur pour mettre à jour le solde
-      const updatedUser = await authService.getCurrentUser();
-      setUser(updatedUser);
-      setCurrentPage('dashboard');
+      // Stocker les données de paiement pour la page de confirmation
+      setPaymentData({
+        amount: amount.toString(),
+        phoneNumber,
+        networkName: network.name
+      });
+      
+      // Rediriger vers la page de confirmation
+      setCurrentPage('payment-confirmation');
     } catch (err) {
       handleError(err);
     }
@@ -344,6 +352,27 @@ export default function App() {
           phoneNumber={currentPhoneNumber}
           onBack={() => setCurrentPage('dashboard')}
           onRefreshCode={handleRefreshCode}
+        />
+      );
+    }
+
+    if (currentPage === 'payment-confirmation' && paymentData) {
+      return (
+        <PaymentConfirmation
+          amount={paymentData.amount}
+          phoneNumber={paymentData.phoneNumber}
+          networkName={paymentData.networkName}
+          onBackToDashboard={async () => {
+            // Recharger les infos utilisateur pour mettre à jour le solde
+            try {
+              const updatedUser = await authService.getCurrentUser();
+              setUser(updatedUser);
+            } catch (err) {
+              console.error('Erreur mise à jour utilisateur:', err);
+            }
+            setPaymentData(null);
+            setCurrentPage('dashboard');
+          }}
         />
       );
     }

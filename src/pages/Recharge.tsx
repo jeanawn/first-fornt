@@ -169,7 +169,7 @@ export default function Recharge({ onRecharge, onBack }: RechargeProps) {
                 <div className="mt-3 text-center">
                   <div className="inline-flex items-center space-x-2 bg-blue-50 px-4 py-2 rounded-xl">
                     <span className="text-sm text-blue-700">Équivalent :</span>
-                    <span className="font-bold text-blue-800">{parseFloat(amount).toLocaleString()} crédits</span>
+                    <span className="font-bold text-blue-800">{parseFloat(amount).toLocaleString()} F</span>
                   </div>
                 </div>
               )}

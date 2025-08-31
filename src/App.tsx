@@ -33,7 +33,7 @@ export default function App() {
   const [currentPhoneNumber, setCurrentPhoneNumber] = useState<PhoneNumber | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
-  const [paymentData, setPaymentData] = useState<{amount: string, phoneNumber: string, networkName: string} | null>(null);
+  const [pendingTransactionId, setPendingTransactionId] = useState<string | null>(null);
 
   // Vérifier l'authentification au démarrage
   useEffect(() => {
@@ -121,21 +121,19 @@ export default function App() {
   // Rechargement
   const handleRecharge = async (amount: number, phoneNumber: string, network: Network) => {
     try {
-      await balanceService.loadBalance({
+      const response = await balanceService.loadBalance({
         amount: amount, // Montant direct, pas de conversion
         phoneNumber,
         network: network.id
       });
       
-      // Stocker les données de paiement pour la page de confirmation
-      setPaymentData({
-        amount: amount.toString(),
-        phoneNumber,
-        networkName: network.name
-      });
-      
-      // Rediriger vers la page de confirmation
-      setCurrentPage('payment-confirmation');
+      // Stocker l'ID de transaction pour le polling
+      if (response && response.data && response.data.id) {
+        setPendingTransactionId(response.data.id);
+        setCurrentPage('payment-confirmation');
+      } else {
+        throw new Error('Transaction ID non reçu');
+      }
     } catch (err) {
       handleError(err);
     }
@@ -356,12 +354,10 @@ export default function App() {
       );
     }
 
-    if (currentPage === 'payment-confirmation' && paymentData) {
+    if (currentPage === 'payment-confirmation' && pendingTransactionId) {
       return (
         <PaymentConfirmation
-          amount={paymentData.amount}
-          phoneNumber={paymentData.phoneNumber}
-          networkName={paymentData.networkName}
+          transactionId={pendingTransactionId}
           onBackToDashboard={async () => {
             // Recharger les infos utilisateur pour mettre à jour le solde
             try {
@@ -370,7 +366,7 @@ export default function App() {
             } catch (err) {
               console.error('Erreur mise à jour utilisateur:', err);
             }
-            setPaymentData(null);
+            setPendingTransactionId(null);
             setCurrentPage('dashboard');
           }}
         />

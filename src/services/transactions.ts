@@ -32,6 +32,11 @@ class TransactionService {
       return [];
     }
   }
+
+  async getTransactionById(transactionId: string): Promise<Transaction> {
+    const response = await apiService.get(`/transactions/${transactionId}`);
+    return response;
+  }
 }
 
 export const transactionService = new TransactionService();

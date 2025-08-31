@@ -12,6 +12,7 @@ import LoadingSpinner from './components/LoadingSpinner';
 import { authService } from './services/auth';
 import { balanceService } from './services/balance';
 import { operationsService } from './services/operations';
+import { notificationSound } from './utils/notificationSound';
 import type { User, Country, Service, PhoneNumber, Network, ApiError } from './types';
 
 type Page = 
@@ -34,6 +35,9 @@ export default function App() {
   // Vérifier l'authentification au démarrage
   useEffect(() => {
     const initializeAuth = async () => {
+      // Initialiser les préférences de notification
+      notificationSound.loadUserPreferences();
+      
       if (authService.isAuthenticated()) {
         try {
           const currentUser = await authService.getCurrentUser();
@@ -172,11 +176,23 @@ export default function App() {
       try {
         const operation = await operationsService.getOperationById(operationId);
         if (operation && currentPhoneNumber) {
+          const previousSmsCode = currentPhoneNumber.smsCode;
+          
           setCurrentPhoneNumber(prev => prev ? {
             ...prev,
             smsCode: operation.sms,
             status: operation.status
           } : null);
+
+          // 🔊 Jouer le son si nouveau SMS reçu
+          if (operation.sms && operation.sms !== previousSmsCode && operation.status === 'SUCCESS') {
+            try {
+              await notificationSound.playNotificationSound();
+            } catch (error) {
+              // Fallback si Web Audio API échoue
+              notificationSound.playHTMLAudioNotification();
+            }
+          }
 
           // Arrêter le polling si SMS reçu ou échec
           if (operation.status === 'SUCCESS' || operation.status === 'FAILED') {

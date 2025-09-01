@@ -1,9 +1,11 @@
 interface LandingPageProps {
   onGoToLogin: () => void;
   onGoToRegister: () => void;
+  onGoToPrivacyPolicy?: () => void;
+  onGoToTermsOfService?: () => void;
 }
 
-export default function LandingPage({ onGoToLogin, onGoToRegister }: LandingPageProps) {
+export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacyPolicy, onGoToTermsOfService }: LandingPageProps) {
   const features = [
     {
       icon: "🌍",
@@ -294,9 +296,26 @@ export default function LandingPage({ onGoToLogin, onGoToRegister }: LandingPage
             </p>
 
             <div className="border-t border-gray-700 pt-8">
-              <p className="text-gray-400 font-montserrat text-sm">
-                © 2024 TagaNum. Tous droits réservés.
-              </p>
+              <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+                <p className="text-gray-400 font-montserrat text-sm">
+                  © 2024 TagaNum. Tous droits réservés.
+                </p>
+                
+                <div className="flex items-center space-x-6">
+                  <button 
+                    onClick={onGoToPrivacyPolicy}
+                    className="text-gray-400 hover:text-white font-montserrat text-sm transition-colors"
+                  >
+                    Politique de confidentialité
+                  </button>
+                  <button 
+                    onClick={onGoToTermsOfService}
+                    className="text-gray-400 hover:text-white font-montserrat text-sm transition-colors"
+                  >
+                    Conditions d'utilisation
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

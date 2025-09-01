@@ -8,6 +8,8 @@ import Recharge from './pages/Recharge';
 import BuyNumber from './pages/BuyNumber';
 import NumberDetails from './pages/NumberDetails';
 import PaymentConfirmation from './pages/PaymentConfirmation';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
 import ErrorNotification from './components/ErrorNotification';
 import LoadingSpinner from './components/LoadingSpinner';
 import { authService } from './services/auth';
@@ -25,7 +27,9 @@ type Page =
   | 'recharge' 
   | 'buy-number' 
   | 'number-details'
-  | 'payment-confirmation';
+  | 'payment-confirmation'
+  | 'privacy-policy'
+  | 'terms-of-service';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>('landing');
@@ -271,6 +275,8 @@ export default function App() {
         <LandingPage
           onGoToLogin={() => setCurrentPage('login')}
           onGoToRegister={() => setCurrentPage('register')}
+          onGoToPrivacyPolicy={() => setCurrentPage('privacy-policy')}
+          onGoToTermsOfService={() => setCurrentPage('terms-of-service')}
         />
       );
     }
@@ -300,6 +306,22 @@ export default function App() {
         <ForgotPassword
           onResetPassword={handleForgotPassword}
           onBackToLogin={() => setCurrentPage('login')}
+        />
+      );
+    }
+
+    if (currentPage === 'privacy-policy') {
+      return (
+        <PrivacyPolicy
+          onBack={() => setCurrentPage('landing')}
+        />
+      );
+    }
+
+    if (currentPage === 'terms-of-service') {
+      return (
+        <TermsOfService
+          onBack={() => setCurrentPage('landing')}
         />
       );
     }

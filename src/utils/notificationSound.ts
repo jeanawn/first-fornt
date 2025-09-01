@@ -1,5 +1,10 @@
 // Utilitaire pour jouer les sons de notification
 
+// Type pour gérer les navigateurs avec webkitAudioContext
+interface AudioContextWithWebkit extends Window {
+  webkitAudioContext: typeof AudioContext;
+}
+
 class NotificationSound {
   private audioContext: AudioContext | null = null;
   private isEnabled: boolean = true;
@@ -11,7 +16,7 @@ class NotificationSound {
 
   private initAudioContext() {
     try {
-      this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      this.audioContext = new (window.AudioContext || (window as unknown as AudioContextWithWebkit).webkitAudioContext)();
     } catch (error) {
       console.warn('AudioContext non supporté:', error);
     }
@@ -104,7 +109,7 @@ export const useNotificationSound = () => {
   const playNotification = async () => {
     try {
       await notificationSound.playNotificationSound();
-    } catch (error) {
+    } catch {
       // Fallback vers HTML5 Audio
       notificationSound.playHTMLAudioNotification();
     }

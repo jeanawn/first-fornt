@@ -23,12 +23,14 @@ export default function PaymentConfirmation({
     const pollTransaction = async () => {
       try {
         const txn = await transactionService.getTransactionById(transactionId);
-        setTransaction(txn);
-        setIsLoading(false);
-        
-        // Si transaction finalisée (success ou failed), arrêter le polling
-        if (txn.status === 'success' || txn.status === 'failed') {
-          return true; // Arrêter le polling
+        if (txn) {
+          setTransaction(txn);
+          setIsLoading(false);
+          
+          // Si transaction finalisée (success ou failed), arrêter le polling
+          if (txn.status === 'success' || txn.status === 'failed') {
+            return true; // Arrêter le polling
+          }
         }
         return false; // Continuer le polling
       } catch (error) {

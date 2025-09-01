@@ -132,8 +132,9 @@ export default function App() {
       });
       
       // Stocker l'ID de transaction pour le polling
-      if (response && response.data && response.data.id) {
-        setPendingTransactionId(response.data.id);
+      if (response && typeof response === 'object' && 'data' in response && 
+          response.data && typeof response.data === 'object' && 'id' in response.data) {
+        setPendingTransactionId(response.data.id as string);
         setCurrentPage('payment-confirmation');
       } else {
         throw new Error('Transaction ID non reçu');
@@ -198,7 +199,7 @@ export default function App() {
           if (operation.sms && operation.sms !== previousSmsCode && operation.status === 'SUCCESS') {
             try {
               await notificationSound.playNotificationSound();
-            } catch (error) {
+            } catch {
               // Fallback si Web Audio API échoue
               notificationSound.playHTMLAudioNotification();
             }
@@ -242,7 +243,7 @@ export default function App() {
     try {
       // Déconnexion côté serveur + nettoyage localStorage
       await authService.logout();
-    } catch (error) {
+    } catch {
       // En cas d'erreur, forcer le nettoyage local
       authService.clearAllData();
     }

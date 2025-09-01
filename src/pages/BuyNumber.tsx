@@ -186,7 +186,7 @@ export default function BuyNumber({ onBuyNumber, onBack }: BuyNumberProps) {
   };
 
   // Fonction pour trier par popularité
-  const sortByUsage = (items: any[], type: 'countries' | 'services', getKey: (item: any) => string) => {
+  const sortByUsage = <T extends { name: string }>(items: T[], type: 'countries' | 'services', getKey: (item: T) => string) => {
     return [...items].sort((a, b) => {
       const usageA = userPrefs[type][getKey(a)] || 0;
       const usageB = userPrefs[type][getKey(b)] || 0;
@@ -195,7 +195,7 @@ export default function BuyNumber({ onBuyNumber, onBack }: BuyNumberProps) {
       if (usageA !== usageB) {
         return usageB - usageA;
       }
-      return a.name?.localeCompare(b.name) || 0;
+      return a.name.localeCompare(b.name);
     });
   };
 
@@ -317,15 +317,15 @@ export default function BuyNumber({ onBuyNumber, onBack }: BuyNumberProps) {
                 ) : (
                   filteredCountries.map((country) => (
                   <button
-                    key={country.alphaCode || `${country.name}-${country.code}`}
-                    onClick={() => handleCountrySelect(country)}
+                    key={country.alphaCode || country.code}
+                    onClick={() => handleCountrySelect(country as Country)}
                     className="group p-4 rounded-xl border-2 border-gray-200 bg-white hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 hover:scale-105 active:scale-95 text-left"
                   >
                     <div className="flex items-center space-x-4">
                       <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center group-hover:bg-blue-100 transition-colors">
                         <ImageWithFallback
-                          src={country.flags || country.flag}
-                          fallback={COUNTRY_FALLBACKS[country.alphaCode || country.code] || '🏳️'}
+                          src={(country as Country).flags?.png || (country as Country).flag}
+                          fallback={COUNTRY_FALLBACKS[(country as Country).alphaCode || (country as Country).code] || '🏳️'}
                           alt={`Drapeau ${country.name}`}
                           className="w-8 h-6 rounded"
                         />
@@ -369,7 +369,7 @@ export default function BuyNumber({ onBuyNumber, onBack }: BuyNumberProps) {
                 <div className="flex items-center space-x-4">
                   <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm">
                     <ImageWithFallback
-                      src={selectedCountry.flags || selectedCountry.flag}
+                      src={selectedCountry.flags?.png || selectedCountry.flag}
                       fallback={COUNTRY_FALLBACKS[selectedCountry.alphaCode || selectedCountry.code] || '🏳️'}
                       alt={`Drapeau ${selectedCountry.name}`}
                       className="w-8 h-6 rounded"

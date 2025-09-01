@@ -11,6 +11,11 @@ export interface Country {
   code: string;
   name: string;
   flag: string; // URL du drapeau
+  alphaCode?: string;
+  flags?: {
+    png?: string;
+    svg?: string;
+  };
 }
 
 export interface Service {

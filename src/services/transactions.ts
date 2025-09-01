@@ -7,7 +7,7 @@ class TransactionService {
       return response;
     } catch (error: unknown) {
       // Si l'endpoint n'existe pas (404), retourner des données vides
-      if ((error as any)?.statusCode === 404) {
+      if (error && typeof error === 'object' && 'statusCode' in error && error.statusCode === 404) {
         //console.warn('Endpoint /transactions non disponible');
         return { data: [], total: 0, limit, offset };
       }
@@ -18,16 +18,27 @@ class TransactionService {
   async getRecentTransactions(limit: number = 5): Promise<Transaction[]> {
     try {
       const response = await this.getUserTransactions(limit, 0);
-      return response.data || [];
+      if (response && typeof response === 'object' && 'data' in response && Array.isArray(response.data)) {
+        return response.data as Transaction[];
+      }
+      return [];
     } catch (error) {
       console.warn('Impossible de récupérer les transactions:', error);
       return [];
     }
   }
 
-  async getTransactionById(transactionId: string): Promise<unknown> {
-    const response = await apiService.get(`/transactions/${transactionId}`);
-    return response;
+  async getTransactionById(transactionId: string): Promise<Transaction | null> {
+    try {
+      const response = await apiService.get(`/transactions/${transactionId}`);
+      if (response && typeof response === 'object' && 'data' in response) {
+        return response.data as Transaction;
+      }
+      return null;
+    } catch (error) {
+      console.warn('Transaction non trouvée:', error);
+      return null;
+    }
   }
 }
 

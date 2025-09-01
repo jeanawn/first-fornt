@@ -1,15 +1,7 @@
 import { apiService } from './api';
 import type { Transaction } from '../types';
-
-interface TransactionsResponse {
-  data: Transaction[];
-  total: number;
-  limit: number;
-  offset: number;
-}
-
 class TransactionService {
-  async getUserTransactions(limit: number = 10, offset: number = 0): Promise<TransactionsResponse> {
+  async getUserTransactions(limit: number = 10, offset: number = 0): Promise<unknown> {
     try {
       const response = await apiService.get(`/transactions?limit=${limit}&offset=${offset}`);
       return response;
@@ -33,7 +25,7 @@ class TransactionService {
     }
   }
 
-  async getTransactionById(transactionId: string): Promise<Transaction> {
+  async getTransactionById(transactionId: string): Promise<unknown> {
     const response = await apiService.get(`/transactions/${transactionId}`);
     return response;
   }

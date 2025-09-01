@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface LandingPageProps {
   onGoToLogin: () => void;
   onGoToRegister: () => void;

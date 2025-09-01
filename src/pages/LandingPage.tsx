@@ -25,7 +25,7 @@ export default function LandingPage({ onGoToLogin, onGoToRegister }: LandingPage
     {
       icon: "💰",
       title: "Prix Transparents",
-      description: "1 crédit = 1 FCFA, sans frais cachés"
+      description: "Tarifs compétitifs, paiement sécurisé"
     }
   ];
 
@@ -96,7 +96,7 @@ export default function LandingPage({ onGoToLogin, onGoToRegister }: LandingPage
 
             {/* Main Heading */}
             <h1 className="text-5xl md:text-6xl font-black text-gray-900 font-montserrat mb-6 leading-tight">
-              Recevez vos codes SMS avec{' '}
+              Obtenez vos numéros virtuels avec{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
                 TagaNum
               </span>
@@ -104,8 +104,8 @@ export default function LandingPage({ onGoToLogin, onGoToRegister }: LandingPage
 
             {/* Sub Heading */}
             <p className="text-xl text-gray-600 font-montserrat max-w-3xl mx-auto mb-10 leading-relaxed">
-              La solution la plus fiable pour recevoir des codes de vérification SMS sur des numéros virtuels temporaires. 
-              Simple, rapide et sécurisé.
+              La solution la plus fiable pour obtenir des numéros virtuels temporaires de vérification. 
+              Simple, anonyme et instantané.
             </p>
 
             {/* CTA Buttons */}

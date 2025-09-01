@@ -16,7 +16,7 @@ class TransactionService {
     } catch (error: unknown) {
       // Si l'endpoint n'existe pas (404), retourner des données vides
       if ((error as any)?.statusCode === 404) {
-        console.warn('Endpoint /transactions non disponible');
+        //console.warn('Endpoint /transactions non disponible');
         return { data: [], total: 0, limit, offset };
       }
       throw error;

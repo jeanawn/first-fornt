@@ -98,13 +98,11 @@ export default function BuyNumber({ onBuyNumber, onBack }: BuyNumberProps) {
           operationsService.getServices()
         ]);
         
-        console.log('Countries data:', countriesData);
-        console.log('Services data:', servicesData);
         
         setCountries(countriesData);
         setServices(servicesData);
-      } catch (error) {
-        console.error('Erreur chargement données:', error);
+      } catch {
+        // Erreur silencieuse chargement données
       } finally {
         setIsLoadingData(false);
       }
@@ -144,8 +142,8 @@ export default function BuyNumber({ onBuyNumber, onBack }: BuyNumberProps) {
             });
           
           setServices(availableServices);
-        } catch (error) {
-          console.error('Erreur chargement services pays:', error);
+        } catch {
+          // Erreur silencieuse chargement services pays
           setServices([]);
         }
       }
@@ -324,7 +322,7 @@ export default function BuyNumber({ onBuyNumber, onBack }: BuyNumberProps) {
                     <div className="flex items-center space-x-4">
                       <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center group-hover:bg-blue-100 transition-colors">
                         <ImageWithFallback
-                          src={(country as Country).flags?.png || (country as Country).flag}
+                          src={(country as Country).flags}
                           fallback={COUNTRY_FALLBACKS[(country as Country).alphaCode || (country as Country).code] || '🏳️'}
                           alt={`Drapeau ${country.name}`}
                           className="w-8 h-6 rounded"
@@ -369,7 +367,7 @@ export default function BuyNumber({ onBuyNumber, onBack }: BuyNumberProps) {
                 <div className="flex items-center space-x-4">
                   <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm">
                     <ImageWithFallback
-                      src={selectedCountry.flags?.png || selectedCountry.flag}
+                      src={selectedCountry.flags || selectedCountry.flag}
                       fallback={COUNTRY_FALLBACKS[selectedCountry.alphaCode || selectedCountry.code] || '🏳️'}
                       alt={`Drapeau ${selectedCountry.name}`}
                       className="w-8 h-6 rounded"

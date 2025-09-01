@@ -10,12 +10,9 @@ export interface User {
 export interface Country {
   code: string;
   name: string;
-  flag: string; // URL du drapeau
+  flag: string; // URL du drapeau (fallback)
   alphaCode?: string;
-  flags?: {
-    png?: string;
-    svg?: string;
-  };
+  flags?: string; // URL directe du drapeau (principale)
 }
 
 export interface Service {

@@ -33,8 +33,8 @@ export default function PaymentConfirmation({
           }
         }
         return false; // Continuer le polling
-      } catch (error) {
-        console.error('Erreur polling transaction:', error);
+      } catch {
+        
         setError('Erreur lors de la vérification du statut');
         setIsLoading(false);
         return true; // Arrêter le polling en cas d'erreur

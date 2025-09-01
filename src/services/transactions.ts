@@ -22,8 +22,8 @@ class TransactionService {
         return response.data as Transaction[];
       }
       return [];
-    } catch (error) {
-      console.warn('Impossible de récupérer les transactions:', error);
+    } catch {
+      // Impossible de récupérer les transactions
       return [];
     }
   }
@@ -35,8 +35,8 @@ class TransactionService {
         return response.data as Transaction;
       }
       return null;
-    } catch (error) {
-      console.warn('Transaction non trouvée:', error);
+    } catch {
+      // Transaction non trouvée
       return null;
     }
   }

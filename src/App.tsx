@@ -61,7 +61,7 @@ export default function App() {
     initializeAuth();
   }, []);
 
-  // Gestion des erreurs
+  // Gestion des erreurs utilisateur
   const handleError = (err: unknown) => {
     const apiError = err as ApiError;
     setError(apiError.message || 'Une erreur inattendue est survenue');
@@ -84,7 +84,6 @@ export default function App() {
       const currentUser = await authService.getCurrentUser();
       
       // Vérification supplémentaire des données utilisateur
-      console.log('Utilisateur connecté:', currentUser);
       
       setUser(currentUser);
       setCurrentPage('dashboard');
@@ -210,9 +209,8 @@ export default function App() {
             clearInterval(pollInterval);
           }
         }
-      } catch (err) {
+      } catch {
         // Erreur silencieuse pour le polling
-        console.error('Erreur polling SMS:', err);
       }
     }, 30000); // Toutes les 30 secondes
 
@@ -386,8 +384,8 @@ export default function App() {
             try {
               const updatedUser = await authService.getCurrentUser();
               setUser(updatedUser);
-            } catch (err) {
-              console.error('Erreur mise à jour utilisateur:', err);
+            } catch {
+              // Erreur silencieuse mise à jour utilisateur
             }
             setPendingTransactionId(null);
             setCurrentPage('dashboard');

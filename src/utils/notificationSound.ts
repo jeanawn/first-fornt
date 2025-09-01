@@ -17,8 +17,8 @@ class NotificationSound {
   private initAudioContext() {
     try {
       this.audioContext = new (window.AudioContext || (window as unknown as AudioContextWithWebkit).webkitAudioContext)();
-    } catch (error) {
-      console.warn('AudioContext non supporté:', error);
+    } catch {
+      // AudioContext non supporté
     }
   }
 
@@ -36,8 +36,8 @@ class NotificationSound {
 
       // Créer un son de notification agréable
       this.createNotificationBeep();
-    } catch (error) {
-      console.warn('Erreur lecture son:', error);
+    } catch {
+      // Erreur lecture son
     }
   }
 
@@ -74,8 +74,8 @@ class NotificationSound {
     const audio = new Audio(audioData);
     
     audio.volume = 0.5;
-    audio.play().catch(error => {
-      console.warn('Erreur lecture audio HTML5:', error);
+    audio.play().catch(() => {
+      // Erreur lecture audio HTML5
     });
   }
 

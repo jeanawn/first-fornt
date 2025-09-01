@@ -67,9 +67,9 @@ class AuthService {
     try {
       // Tenter de déconnecter côté serveur
       await apiService.post('/auth/logout');
-    } catch (error) {
+    } catch {
       // Continuer même si l'appel serveur échoue
-      console.warn('Erreur lors de la déconnexion serveur:', error);
+      
     }
     
     // Nettoyage complet côté client

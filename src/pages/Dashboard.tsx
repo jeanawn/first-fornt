@@ -43,8 +43,8 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout }: D
           .sort((a, b) => new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime())
           .slice(0, 5);
         setOperations(sortedOperations);
-      } catch (error) {
-        console.error('Erreur chargement opérations:', error);
+      } catch {
+        
       } finally {
         setIsLoadingOperations(false);
       }
@@ -59,8 +59,8 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout }: D
       try {
         const recentTransactions = await transactionService.getRecentTransactions(3);
         setTransactions(recentTransactions || []);
-      } catch (error) {
-        console.error('Erreur chargement transactions:', error);
+      } catch {
+        
         // En cas d'erreur, on ignore silencieusement et on continue sans les transactions
         setTransactions([]);
       } finally {

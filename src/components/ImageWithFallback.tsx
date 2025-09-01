@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 interface ImageWithFallbackProps {
   src?: string;
-  fallback: string; // Emoji ou texte de fallback
+  fallback: string;
   alt: string;
   className?: string;
 }
@@ -12,13 +12,11 @@ export default function ImageWithFallback({ src, fallback, alt, className = '' }
   const [isLoading, setIsLoading] = useState(!!src);
 
   const handleError = () => {
-    console.log('Image failed to load:', src);
     setHasError(true);
     setIsLoading(false);
   };
 
   const handleLoad = () => {
-    console.log('Image loaded successfully:', src);
     setIsLoading(false);
   };
 

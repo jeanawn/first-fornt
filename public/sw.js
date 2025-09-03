@@ -1,4 +1,4 @@
-const CACHE_NAME = 'taganum-v1';
+const CACHE_NAME = 'teranum-v1';
 const urlsToCache = [
   '/',
   '/manifest.json',
@@ -92,6 +92,6 @@ self.addEventListener('push', (event) => {
   };
 
   event.waitUntil(
-    self.registration.showNotification('TagaNum', options)
+    self.registration.showNotification('TeraNum', options)
   );
 });

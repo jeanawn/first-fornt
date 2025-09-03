@@ -154,8 +154,8 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout }: D
         <div className="text-center space-y-2">
           <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto shadow-lg border border-gray-200 p-2">
             <img 
-              src="https://s6.imgcdn.dev/YQjTwD.png" 
-              alt="TagaNum Logo" 
+              src="https://s6.imgcdn.dev/YQ54Ge.png" 
+              alt="TeraNum Logo" 
               className="w-full h-full object-cover rounded-xl"
             />
           </div>

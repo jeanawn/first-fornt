@@ -14,13 +14,13 @@ export default function Layout({ children, showHeader = true }: LayoutProps) {
             <div className="flex items-center justify-center space-x-3">
               <div className="w-8 h-8 bg-white rounded-lg shadow-sm border border-gray-100 p-1">
                 <img 
-                  src="https://s6.imgcdn.dev/YQjTwD.png" 
-                  alt="TagaNum Logo" 
+                  src="https://s6.imgcdn.dev/YQ54Ge.png" 
+                  alt="TeraNum Logo" 
                   className="w-full h-full object-cover rounded"
                 />
               </div>
               <h1 className="text-xl font-bold text-gray-900 font-montserrat">
-                TagaNum
+                TeraNum
               </h1>
             </div>
           </div>

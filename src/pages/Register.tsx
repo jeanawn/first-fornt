@@ -64,8 +64,8 @@ export default function Register({ onRegister, onBackToLogin }: RegisterProps) {
           <div className="text-center space-y-4">
             <div className="w-20 h-20 bg-white rounded-2xl mx-auto flex items-center justify-center shadow-xl border border-gray-200 p-2">
               <img 
-                src="https://s6.imgcdn.dev/YQjTwD.png" 
-                alt="TagaNum Logo" 
+                src="https://s6.imgcdn.dev/YQ54Ge.png" 
+                alt="TeraNum Logo" 
                 className="w-full h-full object-cover rounded-xl"
               />
             </div>
@@ -74,7 +74,7 @@ export default function Register({ onRegister, onBackToLogin }: RegisterProps) {
                 Créer un compte
               </h1>
               <p className="text-gray-600 text-lg mt-2 font-montserrat">
-                Rejoignez TagaNum
+                Rejoignez TeraNum
               </p>
             </div>
           </div>

@@ -33,7 +33,7 @@ export default function TermsOfService({ onBack }: TermsOfServiceProps) {
               <section className="mb-8">
                 <h2 className="text-2xl font-bold text-gray-900 font-montserrat mb-4">1. Acceptation des conditions</h2>
                 <p className="text-gray-700 font-montserrat leading-relaxed mb-4">
-                  En accédant et en utilisant TagaNum, vous acceptez d'être lié par ces conditions générales d'utilisation. 
+                  En accédant et en utilisant TeraNum, vous acceptez d'être lié par ces conditions générales d'utilisation. 
                   Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser notre service.
                 </p>
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -47,7 +47,7 @@ export default function TermsOfService({ onBack }: TermsOfServiceProps) {
               <section className="mb-8">
                 <h2 className="text-2xl font-bold text-gray-900 font-montserrat mb-4">2. Description du service</h2>
                 <p className="text-gray-700 font-montserrat leading-relaxed mb-4">
-                  TagaNum fournit des numéros de téléphone virtuels temporaires permettant de recevoir des codes de vérification SMS.
+                  TeraNum fournit des numéros de téléphone virtuels temporaires permettant de recevoir des codes de vérification SMS.
                 </p>
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="bg-green-50 rounded-lg p-4">
@@ -146,7 +146,7 @@ export default function TermsOfService({ onBack }: TermsOfServiceProps) {
                 <h2 className="text-2xl font-bold text-gray-900 font-montserrat mb-4">6. Propriété intellectuelle</h2>
                 <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
                   <p className="text-purple-800 font-montserrat mb-3">
-                    Tous les droits de propriété intellectuelle relatifs à TagaNum nous appartiennent.
+                    Tous les droits de propriété intellectuelle relatifs à TeraNum nous appartiennent.
                   </p>
                   <ul className="text-purple-700 font-montserrat text-sm space-y-1">
                     <li>🔒 Marques déposées et logos</li>
@@ -161,7 +161,7 @@ export default function TermsOfService({ onBack }: TermsOfServiceProps) {
                 <h2 className="text-2xl font-bold text-gray-900 font-montserrat mb-4">7. Limitation de responsabilité</h2>
                 <div className="border-l-4 border-gray-400 pl-4">
                   <p className="text-gray-700 font-montserrat text-sm mb-3">
-                    TagaNum fournit ses services "en l'état". Nous ne garantissons pas :
+                    TeraNum fournit ses services "en l'état". Nous ne garantissons pas :
                   </p>
                   <ul className="text-gray-600 font-montserrat text-sm space-y-1 list-disc list-inside">
                     <li>La disponibilité continue du service</li>
@@ -193,7 +193,7 @@ export default function TermsOfService({ onBack }: TermsOfServiceProps) {
                         <td className="px-4 py-3 text-sm text-gray-700 font-montserrat">À tout moment, depuis les paramètres du compte</td>
                       </tr>
                       <tr>
-                        <td className="px-4 py-3 text-sm text-gray-700 font-montserrat font-semibold">Par TagaNum</td>
+                        <td className="px-4 py-3 text-sm text-gray-700 font-montserrat font-semibold">Par TeraNum</td>
                         <td className="px-4 py-3 text-sm text-gray-700 font-montserrat">En cas de violation des conditions</td>
                       </tr>
                       <tr>
@@ -237,7 +237,7 @@ export default function TermsOfService({ onBack }: TermsOfServiceProps) {
 
               <div className="bg-gradient-to-r from-primary-50 to-secondary-50 rounded-lg p-6 text-center">
                 <p className="text-gray-700 font-montserrat">
-                  <strong>Merci d'utiliser TagaNum !</strong><br/>
+                  <strong>Merci d'utiliser TeraNum !</strong><br/>
                   En respectant ces conditions, vous contribuez à maintenir un service de qualité pour tous.
                 </p>
               </div>

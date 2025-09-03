@@ -33,11 +33,11 @@ export default function PrivacyPolicy({ onBack }: PrivacyPolicyProps) {
               <section className="mb-8">
                 <h2 className="text-2xl font-bold text-gray-900 font-montserrat mb-4">1. Introduction</h2>
                 <p className="text-gray-700 font-montserrat leading-relaxed mb-4">
-                  TagaNum s'engage à protéger votre vie privée. Cette politique de confidentialité explique comment nous collectons, 
+                  TeraNum s'engage à protéger votre vie privée. Cette politique de confidentialité explique comment nous collectons, 
                   utilisons, stockons et protégeons vos informations personnelles lorsque vous utilisez notre service de numéros virtuels temporaires.
                 </p>
                 <p className="text-gray-700 font-montserrat leading-relaxed">
-                  En utilisant TagaNum, vous acceptez les pratiques décrites dans cette politique.
+                  En utilisant TeraNum, vous acceptez les pratiques décrites dans cette politique.
                 </p>
               </section>
 
@@ -183,7 +183,7 @@ export default function PrivacyPolicy({ onBack }: PrivacyPolicyProps) {
                 <h2 className="text-2xl font-bold text-gray-900 font-montserrat mb-4">7. Partage des données</h2>
                 <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                   <p className="text-red-800 font-montserrat font-semibold mb-2">
-                    🚫 TagaNum ne vend jamais vos données personnelles
+                    🚫 TeraNum ne vend jamais vos données personnelles
                   </p>
                   <p className="text-red-700 font-montserrat text-sm">
                     Nous ne partageons vos informations qu'avec des prestataires de services essentiels 

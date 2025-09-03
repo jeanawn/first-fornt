@@ -46,12 +46,12 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-white rounded-lg shadow-sm border border-gray-200 p-1">
                 <img 
-                  src="https://s6.imgcdn.dev/YQjTwD.png" 
-                  alt="TagaNum Logo" 
+                  src="https://s6.imgcdn.dev/YQ54Ge.png" 
+                  alt="TeraNum Logo" 
                   className="w-full h-full object-contain rounded"
                 />
               </div>
-              <h1 className="text-2xl font-bold text-primary font-montserrat">TagaNum</h1>
+              <h1 className="text-2xl font-bold text-primary font-montserrat">TeraNum</h1>
             </div>
 
             {/* Navigation */}
@@ -98,7 +98,7 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
             <h1 className="text-5xl md:text-6xl font-black text-gray-900 font-montserrat mb-6 leading-tight">
               Obtenez vos numéros virtuels avec{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
-                TagaNum
+                TeraNum
               </span>
             </h1>
 
@@ -152,7 +152,7 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-black text-gray-900 font-montserrat mb-4">
-              Pourquoi choisir TagaNum ?
+              Pourquoi choisir TeraNum ?
             </h2>
             <p className="text-xl text-gray-600 font-montserrat max-w-2xl mx-auto">
               Une plateforme simple et efficace pour vos besoins de vérification SMS.
@@ -253,10 +253,10 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
       <section className="py-20 bg-gradient-to-r from-primary to-secondary">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl font-black text-white font-montserrat mb-6">
-            Prêt à commencer avec TagaNum ?
+            Prêt à commencer avec TeraNum ?
           </h2>
           <p className="text-xl text-primary-100 font-montserrat mb-10">
-            Rejoignez des milliers d'utilisateurs qui font confiance à TagaNum pour leurs codes SMS.
+            Rejoignez des milliers d'utilisateurs qui font confiance à TeraNum pour leurs codes SMS.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -283,12 +283,12 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
             <div className="flex items-center justify-center space-x-3 mb-6">
               <div className="w-10 h-10 bg-white rounded-lg shadow-sm border border-gray-200 p-1">
                 <img 
-                  src="https://s6.imgcdn.dev/YQjTwD.png" 
-                  alt="TagaNum Logo" 
+                  src="https://s6.imgcdn.dev/YQ54Ge.png" 
+                  alt="TeraNum Logo" 
                   className="w-full h-full object-contain rounded"
                 />
               </div>
-              <h3 className="text-2xl font-bold font-montserrat">TagaNum</h3>
+              <h3 className="text-2xl font-bold font-montserrat">TeraNum</h3>
             </div>
             
             <p className="text-gray-400 font-montserrat mb-8 max-w-2xl mx-auto">
@@ -298,7 +298,7 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
             <div className="border-t border-gray-700 pt-8">
               <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                 <p className="text-gray-400 font-montserrat text-sm">
-                  © 2024 TagaNum. Tous droits réservés.
+                  © 2024 TeraNum. Tous droits réservés.
                 </p>
                 
                 <div className="flex items-center space-x-6">

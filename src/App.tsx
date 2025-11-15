@@ -113,13 +113,6 @@ export default function App() {
     }
   };
 
-  const handleForgotPassword = async (email: string) => {
-    try {
-      await authService.forgotPassword(email);
-    } catch (err) {
-      handleError(err);
-    }
-  };
 
   // Rechargement
   const handleRecharge = async (amount: number, phoneNumber: string, network: Network) => {
@@ -303,7 +296,6 @@ export default function App() {
     if (currentPage === 'forgot-password') {
       return (
         <ForgotPassword
-          onResetPassword={handleForgotPassword}
           onBackToLogin={() => setCurrentPage('login')}
         />
       );

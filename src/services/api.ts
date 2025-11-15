@@ -14,7 +14,7 @@ export interface ApiError {
 }
 
 class ApiService {
-  private getAuthHeader(): HeadersInit {
+  private getAuthHeader(): Record<string, string> {
     const token = localStorage.getItem('auth_token');
     return token ? { 'Authorization': `Bearer ${token}` } : {};
   }
@@ -63,12 +63,23 @@ class ApiService {
   }
 
   async post<T>(endpoint: string, body?: unknown): Promise<T> {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...this.getAuthHeader(),
+    };
+
+    // Ajouter les headers de sécurité pour les endpoints de password reset
+    if (endpoint.includes('/auth/forgot-password') ||
+        endpoint.includes('/auth/verify-forgot-password-otp') ||
+        endpoint.includes('/auth/reset-password')) {
+      headers['Cache-Control'] = 'no-cache, no-store, must-revalidate';
+      headers['Pragma'] = 'no-cache';
+      headers['Expires'] = '0';
+    }
+
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...this.getAuthHeader(),
-      },
+      headers,
       body: body ? JSON.stringify(body) : undefined,
     });
 

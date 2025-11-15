@@ -17,11 +17,6 @@ export interface ForgotPasswordRequest {
   email: string;
 }
 
-export interface VerifyOtpRequest {
-  email: string;
-  otpCode: string;
-}
-
 export interface ResetPasswordRequest {
   email: string;
   otpCode: string;
@@ -53,10 +48,6 @@ class AuthService {
 
   async forgotPassword(email: string): Promise<void> {
     await apiService.post<ApiResponse>('/auth/forgot-password', { email });
-  }
-
-  async verifyOtp(data: VerifyOtpRequest): Promise<void> {
-    await apiService.post<ApiResponse>('/auth/verify-forgot-password-otp', data);
   }
 
   async resetPassword(data: ResetPasswordRequest): Promise<void> {

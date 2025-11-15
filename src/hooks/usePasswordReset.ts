@@ -2,13 +2,12 @@ import { useState } from 'react';
 import { authService } from '../services/auth';
 import type { ApiError } from '../types';
 
-type FlowState = 'IDLE' | 'SENDING_OTP' | 'OTP_SENT' | 'VERIFYING_OTP' | 'OTP_VERIFIED' | 'RESETTING' | 'SUCCESS' | 'ERROR';
+type FlowState = 'IDLE' | 'SENDING_OTP' | 'OTP_SENT' | 'RESETTING' | 'SUCCESS' | 'ERROR';
 
 interface UsePasswordResetReturn {
   state: FlowState;
   error: string;
   sendOtp: (email: string) => Promise<void>;
-  verifyOtp: (email: string, otpCode: string) => Promise<void>;
   resetPassword: (email: string, otpCode: string, newPassword: string) => Promise<void>;
   clearError: () => void;
   reset: () => void;
@@ -49,19 +48,6 @@ export const usePasswordReset = (): UsePasswordResetReturn => {
     }
   };
 
-  const verifyOtp = async (email: string, otpCode: string): Promise<void> => {
-    setState('VERIFYING_OTP');
-    clearError();
-
-    try {
-      await authService.verifyOtp({ email, otpCode });
-      setState('OTP_VERIFIED');
-    } catch (err) {
-      handleError(err);
-      throw err;
-    }
-  };
-
   const resetPassword = async (email: string, otpCode: string, newPassword: string): Promise<void> => {
     setState('RESETTING');
     clearError();
@@ -79,7 +65,6 @@ export const usePasswordReset = (): UsePasswordResetReturn => {
     state,
     error,
     sendOtp,
-    verifyOtp,
     resetPassword,
     clearError,
     reset

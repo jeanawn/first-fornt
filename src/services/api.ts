@@ -68,15 +68,6 @@ class ApiService {
       ...this.getAuthHeader(),
     };
 
-    // Ajouter les headers de sécurité pour les endpoints de password reset
-    if (endpoint.includes('/auth/forgot-password') ||
-        endpoint.includes('/auth/verify-forgot-password-otp') ||
-        endpoint.includes('/auth/reset-password')) {
-      headers['Cache-Control'] = 'no-cache, no-store, must-revalidate';
-      headers['Pragma'] = 'no-cache';
-      headers['Expires'] = '0';
-    }
-
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'POST',
       headers,

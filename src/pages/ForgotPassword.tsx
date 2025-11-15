@@ -3,7 +3,7 @@ import Layout from '../components/Layout';
 import Input from '../components/Input';
 import { usePasswordReset } from '../hooks/usePasswordReset';
 
-type FlowStep = 'email' | 'otp' | 'password' | 'success';
+type FlowStep = 'email' | 'reset' | 'success';
 
 interface ForgotPasswordProps {
   onResetPassword?: (email: string) => void;
@@ -17,9 +17,9 @@ export default function ForgotPassword({ onBackToLogin }: ForgotPasswordProps) {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [countdown, setCountdown] = useState(0);
-  const { state, error, sendOtp, verifyOtp, resetPassword, clearError } = usePasswordReset();
+  const { state, error, sendOtp, resetPassword, clearError } = usePasswordReset();
 
-  const isLoading = ['SENDING_OTP', 'VERIFYING_OTP', 'RESETTING'].includes(state);
+  const isLoading = ['SENDING_OTP', 'RESETTING'].includes(state);
 
   const maskEmail = (email: string) => {
     const [localPart, domain] = email.split('@');
@@ -34,7 +34,7 @@ export default function ForgotPassword({ onBackToLogin }: ForgotPasswordProps) {
 
     try {
       await sendOtp(email);
-      setCurrentStep('otp');
+      setCurrentStep('reset');
       setCountdown(60);
       const timer = setInterval(() => {
         setCountdown((prev) => {
@@ -45,18 +45,6 @@ export default function ForgotPassword({ onBackToLogin }: ForgotPasswordProps) {
           return prev - 1;
         });
       }, 1000);
-    } catch {
-      // Error handled by hook
-    }
-  };
-
-  const handleVerifyOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    clearError();
-
-    try {
-      await verifyOtp(email, otpCode);
-      setCurrentStep('password');
     } catch {
       // Error handled by hook
     }
@@ -175,17 +163,17 @@ export default function ForgotPassword({ onBackToLogin }: ForgotPasswordProps) {
     </div>
   );
 
-  // Étape 2 : Vérification du code OTP
-  const renderOtpStep = () => (
+  // Étape 2 : Reset avec code OTP et nouveau mot de passe
+  const renderResetStep = () => (
     <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
       <div className="text-center mb-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-2">Code de vérification</h2>
+        <h2 className="text-xl font-bold text-gray-900 mb-2">Code et nouveau mot de passe</h2>
         <p className="text-gray-600 text-sm">
-          Un code à 6 chiffres a été envoyé à <strong>{maskEmail(email)}</strong>
+          Entrez le code reçu à <strong>{maskEmail(email)}</strong> et votre nouveau mot de passe
         </p>
       </div>
 
-      <form onSubmit={handleVerifyOtp} className="space-y-6">
+      <form onSubmit={handleResetPassword} className="space-y-6">
         <div>
           <div className="flex items-center space-x-2 mb-2">
             <div className="w-5 h-5 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -212,67 +200,6 @@ export default function ForgotPassword({ onBackToLogin }: ForgotPasswordProps) {
           </p>
         </div>
 
-        {error && (
-          <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-            <div className="flex items-center space-x-2">
-              <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <p className="text-red-800 text-sm font-medium">{error}</p>
-            </div>
-          </div>
-        )}
-
-        <button
-          type="submit"
-          disabled={isLoading || otpCode.length !== 6}
-          className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-4 px-6 rounded-2xl hover:from-blue-700 hover:to-purple-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg disabled:shadow-none"
-        >
-          <div className="flex items-center justify-center space-x-3">
-            {isLoading ? (
-              <>
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                <span>Vérification...</span>
-              </>
-            ) : (
-              <>
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <span>Vérifier le code</span>
-              </>
-            )}
-          </div>
-        </button>
-
-        <div className="text-center pt-4 border-t border-gray-100">
-          <button
-            type="button"
-            onClick={handleResendCode}
-            disabled={countdown > 0 || isLoading}
-            className="text-blue-600 hover:text-blue-700 text-sm font-medium disabled:text-gray-400 disabled:cursor-not-allowed transition-colors duration-200"
-          >
-            {countdown > 0
-              ? `Renvoyer le code dans ${countdown}s`
-              : 'Renvoyer le code'
-            }
-          </button>
-        </div>
-      </form>
-    </div>
-  );
-
-  // Étape 3 : Nouveau mot de passe
-  const renderPasswordStep = () => (
-    <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-      <div className="text-center mb-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-2">Nouveau mot de passe</h2>
-        <p className="text-gray-600 text-sm">
-          Choisissez un nouveau mot de passe sécurisé
-        </p>
-      </div>
-
-      <form onSubmit={handleResetPassword} className="space-y-6">
         <div>
           <div className="flex items-center space-x-2 mb-2">
             <div className="w-5 h-5 bg-green-100 rounded-lg flex items-center justify-center">
@@ -309,6 +236,20 @@ export default function ForgotPassword({ onBackToLogin }: ForgotPasswordProps) {
             placeholder="Confirmez votre mot de passe"
             className="text-lg p-4 rounded-xl border-2 border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-100 transition-all duration-200"
           />
+        </div>
+
+        <div className="text-center pt-4 border-t border-gray-100">
+          <button
+            type="button"
+            onClick={handleResendCode}
+            disabled={countdown > 0 || isLoading}
+            className="text-blue-600 hover:text-blue-700 text-sm font-medium disabled:text-gray-400 disabled:cursor-not-allowed transition-colors duration-200"
+          >
+            {countdown > 0
+              ? `Renvoyer le code dans ${countdown}s`
+              : 'Renvoyer le code'
+            }
+          </button>
         </div>
 
         {/* Indicateur de force du mot de passe */}
@@ -351,7 +292,7 @@ export default function ForgotPassword({ onBackToLogin }: ForgotPasswordProps) {
 
         <button
           type="submit"
-          disabled={isLoading || !newPassword || !confirmPassword || newPassword !== confirmPassword}
+          disabled={isLoading || otpCode.length !== 6 || !newPassword || !confirmPassword || newPassword !== confirmPassword}
           className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold py-4 px-6 rounded-2xl hover:from-green-700 hover:to-emerald-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg disabled:shadow-none"
         >
           <div className="flex items-center justify-center space-x-3">
@@ -421,8 +362,7 @@ export default function ForgotPassword({ onBackToLogin }: ForgotPasswordProps) {
   const getStepTitle = () => {
     switch (currentStep) {
       case 'email': return 'Mot de passe oublié ?';
-      case 'otp': return 'Vérification';
-      case 'password': return 'Nouveau mot de passe';
+      case 'reset': return 'Code et mot de passe';
       case 'success': return 'Terminé !';
       default: return 'Réinitialisation';
     }
@@ -431,8 +371,7 @@ export default function ForgotPassword({ onBackToLogin }: ForgotPasswordProps) {
   const getStepSubtitle = () => {
     switch (currentStep) {
       case 'email': return 'Pas de souci, nous allons vous aider';
-      case 'otp': return 'Entrez le code reçu par email';
-      case 'password': return 'Choisissez votre nouveau mot de passe';
+      case 'reset': return 'Entrez le code et votre nouveau mot de passe';
       case 'success': return 'Votre mot de passe a été mis à jour';
       default: return '';
     }
@@ -445,12 +384,7 @@ export default function ForgotPassword({ onBackToLogin }: ForgotPasswordProps) {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
         </svg>
       );
-      case 'otp': return (
-        <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-        </svg>
-      );
-      case 'password': return (
+      case 'reset': return (
         <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
         </svg>
@@ -467,8 +401,7 @@ export default function ForgotPassword({ onBackToLogin }: ForgotPasswordProps) {
   const getStepColor = () => {
     switch (currentStep) {
       case 'email': return 'from-orange-500 to-red-600';
-      case 'otp': return 'from-blue-500 to-indigo-600';
-      case 'password': return 'from-green-500 to-emerald-600';
+      case 'reset': return 'from-blue-500 to-indigo-600';
       case 'success': return 'from-green-500 to-emerald-600';
       default: return 'from-gray-500 to-gray-600';
     }
@@ -476,9 +409,8 @@ export default function ForgotPassword({ onBackToLogin }: ForgotPasswordProps) {
 
   const getStepProgressWidth = () => {
     switch (currentStep) {
-      case 'email': return '25%';
-      case 'otp': return '50%';
-      case 'password': return '75%';
+      case 'email': return '33%';
+      case 'reset': return '66%';
       case 'success': return '100%';
       default: return '0%';
     }
@@ -513,8 +445,7 @@ export default function ForgotPassword({ onBackToLogin }: ForgotPasswordProps) {
 
           {/* Step Content */}
           {currentStep === 'email' && renderEmailStep()}
-          {currentStep === 'otp' && renderOtpStep()}
-          {currentStep === 'password' && renderPasswordStep()}
+          {currentStep === 'reset' && renderResetStep()}
           {currentStep === 'success' && renderSuccessStep()}
 
           {/* Back to Login - Show on all steps except success */}

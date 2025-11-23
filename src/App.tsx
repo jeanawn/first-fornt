@@ -8,6 +8,7 @@ import Recharge from './pages/Recharge';
 import BuyNumber from './pages/BuyNumber';
 import AwaitingNumber from './pages/AwaitingNumber';
 import NumberDetails from './pages/NumberDetails';
+import OperationDetails from './pages/OperationDetails';
 import PaymentConfirmation from './pages/PaymentConfirmation';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
@@ -29,6 +30,7 @@ type Page =
   | 'buy-number'
   | 'awaiting-number'
   | 'number-details'
+  | 'operation-details'
   | 'payment-confirmation'
   | 'privacy-policy'
   | 'terms-of-service';
@@ -45,6 +47,7 @@ export default function App() {
     country: Country;
     service: Service;
   } | null>(null);
+  const [selectedOperationId, setSelectedOperationId] = useState<string | null>(null);
 
   // Vérifier l'authentification au démarrage
   useEffect(() => {
@@ -410,6 +413,18 @@ export default function App() {
       );
     }
 
+    if (currentPage === 'operation-details' && selectedOperationId) {
+      return (
+        <OperationDetails
+          operationId={selectedOperationId}
+          onBack={() => {
+            setSelectedOperationId(null);
+            setCurrentPage('dashboard');
+          }}
+        />
+      );
+    }
+
     if (currentPage === 'payment-confirmation' && pendingTransactionId) {
       return (
         <PaymentConfirmation
@@ -436,6 +451,10 @@ export default function App() {
         onRecharge={() => setCurrentPage('recharge')}
         onBuyNumber={() => setCurrentPage('buy-number')}
         onLogout={handleLogout}
+        onViewOperation={(operationId: string) => {
+          setSelectedOperationId(operationId);
+          setCurrentPage('operation-details');
+        }}
       />
     );
   };

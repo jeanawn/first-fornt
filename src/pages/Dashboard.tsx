@@ -23,9 +23,10 @@ interface DashboardProps {
   onRecharge: () => void;
   onBuyNumber: () => void;
   onLogout: () => void;
+  onViewOperation?: (operationId: string) => void;
 }
 
-export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout }: DashboardProps) {
+export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onViewOperation }: DashboardProps) {
   const [operations, setOperations] = useState<Operation[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoadingOperations, setIsLoadingOperations] = useState(true);
@@ -296,7 +297,8 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout }: D
                 {operations.map((operation, index) => (
                 <div
                   key={operation.id}
-                  className={`relative bg-gradient-to-r from-gray-50 to-white rounded-xl p-4 border border-gray-200 hover:shadow-md transition-all duration-200 hover:border-gray-300 group ${
+                  onClick={() => onViewOperation?.(operation.id)}
+                  className={`relative bg-gradient-to-r from-gray-50 to-white rounded-xl p-4 border border-gray-200 hover:shadow-md transition-all duration-200 hover:border-gray-300 group cursor-pointer hover:scale-[1.02] ${
                     index === 0 ? 'ring-2 ring-blue-100 bg-gradient-to-r from-blue-50 to-white' : ''
                   }`}
                 >

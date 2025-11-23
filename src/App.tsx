@@ -6,6 +6,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import Dashboard from './pages/Dashboard';
 import Recharge from './pages/Recharge';
 import BuyNumber from './pages/BuyNumber';
+import AwaitingNumber from './pages/AwaitingNumber';
 import NumberDetails from './pages/NumberDetails';
 import PaymentConfirmation from './pages/PaymentConfirmation';
 import PrivacyPolicy from './pages/PrivacyPolicy';
@@ -18,14 +19,15 @@ import { operationsService } from './services/operations';
 import { notificationSound } from './utils/notificationSound';
 import type { User, Country, Service, PhoneNumber, Network, ApiError } from './types';
 
-type Page = 
+type Page =
   | 'landing'
   | 'login'
   | 'register'
-  | 'forgot-password' 
-  | 'dashboard' 
-  | 'recharge' 
-  | 'buy-number' 
+  | 'forgot-password'
+  | 'dashboard'
+  | 'recharge'
+  | 'buy-number'
+  | 'awaiting-number'
   | 'number-details'
   | 'payment-confirmation'
   | 'privacy-policy'
@@ -38,6 +40,11 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
   const [pendingTransactionId, setPendingTransactionId] = useState<string | null>(null);
+  const [pendingOperation, setPendingOperation] = useState<{
+    operationId: string;
+    country: Country;
+    service: Service;
+  } | null>(null);
 
   // Vérifier l'authentification au démarrage
   useEffect(() => {
@@ -145,36 +152,49 @@ export default function App() {
         countryCode: country.code
       });
 
-      // Créer l'objet PhoneNumber initial avec status PROCESSING
-      const initialPhoneNumber: PhoneNumber = {
-        id: response.operationId,
-        number: '', // Vide car pas encore de numéro
+      // Stocker les infos de l'opération en attente
+      setPendingOperation({
+        operationId: response.operationId,
         country,
-        service: {
-          ...service,
-          price: 0 // Prix sera mis à jour quand l'opération sera complète
-        },
-        expiresAt: new Date(Date.now() + 15 * 60 * 1000), // 15 minutes
-        smsCode: undefined,
-        status: response.status,
-        createdDate: new Date().toISOString()
-      };
+        service
+      });
 
-      setCurrentPhoneNumber(initialPhoneNumber);
-      setCurrentPage('number-details');
+      // Aller à la page d'attente
+      setCurrentPage('awaiting-number');
 
-      // Démarrer le polling pour vérifier le statut
-      startOperationPolling(response.operationId);
+      // Démarrer le polling pour attendre le numéro avant d'afficher la page
+      startOperationPolling(response.operationId, country, service);
     } catch (err) {
       handleError(err);
     }
   };
 
   // Polling pour le statut des opérations asynchrones
-  const startOperationPolling = (operationId: string) => {
+  const startOperationPolling = (operationId: string, country?: Country, service?: Service) => {
     const pollInterval = setInterval(async () => {
       try {
         const statusResponse = await operationsService.getOperationStatus(operationId);
+
+        // Si nous attendons le numéro initial (première fois)
+        if (!currentPhoneNumber && statusResponse.number && country && service) {
+          const initialPhoneNumber: PhoneNumber = {
+            id: operationId,
+            number: statusResponse.number,
+            country,
+            service: {
+              ...service,
+              price: 0 // Prix sera mis à jour quand l'opération sera complète
+            },
+            expiresAt: new Date(Date.now() + 15 * 60 * 1000), // 15 minutes
+            smsCode: statusResponse.sms,
+            status: statusResponse.status,
+            createdDate: new Date().toISOString()
+          };
+
+          setCurrentPhoneNumber(initialPhoneNumber);
+          setPendingOperation(null); // Nettoyer l'opération en attente
+          setCurrentPage('number-details');
+        }
 
         if (currentPhoneNumber) {
           const previousSmsCode = currentPhoneNumber.smsCode;
@@ -363,6 +383,19 @@ export default function App() {
         <BuyNumber
           onBuyNumber={handleBuyNumber}
           onBack={() => setCurrentPage('dashboard')}
+        />
+      );
+    }
+
+    if (currentPage === 'awaiting-number' && pendingOperation) {
+      return (
+        <AwaitingNumber
+          country={pendingOperation.country}
+          service={pendingOperation.service}
+          onBack={() => {
+            setPendingOperation(null);
+            setCurrentPage('dashboard');
+          }}
         />
       );
     }

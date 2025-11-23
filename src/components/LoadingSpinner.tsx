@@ -1,20 +1,27 @@
 interface LoadingSpinnerProps {
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
   className?: string;
+  color?: 'blue' | 'white';
 }
 
-export default function LoadingSpinner({ size = 'md', className = '' }: LoadingSpinnerProps) {
+export default function LoadingSpinner({ size = 'md', className = '', color = 'blue' }: LoadingSpinnerProps) {
   const sizes = {
+    xs: 'w-3 h-3',
     sm: 'w-4 h-4',
-    md: 'w-6 h-6', 
+    md: 'w-6 h-6',
     lg: 'w-8 h-8'
+  };
+
+  const colors = {
+    blue: 'text-blue-600',
+    white: 'text-white'
   };
 
   return (
     <div className={`inline-flex items-center justify-center ${className}`}>
-      <svg 
-        className={`animate-spin text-blue-600 ${sizes[size]}`} 
-        fill="none" 
+      <svg
+        className={`animate-spin ${colors[color]} ${sizes[size]}`}
+        fill="none"
         viewBox="0 0 24 24"
       >
         <circle 

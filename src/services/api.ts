@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://api.teranum.com';
+const API_BASE_URL = 'http://localhost:3000';
 
 export interface ApiResponse<T = unknown> {
   success?: boolean;

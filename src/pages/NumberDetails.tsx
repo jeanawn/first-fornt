@@ -41,15 +41,17 @@ export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: Nu
     });
   };
 
-  const formatTimeRemaining = (expiresAt: Date) => {
+  const formatTimeRemaining = (createdDate: string) => {
     const now = new Date();
-    const remaining = expiresAt.getTime() - now.getTime();
-    
+    const created = new Date(createdDate);
+    const expirationTime = created.getTime() + (15 * 60 * 1000); // 15 minutes après création
+    const remaining = expirationTime - now.getTime();
+
     if (remaining <= 0) return 'Expiré';
-    
+
     const minutes = Math.floor(remaining / 60000);
     const seconds = Math.floor((remaining % 60000) / 1000);
-    
+
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
@@ -67,7 +69,7 @@ export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: Nu
   // Mise à jour automatique du décompte toutes les secondes
   useEffect(() => {
     const updateTimer = () => {
-      setTimeRemaining(formatTimeRemaining(phoneNumber.expiresAt));
+      setTimeRemaining(formatTimeRemaining(phoneNumber.createdDate));
     };
 
     // Mise à jour immédiate
@@ -77,7 +79,7 @@ export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: Nu
     const interval = setInterval(updateTimer, 1000);
 
     return () => clearInterval(interval);
-  }, [phoneNumber.expiresAt]);
+  }, [phoneNumber.createdDate]);
 
   // Polling automatique pour les SMS toutes les 10 secondes si pas de SMS
   useEffect(() => {

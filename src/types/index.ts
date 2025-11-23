@@ -36,7 +36,7 @@ export interface PhoneNumber {
   service: Service;
   expiresAt: Date;
   smsCode?: string;
-  status: 'PENDING' | 'SUCCESS' | 'FAILED';
+  status: 'PROCESSING' | 'PENDING' | 'SUCCESS' | 'FAILED';
   createdDate: string;
 }
 

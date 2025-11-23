@@ -7,11 +7,26 @@ export interface CreateOperationRequest {
   countryCode: string;
 }
 
+export interface CreateOperationResponse {
+  success: boolean;
+  operationId: string;
+  status: 'PROCESSING';
+  message: string;
+}
+
+export interface OperationStatusResponse {
+  operationId: string;
+  status: 'PROCESSING' | 'PENDING' | 'SUCCESS' | 'FAILED';
+  number?: string;
+  sms?: string;
+  message?: string;
+}
+
 export interface Operation {
   id: string;
   number: string;
   sms?: string;
-  status: 'PENDING' | 'SUCCESS' | 'FAILED';
+  status: 'PROCESSING' | 'PENDING' | 'SUCCESS' | 'FAILED';
   service: string;
   country: string;
   price: number;
@@ -71,8 +86,13 @@ class OperationsService {
     }
   }
 
-  async createOperation(request: CreateOperationRequest): Promise<Operation> {
-    const response = await apiService.post<Operation>('/operations', request);
+  async createOperation(request: CreateOperationRequest): Promise<CreateOperationResponse> {
+    const response = await apiService.post<CreateOperationResponse>('/operations', request);
+    return response;
+  }
+
+  async getOperationStatus(operationId: string): Promise<OperationStatusResponse> {
+    const response = await apiService.get<OperationStatusResponse>(`/operations/${operationId}`);
     return response;
   }
 

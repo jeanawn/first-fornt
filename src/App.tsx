@@ -136,59 +136,63 @@ export default function App() {
     }
   };
 
-  // Achat de numéro
+  // Achat de numéro avec polling asynchrone
   const handleBuyNumber = async (country: Country, service: Service) => {
     try {
-      const operation = await operationsService.createOperation({
+      // Créer l'opération (retourne immédiatement avec PROCESSING)
+      const response = await operationsService.createOperation({
         serviceCode: service.code || service.id,
         countryCode: country.code
       });
 
-      // Créer l'objet PhoneNumber à partir de l'opération
-      const newPhoneNumber: PhoneNumber = {
-        id: operation.id,
-        number: operation.number,
+      // Créer l'objet PhoneNumber initial avec status PROCESSING
+      const initialPhoneNumber: PhoneNumber = {
+        id: response.operationId,
+        number: '', // Vide car pas encore de numéro
         country,
         service: {
           ...service,
-          price: operation.price / 100 // Convertir de centimes vers euros
+          price: 0 // Prix sera mis à jour quand l'opération sera complète
         },
         expiresAt: new Date(Date.now() + 15 * 60 * 1000), // 15 minutes
-        smsCode: operation.sms,
-        status: operation.status,
-        createdDate: operation.createdDate
+        smsCode: undefined,
+        status: response.status,
+        createdDate: new Date().toISOString()
       };
 
-      // Recharger les infos utilisateur pour mettre à jour le solde
-      const updatedUser = await authService.getCurrentUser();
-      setUser(updatedUser);
-      
-      setCurrentPhoneNumber(newPhoneNumber);
+      setCurrentPhoneNumber(initialPhoneNumber);
       setCurrentPage('number-details');
 
-      // Démarrer le polling pour vérifier les SMS
-      startSmsPolling(operation.id);
+      // Démarrer le polling pour vérifier le statut
+      startOperationPolling(response.operationId);
     } catch (err) {
       handleError(err);
     }
   };
 
-  // Polling pour les SMS
-  const startSmsPolling = (operationId: string) => {
+  // Polling pour le statut des opérations asynchrones
+  const startOperationPolling = (operationId: string) => {
     const pollInterval = setInterval(async () => {
       try {
-        const operation = await operationsService.getOperationById(operationId);
-        if (operation && currentPhoneNumber) {
+        const statusResponse = await operationsService.getOperationStatus(operationId);
+
+        if (currentPhoneNumber) {
           const previousSmsCode = currentPhoneNumber.smsCode;
-          
-          setCurrentPhoneNumber(prev => prev ? {
-            ...prev,
-            smsCode: operation.sms,
-            status: operation.status
-          } : null);
+
+          setCurrentPhoneNumber(prev => {
+            if (!prev) return null;
+
+            // Mettre à jour les infos selon le statut
+            return {
+              ...prev,
+              number: statusResponse.number || prev.number,
+              smsCode: statusResponse.sms,
+              status: statusResponse.status
+            };
+          });
 
           // 🔊 Jouer le son si nouveau SMS reçu
-          if (operation.sms && operation.sms !== previousSmsCode && operation.status === 'SUCCESS') {
+          if (statusResponse.sms && statusResponse.sms !== previousSmsCode && statusResponse.status === 'SUCCESS') {
             try {
               await notificationSound.playNotificationSound();
             } catch {
@@ -197,15 +201,21 @@ export default function App() {
             }
           }
 
-          // Arrêter le polling si SMS reçu ou échec
-          if (operation.status === 'SUCCESS' || operation.status === 'FAILED') {
+          // Mettre à jour le solde utilisateur quand l'opération est complète
+          if (statusResponse.status === 'SUCCESS' || statusResponse.status === 'FAILED') {
+            try {
+              const updatedUser = await authService.getCurrentUser();
+              setUser(updatedUser);
+            } catch {
+              // Erreur silencieuse
+            }
             clearInterval(pollInterval);
           }
         }
       } catch {
         // Erreur silencieuse pour le polling
       }
-    }, 30000); // Toutes les 30 secondes
+    }, 3000); // Toutes les 3 secondes (plus fréquent pour une meilleure UX)
 
     // Nettoyer l'interval après 15 minutes
     setTimeout(() => {
@@ -216,14 +226,14 @@ export default function App() {
   const handleRefreshCode = async () => {
     if (currentPhoneNumber) {
       try {
-        const operation = await operationsService.getOperationById(currentPhoneNumber.id);
-        if (operation) {
-          setCurrentPhoneNumber(prev => prev ? {
-            ...prev,
-            smsCode: operation.sms,
-            status: operation.status
-          } : null);
-        }
+        const statusResponse = await operationsService.getOperationStatus(currentPhoneNumber.id);
+
+        setCurrentPhoneNumber(prev => prev ? {
+          ...prev,
+          number: statusResponse.number || prev.number,
+          smsCode: statusResponse.sms,
+          status: statusResponse.status
+        } : null);
       } catch (err) {
         handleError(err);
       }

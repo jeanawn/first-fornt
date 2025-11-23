@@ -44,7 +44,7 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout }: D
           .slice(0, 5);
         setOperations(sortedOperations);
       } catch {
-        
+        // Ignore errors silently
       } finally {
         setIsLoadingOperations(false);
       }
@@ -79,6 +79,7 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout }: D
   }, []);
   const getStatusText = (status: string) => {
     switch (status.toLowerCase()) {
+      case 'processing': return '🔄 Traitement';
       case 'success': return '✅ Terminé';
       case 'failed': return '❌ Échec';
       case 'pending': return '⏳ En attente';
@@ -189,6 +190,24 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout }: D
 
         {/* Action Buttons - Design avec cartes cliquables */}
         <div className="grid grid-cols-2 gap-4">
+
+          <button
+              onClick={onBuyNumber}
+              className="group bg-white rounded-2xl p-6 shadow-md border border-gray-200 hover:shadow-xl hover:scale-105 transition-all duration-200 active:scale-95"
+          >
+            <div className="text-center space-y-3">
+              <div className="w-12 h-12 bg-primary rounded-xl mx-auto flex items-center justify-center group-hover:scale-110 transition-transform">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+              </div>
+              <div>
+                <p className="font-montserrat font-semibold text-gray-900 text-sm">Acheter</p>
+                <p className="font-montserrat text-xs text-gray-600">Numéro virtuel</p>
+              </div>
+            </div>
+          </button>
+
           <button
             onClick={onRecharge}
             className="group bg-white rounded-2xl p-6 shadow-md border border-gray-200 hover:shadow-xl hover:scale-105 transition-all duration-200 active:scale-95"
@@ -206,22 +225,7 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout }: D
             </div>
           </button>
 
-          <button
-            onClick={onBuyNumber}
-            className="group bg-white rounded-2xl p-6 shadow-md border border-gray-200 hover:shadow-xl hover:scale-105 transition-all duration-200 active:scale-95"
-          >
-            <div className="text-center space-y-3">
-              <div className="w-12 h-12 bg-primary rounded-xl mx-auto flex items-center justify-center group-hover:scale-110 transition-transform">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                </svg>
-              </div>
-              <div>
-                <p className="font-montserrat font-semibold text-gray-900 text-sm">Acheter</p>
-                <p className="font-montserrat text-xs text-gray-600">Numéro virtuel</p>
-              </div>
-            </div>
-          </button>
+
         </div>
 
         {/* Activity Card - Operations et Transactions combinées */}
@@ -308,6 +312,7 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout }: D
                           {operation.service}
                         </p>
                         <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                          operation.status.toLowerCase() === 'processing' ? 'bg-blue-100 text-blue-800' :
                           operation.status.toLowerCase() === 'success' ? 'bg-green-100 text-green-800' :
                           operation.status.toLowerCase() === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                           'bg-red-100 text-red-800'

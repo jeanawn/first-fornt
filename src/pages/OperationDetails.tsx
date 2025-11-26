@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import LoadingSpinner from '../components/LoadingSpinner';
+import usePersistentTimer from '../hooks/usePersistentTimer';
 import { operationsService } from '../services/operations';
 import type { Operation } from '../services/operations';
 
@@ -26,6 +27,13 @@ export default function OperationDetails({ operationId, onBack }: OperationDetai
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState<'number' | 'sms' | null>(null);
 
+  // Timer persistant pour l'opération
+  const { timeRemaining, isExpired, clearTimer } = usePersistentTimer(
+    operationId,
+    operation?.createdDate || new Date().toISOString(),
+    15
+  );
+
   useEffect(() => {
     const loadOperation = async () => {
       try {
@@ -40,6 +48,13 @@ export default function OperationDetails({ operationId, onBack }: OperationDetai
 
     loadOperation();
   }, [operationId]);
+
+  // Nettoyage du timer quand l'opération est terminée
+  useEffect(() => {
+    if (operation && (operation.sms || operation.status.toLowerCase() === 'success' || operation.status.toLowerCase() === 'failed')) {
+      clearTimer();
+    }
+  }, [operation, clearTimer]);
 
   const copyToClipboard = (text: string, type: 'number' | 'sms') => {
     navigator.clipboard.writeText(text).then(() => {
@@ -254,6 +269,16 @@ export default function OperationDetails({ operationId, onBack }: OperationDetai
                     ✓ Numéro copié !
                   </p>
                 )}
+              </div>
+            )}
+
+            {/* Temps restant (si l'opération est en cours) */}
+            {(operation.status.toLowerCase() === 'pending' || operation.status.toLowerCase() === 'processing') && !isExpired && (
+              <div className="flex items-center justify-center p-4 bg-amber-50 rounded-xl border border-amber-200">
+                <div className="text-center">
+                  <p className="text-amber-900 font-medium mb-1">⏱️ Temps restant</p>
+                  <p className="text-3xl font-mono font-bold text-amber-800">{timeRemaining}</p>
+                </div>
               </div>
             )}
           </div>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import ImageWithFallback from '../components/ImageWithFallback';
+import usePersistentTimer from '../hooks/usePersistentTimer';
 import type { PhoneNumber } from '../types';
 
 // Fallbacks
@@ -32,7 +33,13 @@ interface NumberDetailsProps {
 
 export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: NumberDetailsProps) {
   const [copied, setCopied] = useState<'number' | 'sms' | null>(null);
-  const [timeRemaining, setTimeRemaining] = useState('');
+
+  // Utilisation du hook persistant pour le timer
+  const { timeRemaining, clearTimer } = usePersistentTimer(
+    phoneNumber.id || phoneNumber.number, // ID unique de l'opération
+    phoneNumber.createdDate,
+    15 // 15 minutes
+  );
 
   const copyToClipboard = (text: string, type: 'number' | 'sms') => {
     navigator.clipboard.writeText(text).then(() => {
@@ -41,19 +48,6 @@ export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: Nu
     });
   };
 
-  const formatTimeRemaining = (createdDate: string) => {
-    const now = new Date();
-    const created = new Date(createdDate);
-    const expirationTime = created.getTime() + (15 * 60 * 1000); // 15 minutes après création
-    const remaining = expirationTime - now.getTime();
-
-    if (remaining <= 0) return 'Expiré';
-
-    const minutes = Math.floor(remaining / 60000);
-    const seconds = Math.floor((remaining % 60000) / 1000);
-
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-  };
 
   const formatCreationDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -66,20 +60,12 @@ export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: Nu
     });
   };
 
-  // Mise à jour automatique du décompte toutes les secondes
+  // Nettoyage du timer quand l'opération est terminée
   useEffect(() => {
-    const updateTimer = () => {
-      setTimeRemaining(formatTimeRemaining(phoneNumber.createdDate));
-    };
-
-    // Mise à jour immédiate
-    updateTimer();
-
-    // Mise à jour toutes les secondes
-    const interval = setInterval(updateTimer, 1000);
-
-    return () => clearInterval(interval);
-  }, [phoneNumber.createdDate]);
+    if (phoneNumber.smsCode || phoneNumber.status === 'SUCCESS' || phoneNumber.status === 'FAILED') {
+      clearTimer();
+    }
+  }, [phoneNumber.smsCode, phoneNumber.status, clearTimer]);
 
   // Polling automatique pour les SMS toutes les 10 secondes si pas de SMS
   useEffect(() => {

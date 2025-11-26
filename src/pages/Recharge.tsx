@@ -104,6 +104,7 @@ export default function Recharge({ onRecharge, onBack }: RechargeProps) {
               <p className="text-sm text-blue-800">
                 <strong>1 crédit = 1 FCFA</strong><br/>
                 Les crédits servent à acheter des numéros virtuels sur la plateforme.
+                NB : Les crédits ne sont pas remboursables.
               </p>
             </div>
           </div>

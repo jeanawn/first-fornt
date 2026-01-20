@@ -48,14 +48,14 @@ export default function Login({ onLogin, onForgotPassword, onRegister, onBackToH
           <div className="text-center space-y-4">
             <div className="w-20 h-20 bg-white rounded-2xl mx-auto flex items-center justify-center shadow-xl border border-gray-200 p-2">
               <img 
-                src="https://s6.imgcdn.dev/YQ54Ge.png" 
-                alt="TeraNum Logo" 
+                src="https://i.postimg.cc/fRm60V7Z/LOGO-XAARY-500x500.png" 
+                alt="Xaary Logo" 
                 className="w-full h-full object-cover rounded-xl"
               />
             </div>
             <div>
               <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary-800 bg-clip-text text-transparent font-montserrat">
-                TeraNum
+                Xaary
               </h1>
               <p className="text-gray-600 text-lg mt-2 font-montserrat">
                 Connexion à votre compte
@@ -170,7 +170,7 @@ export default function Login({ onLogin, onForgotPassword, onRegister, onBackToH
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <h3 className="font-semibold text-primary-900 font-montserrat">Bienvenue sur TeraNum</h3>
+                <h3 className="font-semibold text-primary-900 font-montserrat">Bienvenue sur Xaary</h3>
               </div>
               <p className="text-primary-800 text-sm font-montserrat">
                 Accédez à vos numéros virtuels pour recevoir des codes SMS de vérification en toute simplicité.

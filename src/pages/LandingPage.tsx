@@ -45,13 +45,13 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
             {/* Logo */}
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-white rounded-lg shadow-sm border border-gray-200 p-1">
-                <img 
-                  src="https://s6.imgcdn.dev/YQ54Ge.png" 
-                  alt="TeraNum Logo" 
+                <img
+                  src="https://i.postimg.cc/fRm60V7Z/LOGO-XAARY-500x500.png"
+                  alt="Xaary Logo"
                   className="w-full h-full object-contain rounded"
                 />
               </div>
-              <h1 className="text-2xl font-bold text-primary font-montserrat">TeraNum</h1>
+              <h1 className="text-2xl font-bold text-primary font-montserrat">Xaary</h1>
             </div>
 
             {/* Navigation */}
@@ -90,22 +90,22 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
             {/* Badge */}
             <div className="inline-flex items-center bg-white rounded-full px-6 py-2 shadow-md mb-8">
               <span className="text-primary font-montserrat font-semibold text-sm">
-                🚀 Numéros virtuels temporaires de vérification
+                🚀 Connectez-vous au monde
               </span>
             </div>
 
             {/* Main Heading */}
             <h1 className="text-5xl md:text-6xl font-black text-gray-900 font-montserrat mb-6 leading-tight">
-              Obtenez vos numéros virtuels avec{' '}
+              Connectez-vous au monde avec{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
-                TeraNum
+                Xaary
               </span>
             </h1>
 
             {/* Sub Heading */}
             <p className="text-xl text-gray-600 font-montserrat max-w-3xl mx-auto mb-10 leading-relaxed">
-              La solution la plus fiable pour obtenir des numéros virtuels temporaires de vérification. 
-              Simple, anonyme et instantané.
+              Accédez à des numéros virtuels temporaires du monde entier pour vos vérifications.
+              Simple, sécurisé et instantané.
             </p>
 
             {/* CTA Buttons */}
@@ -152,7 +152,7 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-black text-gray-900 font-montserrat mb-4">
-              Pourquoi choisir TeraNum ?
+              Pourquoi choisir Xaary ?
             </h2>
             <p className="text-xl text-gray-600 font-montserrat max-w-2xl mx-auto">
               Une plateforme simple et efficace pour vos besoins de vérification SMS.
@@ -184,7 +184,7 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
               Tarifs transparents
             </h2>
             <p className="text-xl text-gray-600 font-montserrat max-w-2xl mx-auto">
-              1 crédit = 1 FCFA. Simple, transparent, sans surprise.
+              1 crédit = 1$. Simple, transparent, sans surprise.
             </p>
           </div>
 
@@ -205,7 +205,7 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
                 
                 <div className="text-center">
                   <div className="text-4xl font-black text-gray-900 font-montserrat mb-2">
-                    {plan.amount} FCFA
+                    ${plan.amount}
                   </div>
                   <div className="text-primary font-montserrat font-semibold mb-6">
                     {plan.credits} crédits
@@ -253,10 +253,10 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
       <section className="py-20 bg-gradient-to-r from-primary to-secondary">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl font-black text-white font-montserrat mb-6">
-            Prêt à commencer avec TeraNum ?
+            Prêt à commencer avec Xaary ?
           </h2>
           <p className="text-xl text-primary-100 font-montserrat mb-10">
-            Rejoignez des milliers d'utilisateurs qui font confiance à TeraNum pour leurs codes SMS.
+            Rejoignez des milliers d'utilisateurs qui font confiance à Xaary pour leurs codes SMS.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -282,23 +282,23 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
           <div className="text-center">
             <div className="flex items-center justify-center space-x-3 mb-6">
               <div className="w-10 h-10 bg-white rounded-lg shadow-sm border border-gray-200 p-1">
-                <img 
-                  src="https://s6.imgcdn.dev/YQ54Ge.png" 
-                  alt="TeraNum Logo" 
+                <img
+                  src="https://i.postimg.cc/fRm60V7Z/LOGO-XAARY-500x500.png"
+                  alt="Xaary Logo"
                   className="w-full h-full object-contain rounded"
                 />
               </div>
-              <h3 className="text-2xl font-bold font-montserrat">TeraNum</h3>
+              <h3 className="text-2xl font-bold font-montserrat">Xaary</h3>
             </div>
             
             <p className="text-gray-400 font-montserrat mb-8 max-w-2xl mx-auto">
-              La plateforme de référence pour recevoir des codes SMS de vérification sur des numéros virtuels temporaires.
+              Connectez-vous au monde grâce à notre plateforme de numéros virtuels temporaires pour vos vérifications.
             </p>
 
             <div className="border-t border-gray-700 pt-8">
               <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                 <p className="text-gray-400 font-montserrat text-sm">
-                  © 2024 TeraNum. Tous droits réservés.
+                  © 2024 Xaary. Tous droits réservés.
                 </p>
                 
                 <div className="flex items-center space-x-6">

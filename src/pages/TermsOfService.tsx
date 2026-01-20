@@ -33,7 +33,7 @@ export default function TermsOfService({ onBack }: TermsOfServiceProps) {
               <section className="mb-8">
                 <h2 className="text-2xl font-bold text-gray-900 font-montserrat mb-4">1. Acceptation des conditions</h2>
                 <p className="text-gray-700 font-montserrat leading-relaxed mb-4">
-                  En accédant et en utilisant TeraNum, vous acceptez d'être lié par ces conditions générales d'utilisation. 
+                  En accédant et en utilisant Xaary, vous acceptez d'être lié par ces conditions générales d'utilisation. 
                   Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser notre service.
                 </p>
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -47,7 +47,7 @@ export default function TermsOfService({ onBack }: TermsOfServiceProps) {
               <section className="mb-8">
                 <h2 className="text-2xl font-bold text-gray-900 font-montserrat mb-4">2. Description du service</h2>
                 <p className="text-gray-700 font-montserrat leading-relaxed mb-4">
-                  TeraNum fournit des numéros de téléphone virtuels temporaires permettant de recevoir des codes de vérification SMS.
+                  Xaary fournit des numéros de téléphone virtuels temporaires permettant de recevoir des codes de vérification SMS.
                 </p>
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="bg-green-50 rounded-lg p-4">
@@ -123,7 +123,7 @@ export default function TermsOfService({ onBack }: TermsOfServiceProps) {
                     <h3 className="font-semibold text-blue-900 font-montserrat mb-2">💳 Paiements</h3>
                     <ul className="text-blue-800 font-montserrat text-sm space-y-1">
                       <li>• Paiement requis avant utilisation</li>
-                      <li>• Tarifs affichés en FCFA (CFA)</li>
+                      <li>• Tarifs affichés en dollars ($)</li>
                       <li>• Paiements sécurisés par SSL</li>
                       <li>• Pas de frais cachés</li>
                     </ul>
@@ -146,7 +146,7 @@ export default function TermsOfService({ onBack }: TermsOfServiceProps) {
                 <h2 className="text-2xl font-bold text-gray-900 font-montserrat mb-4">6. Propriété intellectuelle</h2>
                 <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
                   <p className="text-purple-800 font-montserrat mb-3">
-                    Tous les droits de propriété intellectuelle relatifs à TeraNum nous appartiennent.
+                    Tous les droits de propriété intellectuelle relatifs à Xaary nous appartiennent.
                   </p>
                   <ul className="text-purple-700 font-montserrat text-sm space-y-1">
                     <li>🔒 Marques déposées et logos</li>
@@ -161,7 +161,7 @@ export default function TermsOfService({ onBack }: TermsOfServiceProps) {
                 <h2 className="text-2xl font-bold text-gray-900 font-montserrat mb-4">7. Limitation de responsabilité</h2>
                 <div className="border-l-4 border-gray-400 pl-4">
                   <p className="text-gray-700 font-montserrat text-sm mb-3">
-                    TeraNum fournit ses services "en l'état". Nous ne garantissons pas :
+                    Xaary fournit ses services "en l'état". Nous ne garantissons pas :
                   </p>
                   <ul className="text-gray-600 font-montserrat text-sm space-y-1 list-disc list-inside">
                     <li>La disponibilité continue du service</li>
@@ -193,7 +193,7 @@ export default function TermsOfService({ onBack }: TermsOfServiceProps) {
                         <td className="px-4 py-3 text-sm text-gray-700 font-montserrat">À tout moment, depuis les paramètres du compte</td>
                       </tr>
                       <tr>
-                        <td className="px-4 py-3 text-sm text-gray-700 font-montserrat font-semibold">Par TeraNum</td>
+                        <td className="px-4 py-3 text-sm text-gray-700 font-montserrat font-semibold">Par Xaary</td>
                         <td className="px-4 py-3 text-sm text-gray-700 font-montserrat">En cas de violation des conditions</td>
                       </tr>
                       <tr>
@@ -226,7 +226,7 @@ export default function TermsOfService({ onBack }: TermsOfServiceProps) {
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
-                      <span>support@taganum.com</span>
+                      <span>support@xaary.com</span>
                     </div>
                   </div>
                   <p className="text-gray-600 font-montserrat text-sm mt-4">
@@ -237,7 +237,7 @@ export default function TermsOfService({ onBack }: TermsOfServiceProps) {
 
               <div className="bg-gradient-to-r from-primary-50 to-secondary-50 rounded-lg p-6 text-center">
                 <p className="text-gray-700 font-montserrat">
-                  <strong>Merci d'utiliser TeraNum !</strong><br/>
+                  <strong>Merci d'utiliser Xaary !</strong><br/>
                   En respectant ces conditions, vous contribuez à maintenir un service de qualité pour tous.
                 </p>
               </div>

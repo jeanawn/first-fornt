@@ -60,7 +60,7 @@ export default function Recharge({ onRecharge, onBack }: RechargeProps) {
 
     setIsLoading(true);
     try {
-      await onRecharge(parseFloat(amount), phoneNumber, selectedNetwork);
+      onRecharge(parseFloat(amount), phoneNumber, selectedNetwork);
     } finally {
       setIsLoading(false);
     }
@@ -102,7 +102,7 @@ export default function Recharge({ onRecharge, onBack }: RechargeProps) {
             <div>
               <h4 className="font-semibold text-blue-900 mb-1">💡 Information importante</h4>
               <p className="text-sm text-blue-800">
-                <strong>1 crédit = 1 FCFA</strong><br/>
+                <strong>1 crédit = 1$</strong><br/>
                 Les crédits servent à acheter des numéros virtuels sur la plateforme.
               </p>
                 <p className="mt-2 text-sm text-red-600 font-semibold">
@@ -172,7 +172,7 @@ export default function Recharge({ onRecharge, onBack }: RechargeProps) {
                 <div className="mt-3 text-center">
                   <div className="inline-flex items-center space-x-2 bg-blue-50 px-4 py-2 rounded-xl">
                     <span className="text-sm text-blue-700">Équivalent :</span>
-                    <span className="font-bold text-blue-800">{parseFloat(amount).toLocaleString()} F</span>
+                    <span className="font-bold text-blue-800">${parseFloat(amount).toLocaleString()}</span>
                   </div>
                 </div>
               )}

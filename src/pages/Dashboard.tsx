@@ -156,8 +156,8 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
         <div className="text-center space-y-2">
           <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto shadow-lg border border-gray-200 p-2">
             <img 
-              src="https://s6.imgcdn.dev/YQ54Ge.png" 
-              alt="TeraNum Logo" 
+              src="https://i.postimg.cc/fRm60V7Z/LOGO-XAARY-500x500.png" 
+              alt="Xaary Logo" 
               className="w-full h-full object-cover rounded-xl"
             />
           </div>

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'teranum-v1';
+const CACHE_NAME = 'xaary-v1';
 const urlsToCache = [
   '/',
   '/manifest.json',
@@ -92,6 +92,6 @@ self.addEventListener('push', (event) => {
   };
 
   event.waitUntil(
-    self.registration.showNotification('TeraNum', options)
+    self.registration.showNotification('Xaary', options)
   );
 });

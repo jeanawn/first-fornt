@@ -235,7 +235,7 @@ export default function OperationDetails({ operationId, onBack }: OperationDetai
                 <div>
                   <p className="font-semibold text-gray-900">Prix</p>
                   <p className="text-gray-600 text-sm">
-                    {operation.price && !isNaN(operation.price) ? `${operation.price} crédits` : 'N/A'}
+                    {operation.price && !isNaN(operation.price) ? `${operation.price.toFixed(2)} $` : 'N/A'}
                   </p>
                 </div>
               </div>

@@ -85,7 +85,7 @@ export default function Recharge({ onRecharge, onBack }: RechargeProps) {
             <h1 className="text-2xl font-bold text-gray-900">
               Recharge 💳
             </h1>
-            <p className="text-gray-600 text-sm">Ajoutez des crédits à votre compte</p>
+            <p className="text-gray-600 text-sm">Ajoutez du solde à votre compte</p>
           </div>
         </div>
 
@@ -102,11 +102,11 @@ export default function Recharge({ onRecharge, onBack }: RechargeProps) {
             <div>
               <h4 className="font-semibold text-blue-900 mb-1">💡 Information importante</h4>
               <p className="text-sm text-blue-800">
-                <strong>1 crédit = 1$</strong><br/>
-                Les crédits servent à acheter des numéros virtuels sur la plateforme.
+                <strong>Les prix sont en USD ($)</strong><br/>
+                Votre solde sert à acheter des numéros virtuels sur la plateforme.
               </p>
                 <p className="mt-2 text-sm text-red-600 font-semibold">
-                    ⚠️ Les crédits achetés ne sont pas remboursables.
+                    ⚠️ Les achats ne sont pas remboursables.
                 </p>
             </div>
           </div>
@@ -145,7 +145,7 @@ export default function Recharge({ onRecharge, onBack }: RechargeProps) {
                   <div className={`text-xs font-medium ${
                     amount === suggestedAmount.toString() ? 'text-green-600' : 'text-gray-600'
                   }`}>
-                    crédits
+                    $
                   </div>
                 </button>
               ))}
@@ -276,7 +276,7 @@ export default function Recharge({ onRecharge, onBack }: RechargeProps) {
               <div className="space-y-3">
                 <div className="flex justify-between items-center py-2">
                   <span className="text-gray-600">Montant</span>
-                  <span className="font-bold text-lg text-green-600">{amount} crédits</span>
+                  <span className="font-bold text-lg text-green-600">{amount} $</span>
                 </div>
                 <div className="flex justify-between items-center py-2">
                   <span className="text-gray-600">Téléphone</span>

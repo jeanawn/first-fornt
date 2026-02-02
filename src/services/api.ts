@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://api.teranum.com';
+const API_BASE_URL = 'http://localhost:3000';
 
 export interface ApiResponse<T = unknown> {
   success?: boolean;
@@ -85,6 +85,18 @@ class ApiService {
         ...this.getAuthHeader(),
       },
       body: body ? JSON.stringify(body) : undefined,
+    });
+
+    return this.handleResponse<T>(response);
+  }
+
+  async delete<T>(endpoint: string): Promise<T> {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        ...this.getAuthHeader(),
+      },
     });
 
     return this.handleResponse<T>(response);

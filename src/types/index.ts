@@ -4,7 +4,10 @@ export interface User {
   email: string;
   balance: number;
   isActive: boolean;
-  createdDate: string;
+  role?: 'user' | 'admin';
+  createdDate?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Country {

@@ -69,7 +69,7 @@ export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: Nu
 
   // Polling automatique pour les SMS toutes les 10 secondes si pas de SMS
   useEffect(() => {
-    if (!phoneNumber.smsCode && phoneNumber.status === 'PENDING') {
+    if (!phoneNumber.smsCode && (phoneNumber.status === 'PENDING' || phoneNumber.status === 'PROCESSING')) {
       const pollInterval = setInterval(() => {
         onRefreshCode();
       }, 10000); // Toutes les 10 secondes
@@ -85,6 +85,7 @@ export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: Nu
 
   const getStatusColor = () => {
     switch (phoneNumber.status) {
+      case 'PROCESSING': return 'from-blue-500 to-indigo-600';
       case 'PENDING': return 'from-yellow-500 to-amber-600';
       case 'SUCCESS': return 'from-green-500 to-emerald-600';
       case 'FAILED': return 'from-red-500 to-red-600';
@@ -94,6 +95,7 @@ export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: Nu
 
   const getStatusText = () => {
     switch (phoneNumber.status) {
+      case 'PROCESSING': return '🔄 Traitement';
       case 'PENDING': return '⏳ En attente';
       case 'SUCCESS': return '✅ Terminé';
       case 'FAILED': return '❌ Échec';
@@ -239,7 +241,7 @@ export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: Nu
               <h3 className="text-xl font-bold text-gray-900">Code SMS</h3>
               <p className="text-gray-600 text-sm">Code de vérification reçu</p>
             </div>
-            {!phoneNumber.smsCode && phoneNumber.status === 'PENDING' && (
+            {!phoneNumber.smsCode && (phoneNumber.status === 'PENDING' || phoneNumber.status === 'PROCESSING') && (
               <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce"></div>
                 <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
@@ -307,13 +309,21 @@ export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: Nu
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>
               </div>
-              <h4 className="font-bold text-gray-900 text-lg mb-1">En attente du SMS</h4>
+              <h4 className="font-bold text-gray-900 text-lg mb-1">
+                {phoneNumber.status === 'PROCESSING' ? 'Traitement en cours' : 'En attente du SMS'}
+              </h4>
               <p className="text-blue-600 text-sm mb-4">
-                ⚡ Vérification automatique toutes les 10 secondes
+                {phoneNumber.status === 'PROCESSING'
+                  ? '🔄 Attribution du numéro en cours...'
+                  : '⚡ Vérification automatique toutes les 10 secondes'
+                }
               </p>
               <div className="bg-blue-50 rounded-xl p-4 border border-blue-200 max-w-xs mx-auto">
                 <p className="text-blue-800 text-sm">
-                  Le code apparaîtra automatiquement dès réception
+                  {phoneNumber.status === 'PROCESSING'
+                    ? 'Le numéro sera attribué automatiquement'
+                    : 'Le code apparaîtra automatiquement dès réception'
+                  }
                 </p>
               </div>
             </div>
@@ -333,8 +343,8 @@ export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: Nu
             <div>
               <h4 className="font-bold text-green-900 mb-2">🛡️ Garantie 100% Remboursement</h4>
               <p className="text-green-800 text-sm leading-relaxed">
-                <strong>Aucun risque :</strong> Si vous ne recevez pas de code SMS dans les 15 minutes, 
-                vos crédits seront automatiquement remboursés sur votre solde. Pas besoin de contacter le support !
+                <strong>Aucun risque :</strong> Si vous ne recevez pas de code SMS dans les 15 minutes,
+                votre solde sera automatiquement remboursé. Pas besoin de contacter le support !
               </p>
               <div className="mt-3 flex items-center space-x-2">
                 <svg className="w-4 h-4 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

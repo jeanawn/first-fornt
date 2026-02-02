@@ -208,7 +208,7 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
                     ${plan.amount}
                   </div>
                   <div className="text-primary font-montserrat font-semibold mb-6">
-                    {plan.credits} crédits
+                    {plan.credits} $
                   </div>
                   
                   <div className="space-y-3 mb-8">

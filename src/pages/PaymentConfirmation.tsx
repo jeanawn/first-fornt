@@ -132,7 +132,7 @@ export default function PaymentConfirmation({
               🎉 Paiement réussi !
             </h1>
             <p className="text-lg text-gray-600 font-montserrat">
-              Votre recharge de <strong>{transaction.amount} crédits</strong> a été confirmée
+              Votre recharge de <strong>{transaction.amount.toFixed(2)} $</strong> a été confirmée
             </p>
           </div>
         </>
@@ -154,7 +154,7 @@ export default function PaymentConfirmation({
               ❌ Paiement échoué
             </h1>
             <p className="text-lg text-gray-600 font-montserrat">
-              Le paiement de {transaction.amount} crédits n'a pas pu être traité
+              Le paiement de {transaction.amount.toFixed(2)} $ n'a pas pu être traité
             </p>
           </div>
         </>
@@ -179,7 +179,7 @@ export default function PaymentConfirmation({
             ⏳ Paiement en cours...
           </h1>
           <p className="text-lg text-gray-600 font-montserrat">
-            Vérification du paiement de <strong>{transaction.amount} crédits</strong>
+            Vérification du paiement de <strong>{transaction.amount.toFixed(2)} $</strong>
           </p>
         </div>
       </>
@@ -215,7 +215,7 @@ export default function PaymentConfirmation({
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-blue-700 font-medium">Montant</span>
-                      <span className="font-bold text-blue-900 text-lg">{transaction.amount} crédits</span>
+                      <span className="font-bold text-blue-900 text-lg">{transaction.amount.toFixed(2)} $</span>
                     </div>
                     {transaction.phoneNumber && (
                       <div className="flex justify-between items-center">

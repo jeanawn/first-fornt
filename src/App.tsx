@@ -12,6 +12,7 @@ import OperationDetails from './pages/OperationDetails';
 import PaymentConfirmation from './pages/PaymentConfirmation';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
+import { AdminPanel } from './pages/admin';
 import ErrorNotification from './components/ErrorNotification';
 import LoadingSpinner from './components/LoadingSpinner';
 import { authService } from './services/auth';
@@ -26,6 +27,7 @@ type Page =
   | 'register'
   | 'forgot-password'
   | 'dashboard'
+  | 'admin'
   | 'recharge'
   | 'buy-number'
   | 'awaiting-number'
@@ -361,6 +363,15 @@ export default function App() {
       );
     }
 
+    // Admin Panel - uniquement pour les admins
+    if (currentPage === 'admin' && user.role === 'admin') {
+      return (
+        <AdminPanel
+          onLogout={handleLogout}
+        />
+      );
+    }
+
     if (currentPage === 'dashboard') {
       return (
         <Dashboard
@@ -368,6 +379,11 @@ export default function App() {
           onRecharge={() => setCurrentPage('recharge')}
           onBuyNumber={() => setCurrentPage('buy-number')}
           onLogout={handleLogout}
+          onViewOperation={(operationId: string) => {
+            setSelectedOperationId(operationId);
+            setCurrentPage('operation-details');
+          }}
+          onGoToAdmin={user.role === 'admin' ? () => setCurrentPage('admin') : undefined}
         />
       );
     }
@@ -455,6 +471,7 @@ export default function App() {
           setSelectedOperationId(operationId);
           setCurrentPage('operation-details');
         }}
+        onGoToAdmin={user.role === 'admin' ? () => setCurrentPage('admin') : undefined}
       />
     );
   };

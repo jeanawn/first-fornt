@@ -135,7 +135,7 @@ export default function AwaitingNumber({ country, service, onBack }: AwaitingNum
                 </div>
               </div>
               <div className="text-right">
-                <p className="font-semibold text-gray-900">{service.price} crédits</p>
+                <p className="font-semibold text-gray-900">{service.price.toFixed(2)} $</p>
               </div>
             </div>
           </div>
@@ -185,7 +185,7 @@ export default function AwaitingNumber({ country, service, onBack }: AwaitingNum
               <h4 className="font-semibold text-green-900 mb-2">🛡️ Garantie automatique</h4>
               <p className="text-green-800 text-sm">
                 Si aucun numéro n'est attribué dans les 5 prochaines minutes,
-                vos crédits seront automatiquement remboursés.
+                votre solde sera automatiquement remboursé.
               </p>
             </div>
           </div>

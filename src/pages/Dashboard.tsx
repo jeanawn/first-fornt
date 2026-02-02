@@ -24,9 +24,10 @@ interface DashboardProps {
   onBuyNumber: () => void;
   onLogout: () => void;
   onViewOperation?: (operationId: string) => void;
+  onGoToAdmin?: () => void;
 }
 
-export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onViewOperation }: DashboardProps) {
+export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onViewOperation, onGoToAdmin }: DashboardProps) {
   const [operations, setOperations] = useState<Operation[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoadingOperations, setIsLoadingOperations] = useState(true);
@@ -185,7 +186,7 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
             <p className="text-4xl font-montserrat font-bold text-white">
               {user.balance.toFixed(0).toLocaleString()}
             </p>
-            <p className="text-white/80 text-lg font-montserrat font-medium">crédits</p>
+            <p className="text-white/80 text-lg font-montserrat font-medium">$</p>
           </div>
         </div>
 
@@ -221,13 +222,35 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
               </div>
               <div>
                 <p className="font-montserrat font-semibold text-gray-900 text-sm">Recharger</p>
-                <p className="font-montserrat text-xs text-gray-600">Ajouter des crédits</p>
+                <p className="font-montserrat text-xs text-gray-600">Ajouter du solde</p>
               </div>
             </div>
           </button>
-
-
         </div>
+
+        {/* Admin Button - Only for admins */}
+        {onGoToAdmin && (
+          <button
+            onClick={onGoToAdmin}
+            className="w-full group bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl p-4 shadow-md hover:shadow-xl hover:scale-[1.02] transition-all duration-200 active:scale-[0.98]"
+          >
+            <div className="flex items-center justify-center space-x-3">
+              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+              <div className="text-left">
+                <p className="font-montserrat font-semibold text-white text-sm">Panel Admin</p>
+                <p className="font-montserrat text-xs text-white/80">Gérer l'application</p>
+              </div>
+              <svg className="w-5 h-5 text-white/80 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </button>
+        )}
 
         {/* Activity Card - Operations et Transactions combinées */}
         <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
@@ -331,7 +354,7 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
                         </p>
                         <div className="text-right">
                           <p className="text-sm font-semibold text-gray-700">
-                            {operation.price && !isNaN(operation.price) ? operation.price + ' crédits' : '—'}
+                            {operation.price && !isNaN(operation.price) ? operation.price.toFixed(2) + ' $' : '—'}
                           </p>
                         </div>
                       </div>
@@ -420,8 +443,8 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
                         transaction.type === 'deposit' ? 'text-green-600' : 
                         transaction.type === 'refund' ? 'text-blue-600' : 'text-red-600'
                       }`}>
-                        {transaction.type === 'deposit' ? '+' : 
-                         transaction.type === 'refund' ? '+' : '-'}{transaction.amount} crédits
+                        {transaction.type === 'deposit' ? '+' :
+                         transaction.type === 'refund' ? '+' : '-'}{transaction.amount.toFixed(2)} $
                       </p>
                       {transaction.reference && transaction.reference !== 'N/A' && (
                         <p className="text-xs text-gray-500 font-mono">

@@ -34,11 +34,6 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
     }
   ];
 
-  const pricingPlans = [
-    { amount: "2", credits: "1000", popular: false },
-    { amount: "5000", credits: "5000", popular: true },
-    { amount: "10000", credits: "10000", popular: false }
-  ];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -181,74 +176,74 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
 
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+      <section id="pricing" className="py-20 bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
             <h2 className="text-4xl font-black text-gray-900 font-montserrat mb-4">
               {t.landing.pricing.title}
             </h2>
-            <p className="text-xl text-gray-600 font-montserrat max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 font-montserrat">
               {t.landing.pricing.subtitle}
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {pricingPlans.map((plan, index) => (
-              <div key={index} className={`relative bg-white rounded-2xl p-8 shadow-lg border-2 transition-all duration-300 hover:scale-105 ${
-                plan.popular
-                  ? 'border-primary shadow-primary/20'
-                  : 'border-gray-200 hover:border-primary'
-              }`}>
-                {plan.popular && (
-                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-gradient-to-r from-primary to-secondary text-white px-4 py-1 rounded-full text-sm font-bold font-montserrat">
-                      {t.landing.pricing.popular}
-                    </span>
-                  </div>
-                )}
+          <div className="bg-white rounded-3xl shadow-xl border border-gray-200 overflow-hidden">
+            <div className="bg-gradient-to-r from-primary to-secondary p-8 text-center">
+              <p className="text-primary-100 font-montserrat text-lg mb-2">
+                {t.landing.pricing.startingFrom}
+              </p>
+              <div className="flex items-center justify-center">
+                <span className="text-7xl font-black text-white font-montserrat">2</span>
+                <span className="text-4xl font-bold text-white font-montserrat ml-2">$</span>
+              </div>
+              <p className="text-primary-100 font-montserrat text-lg mt-2">
+                {t.landing.pricing.perNumber}
+              </p>
+            </div>
 
+            <div className="p-8">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
                 <div className="text-center">
-                  <div className="text-4xl font-black text-gray-900 font-montserrat mb-2">
-                    ${plan.amount}
+                  <div className="w-12 h-12 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
                   </div>
-                  <div className="text-primary font-montserrat font-semibold mb-6">
-                    {plan.credits} $
+                  <p className="font-montserrat text-gray-700 font-medium text-sm">{t.landing.pricing.features.instantSms}</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
                   </div>
-
-                  <div className="space-y-3 mb-8">
-                    <div className="flex items-center justify-center">
-                      <svg className="w-5 h-5 text-secondary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span className="font-montserrat text-gray-600">{t.landing.pricing.features.instantSms}</span>
-                    </div>
-                    <div className="flex items-center justify-center">
-                      <svg className="w-5 h-5 text-secondary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span className="font-montserrat text-gray-600">{t.landing.pricing.features.allCountries}</span>
-                    </div>
-                    <div className="flex items-center justify-center">
-                      <svg className="w-5 h-5 text-secondary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span className="font-montserrat text-gray-600">{t.landing.pricing.features.support247}</span>
-                    </div>
+                  <p className="font-montserrat text-gray-700 font-medium text-sm">{t.landing.pricing.features.allCountries}</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
                   </div>
-
-                  <button
-                    onClick={onGoToRegister}
-                    className={`w-full py-3 rounded-xl font-montserrat font-bold transition-all duration-300 ${
-                      plan.popular
-                        ? 'bg-gradient-to-r from-primary to-secondary text-white hover:scale-105 shadow-lg'
-                        : 'bg-gray-100 text-gray-900 hover:bg-primary hover:text-white'
-                    }`}
-                  >
-                    {t.landing.pricing.cta}
-                  </button>
+                  <p className="font-montserrat text-gray-700 font-medium text-sm">{t.landing.pricing.features.support247}</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <p className="font-montserrat text-gray-700 font-medium text-sm">{t.landing.pricing.features.noSubscription}</p>
                 </div>
               </div>
-            ))}
+
+              <button
+                onClick={onGoToRegister}
+                className="w-full bg-gradient-to-r from-primary to-secondary text-white py-4 rounded-2xl font-montserrat font-bold text-lg transition-all duration-300 hover:scale-[1.02] shadow-lg hover:shadow-xl"
+              >
+                {t.landing.pricing.cta}
+              </button>
+            </div>
           </div>
         </div>
       </section>

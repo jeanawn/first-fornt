@@ -65,7 +65,7 @@ export const en: Translations = {
     },
     pricing: {
       title: 'Transparent pricing',
-      subtitle: '1 credit = $1. Simple, transparent, no surprises.',
+      subtitle: 'Temporary numbers starting from $2. Simple, transparent, no surprises.',
       popular: 'POPULAR',
       credits: 'credits',
       perCredit: '/ credit',

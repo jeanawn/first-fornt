@@ -35,7 +35,7 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
   ];
 
   const pricingPlans = [
-    { amount: "1000", credits: "1000", popular: false },
+    { amount: "2", credits: "1000", popular: false },
     { amount: "5000", credits: "5000", popular: true },
     { amount: "10000", credits: "10000", popular: false }
   ];

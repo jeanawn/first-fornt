@@ -63,7 +63,7 @@ export const fr = {
     },
     pricing: {
       title: 'Tarifs transparents',
-      subtitle: '1 crédit = 1$. Simple, transparent, sans surprise.',
+      subtitle: 'Numéros temporaires à partir de 2$. Simple, transparent, sans surprise.',
       popular: 'POPULAIRE',
       credits: 'crédits',
       perCredit: '/ crédit',

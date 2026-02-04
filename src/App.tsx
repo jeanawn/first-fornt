@@ -14,11 +14,13 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import { AdminPanel } from './pages/admin';
 import ErrorNotification from './components/ErrorNotification';
+import { ToastContainer, useToast } from './components/Toast';
 import LoadingSpinner from './components/LoadingSpinner';
 import { authService } from './services/auth';
 import { balanceService } from './services/balance';
 import { operationsService } from './services/operations';
 import { notificationSound } from './utils/notificationSound';
+import { useTranslation } from './i18n';
 import type { User, Country, Service, PhoneNumber, Network, ApiError } from './types';
 
 type Page =
@@ -50,6 +52,12 @@ export default function App() {
     service: Service;
   } | null>(null);
   const [selectedOperationId, setSelectedOperationId] = useState<string | null>(null);
+
+  // Toast notifications
+  const { toasts, removeToast, showError, showWarning } = useToast();
+
+  // Translations
+  const { t } = useTranslation();
 
   // Vérifier l'authentification au démarrage
   useEffect(() => {
@@ -148,6 +156,41 @@ export default function App() {
     }
   };
 
+  // Messages d'erreur user-friendly
+  const getErrorMessage = (error: string | undefined): { title: string; message: string } => {
+    const errorLower = (error || '').toLowerCase();
+
+    if (errorLower.includes('rate limit') || errorLower.includes('saturé')) {
+      return {
+        title: t.errors.serviceSaturated.title,
+        message: t.errors.serviceSaturated.message
+      };
+    }
+    if (errorLower.includes('indisponible') || errorLower.includes('unavailable')) {
+      return {
+        title: t.errors.numberUnavailable.title,
+        message: t.errors.numberUnavailable.message
+      };
+    }
+    if (errorLower.includes('fonds insuffisants') || errorLower.includes('insufficient')) {
+      return {
+        title: t.errors.insufficientFunds.title,
+        message: t.errors.insufficientFunds.message
+      };
+    }
+    if (errorLower.includes('non disponible') || errorLower.includes('not available')) {
+      return {
+        title: t.errors.serviceUnavailable.title,
+        message: t.errors.serviceUnavailable.message
+      };
+    }
+
+    return {
+      title: t.common.error,
+      message: error || t.errors.generic
+    };
+  };
+
   // Achat de numéro avec polling asynchrone
   const handleBuyNumber = async (country: Country, service: Service) => {
     try {
@@ -156,6 +199,13 @@ export default function App() {
         serviceCode: service.code || service.id,
         countryCode: country.code
       });
+
+      // Vérifier si l'opération a réussi
+      if (!response.success || !response.operationId) {
+        const { title, message } = getErrorMessage(response.message);
+        showError(title, message);
+        return; // Ne pas continuer vers la page d'attente
+      }
 
       // Stocker les infos de l'opération en attente
       setPendingOperation({
@@ -170,7 +220,9 @@ export default function App() {
       // Démarrer le polling pour attendre le numéro avant d'afficher la page
       startOperationPolling(response.operationId, country, service);
     } catch (err) {
-      handleError(err);
+      const apiError = err as ApiError;
+      const { title, message } = getErrorMessage(apiError.message);
+      showError(title, message);
     }
   };
 
@@ -179,6 +231,18 @@ export default function App() {
     const pollInterval = setInterval(async () => {
       try {
         const statusResponse = await operationsService.getOperationStatus(operationId);
+
+        // Vérifier si l'opération a échoué pendant qu'on attend le numéro
+        if (statusResponse.status === 'FAILED' && pendingOperation) {
+          clearInterval(pollInterval);
+          setPendingOperation(null);
+          setCurrentPage('buy-number');
+          showWarning(
+            t.errors.numberUnavailable.title,
+            t.errors.numberUnavailable.message
+          );
+          return;
+        }
 
         // Si nous attendons le numéro initial (première fois)
         if (!currentPhoneNumber && statusResponse.number && country && service) {
@@ -480,6 +544,7 @@ export default function App() {
     <>
       {renderPage()}
       <ErrorNotification error={error} onClose={clearError} />
+      <ToastContainer toasts={toasts} onClose={removeToast} />
     </>
   );
 }

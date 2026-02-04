@@ -5,6 +5,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import { operationsService } from '../services/operations';
 import { transactionService } from '../services/transactions';
 import type { Operation } from '../services/operations';
+import { useTranslation } from '../i18n';
 
 // Fallbacks pour les services 
 const SERVICE_FALLBACKS: Record<string, string> = {
@@ -28,6 +29,7 @@ interface DashboardProps {
 }
 
 export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onViewOperation, onGoToAdmin }: DashboardProps) {
+  const { t, language } = useTranslation();
   const [operations, setOperations] = useState<Operation[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoadingOperations, setIsLoadingOperations] = useState(true);
@@ -81,10 +83,10 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
   }, []);
   const getStatusText = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'processing': return '🔄 Traitement';
-      case 'success': return '✅ Terminé';
-      case 'failed': return '❌ Échec';
-      case 'pending': return '⏳ En attente';
+      case 'processing': return `🔄 ${t.dashboard.status.processing}`;
+      case 'success': return `✅ ${t.dashboard.status.success}`;
+      case 'failed': return `❌ ${t.dashboard.status.failed}`;
+      case 'pending': return `⏳ ${t.dashboard.status.pending}`;
       default: return status;
     }
   };
@@ -94,15 +96,15 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
     const now = new Date();
     const diff = now.getTime() - date.getTime();
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    
+
     if (days === 0) {
-      return 'Aujourd\'hui';
+      return language === 'fr' ? 'Aujourd\'hui' : 'Today';
     } else if (days === 1) {
-      return 'Hier';
+      return language === 'fr' ? 'Hier' : 'Yesterday';
     } else if (days < 7) {
-      return `Il y a ${days} jours`;
+      return language === 'fr' ? `Il y a ${days} jours` : `${days} days ago`;
     } else {
-      return date.toLocaleDateString('fr-FR');
+      return date.toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US');
     }
   };
 
@@ -125,9 +127,9 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
 
   const getTransactionTypeText = (type: string) => {
     switch (type) {
-      case 'deposit': return 'Recharge';
-      case 'refund': return 'Remboursement';
-      case 'withdraw': return 'Retrait';
+      case 'deposit': return language === 'fr' ? 'Recharge' : 'Top up';
+      case 'refund': return language === 'fr' ? 'Remboursement' : 'Refund';
+      case 'withdraw': return language === 'fr' ? 'Retrait' : 'Withdrawal';
       default: return 'Transaction';
     }
   };
@@ -164,7 +166,7 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
           </div>
           <div>
             <h1 className="text-xl font-bold text-gray-900 font-montserrat">
-              Bonjour {user.username ? user.username : user.email} ! 👋
+              {t.dashboard.welcome} {user.username ? user.username : user.email} ! 👋
             </h1>
           </div>
         </div>
@@ -178,7 +180,7 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
                 </svg>
               </div>
-              <span className="text-white/80 text-sm font-montserrat font-medium">Solde disponible</span>
+              <span className="text-white/80 text-sm font-montserrat font-medium">{t.dashboard.balance}</span>
             </div>
           </div>
           
@@ -204,8 +206,8 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
                 </svg>
               </div>
               <div>
-                <p className="font-montserrat font-semibold text-gray-900 text-sm">Acheter</p>
-                <p className="font-montserrat text-xs text-gray-600">Numéro virtuel</p>
+                <p className="font-montserrat font-semibold text-gray-900 text-sm">{t.dashboard.buyNumber}</p>
+                <p className="font-montserrat text-xs text-gray-600">{language === 'fr' ? 'Numéro virtuel' : 'Virtual number'}</p>
               </div>
             </div>
           </button>
@@ -221,8 +223,8 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
                 </svg>
               </div>
               <div>
-                <p className="font-montserrat font-semibold text-gray-900 text-sm">Recharger</p>
-                <p className="font-montserrat text-xs text-gray-600">Ajouter du solde</p>
+                <p className="font-montserrat font-semibold text-gray-900 text-sm">{t.dashboard.recharge}</p>
+                <p className="font-montserrat text-xs text-gray-600">{language === 'fr' ? 'Ajouter du solde' : 'Add balance'}</p>
               </div>
             </div>
           </button>
@@ -242,8 +244,8 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
                 </svg>
               </div>
               <div className="text-left">
-                <p className="font-montserrat font-semibold text-white text-sm">Panel Admin</p>
-                <p className="font-montserrat text-xs text-white/80">Gérer l'application</p>
+                <p className="font-montserrat font-semibold text-white text-sm">{t.dashboard.admin}</p>
+                <p className="font-montserrat text-xs text-white/80">{language === 'fr' ? 'Gérer l\'application' : 'Manage application'}</p>
               </div>
               <svg className="w-5 h-5 text-white/80 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -263,7 +265,7 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
                 </svg>
               </div>
               <h3 className="text-lg font-bold text-gray-900">
-                Activité récente
+                {t.dashboard.recentOperations}
               </h3>
             </div>
             
@@ -278,7 +280,7 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
-                  📱 Opérations
+                  📱 {language === 'fr' ? 'Opérations' : 'Operations'}
                 </button>
                 <button
                   onClick={() => setActiveTab('transactions')}
@@ -288,7 +290,7 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
-                  💳 Transactions
+                  💳 {language === 'fr' ? 'Transactions' : 'Transactions'}
                 </button>
               </div>
               <div className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
@@ -303,7 +305,7 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
             isLoadingOperations ? (
               <div className="text-center py-8">
                 <LoadingSpinner size="md" />
-                <p className="mt-3 text-gray-600">Chargement...</p>
+                <p className="mt-3 text-gray-600">{t.common.loading}</p>
               </div>
             ) : operations.length === 0 ? (
               <div className="text-center py-12">
@@ -312,8 +314,8 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                 </div>
-                <h4 className="font-semibold text-gray-900 mb-1">Aucune opération</h4>
-                <p className="text-gray-500 text-sm">Vos numéros virtuels apparaîtront ici</p>
+                <h4 className="font-semibold text-gray-900 mb-1">{t.dashboard.noOperations}</h4>
+                <p className="text-gray-500 text-sm">{t.dashboard.noOperationsDesc}</p>
               </div>
             ) : (
               <div className="space-y-4">
@@ -403,8 +405,8 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
                   </svg>
                 </div>
-                <h4 className="font-semibold text-gray-900 mb-1">Aucune transaction</h4>
-                <p className="text-gray-500 text-sm">Vos transactions apparaîtront ici</p>
+                <h4 className="font-semibold text-gray-900 mb-1">{language === 'fr' ? 'Aucune transaction' : 'No transactions'}</h4>
+                <p className="text-gray-500 text-sm">{language === 'fr' ? 'Vos transactions apparaîtront ici' : 'Your transactions will appear here'}</p>
               </div>
             ) : (
               <div className="space-y-3">
@@ -468,7 +470,7 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
             <svg className="w-4 h-4 group-hover:text-red-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
-            <span className="text-sm font-medium">Se déconnecter</span>
+            <span className="text-sm font-medium">{t.dashboard.logout}</span>
           </button>
         </div>
       </div>

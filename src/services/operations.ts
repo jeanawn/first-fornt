@@ -9,8 +9,8 @@ export interface CreateOperationRequest {
 
 export interface CreateOperationResponse {
   success: boolean;
-  operationId: string;
-  status: 'PROCESSING';
+  operationId?: string; // Absent si success=false
+  status?: 'PROCESSING';
   message: string;
 }
 

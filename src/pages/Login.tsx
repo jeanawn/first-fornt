@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import Layout from '../components/Layout';
 import Input from '../components/Input';
+import { useTranslation } from '../i18n';
+import { LanguageSwitcher } from '../i18n/LanguageSwitcher';
 
 interface LoginProps {
   onLogin: (emailOrUsername: string, password: string) => void;
@@ -10,6 +12,7 @@ interface LoginProps {
 }
 
 export default function Login({ onLogin, onForgotPassword, onRegister, onBackToHome }: LoginProps) {
+  const { t } = useTranslation();
   const [emailOrUsername, setEmailOrUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -17,7 +20,7 @@ export default function Login({ onLogin, onForgotPassword, onRegister, onBackToH
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
       await onLogin(emailOrUsername, password);
     } finally {
@@ -29,9 +32,9 @@ export default function Login({ onLogin, onForgotPassword, onRegister, onBackToH
     <Layout showHeader={false}>
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="max-w-md w-full space-y-8">
-          {/* Bouton retour accueil */}
-          {onBackToHome && (
-            <div className="text-center">
+          {/* Top bar with back + language */}
+          <div className="flex items-center justify-between">
+            {onBackToHome ? (
               <button
                 onClick={onBackToHome}
                 className="text-primary hover:text-primary-700 font-montserrat font-medium transition-colors inline-flex items-center space-x-2"
@@ -39,17 +42,18 @@ export default function Login({ onLogin, onForgotPassword, onRegister, onBackToH
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
-                <span>Retour à l'accueil</span>
+                <span>{t.auth.login.backToHome}</span>
               </button>
-            </div>
-          )}
-          
+            ) : <div />}
+            <LanguageSwitcher variant="pill" showLabel={false} />
+          </div>
+
           {/* Logo et titre */}
           <div className="text-center space-y-4">
             <div className="w-20 h-20 bg-white rounded-2xl mx-auto flex items-center justify-center shadow-xl border border-gray-200 p-2">
-              <img 
-                src="https://i.postimg.cc/fRm60V7Z/LOGO-XAARY-500x500.png" 
-                alt="Xaary Logo" 
+              <img
+                src="https://i.postimg.cc/fRm60V7Z/LOGO-XAARY-500x500.png"
+                alt="Xaary Logo"
                 className="w-full h-full object-cover rounded-xl"
               />
             </div>
@@ -58,7 +62,7 @@ export default function Login({ onLogin, onForgotPassword, onRegister, onBackToH
                 Xaary
               </h1>
               <p className="text-gray-600 text-lg mt-2 font-montserrat">
-                Connexion à votre compte
+                {t.auth.login.subtitle}
               </p>
             </div>
           </div>
@@ -73,14 +77,14 @@ export default function Login({ onLogin, onForgotPassword, onRegister, onBackToH
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
                     </svg>
                   </div>
-                  <label className="block text-sm font-semibold text-gray-900">Email ou nom d'utilisateur</label>
+                  <label className="block text-sm font-semibold text-gray-900">{t.auth.login.emailOrUsername}</label>
                 </div>
                 <Input
                   type="text"
                   value={emailOrUsername}
                   onChange={(e) => setEmailOrUsername(e.target.value)}
                   required
-                  placeholder="votre@email.com ou utilisateur@"
+                  placeholder="email@example.com"
                   className="text-lg p-4 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
                 />
               </div>
@@ -92,7 +96,7 @@ export default function Login({ onLogin, onForgotPassword, onRegister, onBackToH
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
                   </div>
-                  <label className="block text-sm font-semibold text-gray-900">Mot de passe</label>
+                  <label className="block text-sm font-semibold text-gray-900">{t.auth.login.password}</label>
                 </div>
                 <Input
                   type="password"
@@ -113,14 +117,14 @@ export default function Login({ onLogin, onForgotPassword, onRegister, onBackToH
                   {isLoading ? (
                     <>
                       <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                      <span>Connexion en cours...</span>
+                      <span>{t.common.loading}</span>
                     </>
                   ) : (
                     <>
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
                       </svg>
-                      <span>Se connecter</span>
+                      <span>{t.auth.login.submit}</span>
                     </>
                   )}
                 </div>
@@ -139,11 +143,11 @@ export default function Login({ onLogin, onForgotPassword, onRegister, onBackToH
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <span>Mot de passe oublié ?</span>
+                    <span>{t.auth.login.forgotPassword}</span>
                   </div>
                 </button>
               </div>
-              
+
               {/* Inscription */}
               <div className="text-center">
                 <button
@@ -154,27 +158,10 @@ export default function Login({ onLogin, onForgotPassword, onRegister, onBackToH
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                     </svg>
-                    <span>Pas de compte ? S'inscrire</span>
+                    <span>{t.auth.login.noAccount} {t.auth.login.register}</span>
                   </div>
                 </button>
               </div>
-            </div>
-          </div>
-
-          {/* Informations supplémentaires */}
-          <div className="text-center">
-            <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-6 border border-blue-200">
-              <div className="flex items-center justify-center space-x-2 mb-3">
-                <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <h3 className="font-semibold text-primary-900 font-montserrat">Bienvenue sur Xaary</h3>
-              </div>
-              <p className="text-primary-800 text-sm font-montserrat">
-                Accédez à vos numéros virtuels pour recevoir des codes SMS de vérification en toute simplicité.
-              </p>
             </div>
           </div>
         </div>

@@ -1,3 +1,6 @@
+import { useTranslation } from '../i18n';
+import { LanguageSwitcher } from '../i18n/LanguageSwitcher';
+
 interface LandingPageProps {
   onGoToLogin: () => void;
   onGoToRegister: () => void;
@@ -6,29 +9,30 @@ interface LandingPageProps {
 }
 
 export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacyPolicy, onGoToTermsOfService }: LandingPageProps) {
+  const { t } = useTranslation();
+
   const features = [
     {
       icon: "🌍",
-      title: "Couverture Mondiale",
-      description: "Accès aux numéros de plus de 10 pays africains"
+      title: t.landing.features.coverage.title,
+      description: t.landing.features.coverage.description,
     },
     {
       icon: "⚡",
-      title: "Réception Instantanée",
-      description: "Recevez vos codes SMS en temps réel"
+      title: t.landing.features.instant.title,
+      description: t.landing.features.instant.description,
     },
     {
       icon: "🔒",
-      title: "100% Sécurisé",
-      description: "Vos données sont protégées et chiffrées"
+      title: t.landing.features.secure.title,
+      description: t.landing.features.secure.description,
     },
     {
       icon: "💰",
-      title: "Prix Transparents",
-      description: "Tarifs compétitifs, paiement sécurisé"
+      title: t.landing.features.pricing.title,
+      description: t.landing.features.pricing.description,
     }
   ];
-
 
   const pricingPlans = [
     { amount: "1000", credits: "1000", popular: false },
@@ -57,26 +61,27 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
             {/* Navigation */}
             <nav className="hidden md:flex space-x-8">
               <a href="#features" className="text-gray-600 hover:text-primary font-montserrat font-medium transition-colors">
-                Fonctionnalités
+                {t.landing.nav.features}
               </a>
               <a href="#pricing" className="text-gray-600 hover:text-primary font-montserrat font-medium transition-colors">
-                Tarifs
+                {t.landing.nav.pricing}
               </a>
             </nav>
 
-            {/* Buttons */}
-            <div className="flex items-center space-x-4">
+            {/* Buttons + Language Switcher */}
+            <div className="flex items-center space-x-3">
+              <LanguageSwitcher variant="pill" showLabel={false} />
               <button
                 onClick={onGoToLogin}
-                className="text-primary hover:text-primary-700 font-montserrat font-medium transition-colors"
+                className="text-primary hover:text-primary-700 font-montserrat font-medium transition-colors hidden sm:block"
               >
-                Connexion
+                {t.landing.nav.login}
               </button>
               <button
                 onClick={onGoToRegister}
-                className="bg-primary hover:bg-primary-700 text-white px-6 py-2 rounded-xl font-montserrat font-semibold transition-all duration-200 hover:scale-105 shadow-lg"
+                className="bg-primary hover:bg-primary-700 text-white px-4 sm:px-6 py-2 rounded-xl font-montserrat font-semibold transition-all duration-200 hover:scale-105 shadow-lg text-sm sm:text-base"
               >
-                S'inscrire
+                {t.landing.nav.register}
               </button>
             </div>
           </div>
@@ -90,13 +95,13 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
             {/* Badge */}
             <div className="inline-flex items-center bg-white rounded-full px-6 py-2 shadow-md mb-8">
               <span className="text-primary font-montserrat font-semibold text-sm">
-                🚀 Connectez-vous au monde
+                🚀 {t.landing.hero.badge}
               </span>
             </div>
 
             {/* Main Heading */}
             <h1 className="text-5xl md:text-6xl font-black text-gray-900 font-montserrat mb-6 leading-tight">
-              Connectez-vous au monde avec{' '}
+              {t.landing.hero.title}{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
                 Xaary
               </span>
@@ -104,8 +109,7 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
 
             {/* Sub Heading */}
             <p className="text-xl text-gray-600 font-montserrat max-w-3xl mx-auto mb-10 leading-relaxed">
-              Accédez à des numéros virtuels temporaires du monde entier pour vos vérifications.
-              Simple, sécurisé et instantané.
+              {t.landing.hero.subtitle}
             </p>
 
             {/* CTA Buttons */}
@@ -114,13 +118,13 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
                 onClick={onGoToRegister}
                 className="w-full sm:w-auto bg-gradient-to-r from-primary to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white px-8 py-4 rounded-2xl font-montserrat font-bold text-lg transition-all duration-300 hover:scale-105 shadow-xl"
               >
-                Commencer gratuitement
+                {t.landing.hero.cta}
               </button>
               <button
                 onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
                 className="w-full sm:w-auto bg-white text-primary border-2 border-primary hover:bg-primary hover:text-white px-8 py-4 rounded-2xl font-montserrat font-bold text-lg transition-all duration-300 hover:scale-105 shadow-lg"
               >
-                Découvrir les fonctionnalités
+                {t.landing.hero.discover}
               </button>
             </div>
 
@@ -128,15 +132,15 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
             <div className="grid grid-cols-3 gap-8 max-w-2xl mx-auto">
               <div className="text-center">
                 <div className="text-3xl font-black text-primary font-montserrat">10+</div>
-                <div className="text-gray-600 font-montserrat font-medium">Pays couverts</div>
+                <div className="text-gray-600 font-montserrat font-medium">{t.landing.stats.countries}</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-black text-primary font-montserrat">99%</div>
-                <div className="text-gray-600 font-montserrat font-medium">Taux de réussite</div>
+                <div className="text-gray-600 font-montserrat font-medium">{t.landing.stats.successRate}</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-black text-primary font-montserrat">24/7</div>
-                <div className="text-gray-600 font-montserrat font-medium">Support</div>
+                <div className="text-gray-600 font-montserrat font-medium">{t.landing.stats.support}</div>
               </div>
             </div>
           </div>
@@ -152,10 +156,10 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-black text-gray-900 font-montserrat mb-4">
-              Pourquoi choisir Xaary ?
+              {t.landing.features.title}
             </h2>
             <p className="text-xl text-gray-600 font-montserrat max-w-2xl mx-auto">
-              Une plateforme simple et efficace pour vos besoins de vérification SMS.
+              {t.landing.features.subtitle}
             </p>
           </div>
 
@@ -181,28 +185,28 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-black text-gray-900 font-montserrat mb-4">
-              Tarifs transparents
+              {t.landing.pricing.title}
             </h2>
             <p className="text-xl text-gray-600 font-montserrat max-w-2xl mx-auto">
-              1 crédit = 1$. Simple, transparent, sans surprise.
+              {t.landing.pricing.subtitle}
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {pricingPlans.map((plan, index) => (
               <div key={index} className={`relative bg-white rounded-2xl p-8 shadow-lg border-2 transition-all duration-300 hover:scale-105 ${
-                plan.popular 
-                  ? 'border-primary shadow-primary/20' 
+                plan.popular
+                  ? 'border-primary shadow-primary/20'
                   : 'border-gray-200 hover:border-primary'
               }`}>
                 {plan.popular && (
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                     <span className="bg-gradient-to-r from-primary to-secondary text-white px-4 py-1 rounded-full text-sm font-bold font-montserrat">
-                      POPULAIRE
+                      {t.landing.pricing.popular}
                     </span>
                   </div>
                 )}
-                
+
                 <div className="text-center">
                   <div className="text-4xl font-black text-gray-900 font-montserrat mb-2">
                     ${plan.amount}
@@ -210,25 +214,25 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
                   <div className="text-primary font-montserrat font-semibold mb-6">
                     {plan.credits} $
                   </div>
-                  
+
                   <div className="space-y-3 mb-8">
                     <div className="flex items-center justify-center">
                       <svg className="w-5 h-5 text-secondary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      <span className="font-montserrat text-gray-600">SMS instantanés</span>
+                      <span className="font-montserrat text-gray-600">{t.landing.pricing.features.instantSms}</span>
                     </div>
                     <div className="flex items-center justify-center">
                       <svg className="w-5 h-5 text-secondary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      <span className="font-montserrat text-gray-600">Tous les pays</span>
+                      <span className="font-montserrat text-gray-600">{t.landing.pricing.features.allCountries}</span>
                     </div>
                     <div className="flex items-center justify-center">
                       <svg className="w-5 h-5 text-secondary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      <span className="font-montserrat text-gray-600">Support 24/7</span>
+                      <span className="font-montserrat text-gray-600">{t.landing.pricing.features.support247}</span>
                     </div>
                   </div>
 
@@ -240,7 +244,7 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
                         : 'bg-gray-100 text-gray-900 hover:bg-primary hover:text-white'
                     }`}
                   >
-                    Commencer
+                    {t.landing.pricing.cta}
                   </button>
                 </div>
               </div>
@@ -253,24 +257,24 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
       <section className="py-20 bg-gradient-to-r from-primary to-secondary">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl font-black text-white font-montserrat mb-6">
-            Prêt à commencer avec Xaary ?
+            {t.landing.cta.title}
           </h2>
           <p className="text-xl text-primary-100 font-montserrat mb-10">
-            Rejoignez des milliers d'utilisateurs qui font confiance à Xaary pour leurs codes SMS.
+            {t.landing.cta.subtitle}
           </p>
-          
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={onGoToRegister}
               className="bg-white text-primary hover:bg-gray-50 px-8 py-4 rounded-2xl font-montserrat font-bold text-lg transition-all duration-300 hover:scale-105 shadow-xl"
             >
-              Créer mon compte gratuitement
+              {t.landing.cta.createAccount}
             </button>
             <button
               onClick={onGoToLogin}
               className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-primary px-8 py-4 rounded-2xl font-montserrat font-bold text-lg transition-all duration-300 hover:scale-105"
             >
-              J'ai déjà un compte
+              {t.landing.cta.haveAccount}
             </button>
           </div>
         </div>
@@ -290,29 +294,29 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
               </div>
               <h3 className="text-2xl font-bold font-montserrat">Xaary</h3>
             </div>
-            
+
             <p className="text-gray-400 font-montserrat mb-8 max-w-2xl mx-auto">
-              Connectez-vous au monde grâce à notre plateforme de numéros virtuels temporaires pour vos vérifications.
+              {t.landing.footer.description}
             </p>
 
             <div className="border-t border-gray-700 pt-8">
               <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                 <p className="text-gray-400 font-montserrat text-sm">
-                  © 2024 Xaary. Tous droits réservés.
+                  {t.landing.footer.copyright}
                 </p>
-                
+
                 <div className="flex items-center space-x-6">
-                  <button 
+                  <button
                     onClick={onGoToPrivacyPolicy}
                     className="text-gray-400 hover:text-white font-montserrat text-sm transition-colors"
                   >
-                    Politique de confidentialité
+                    {t.landing.footer.privacy}
                   </button>
-                  <button 
+                  <button
                     onClick={onGoToTermsOfService}
                     className="text-gray-400 hover:text-white font-montserrat text-sm transition-colors"
                   >
-                    Conditions d'utilisation
+                    {t.landing.footer.terms}
                   </button>
                 </div>
               </div>

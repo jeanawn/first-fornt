@@ -5,6 +5,7 @@ import ImageWithFallback from '../components/ImageWithFallback';
 import { operationsService } from '../services/operations';
 import type { AvailableService, CountryWithPrice } from '../services/operations';
 import type { Country, Service } from '../types';
+import { useTranslation } from '../i18n';
 
 // Fallbacks pour les pays (emojis)
 const COUNTRY_FALLBACKS: Record<string, string> = {
@@ -56,6 +57,8 @@ const incrementUsage = (type: 'countries' | 'services', key: string) => {
 };
 
 export default function BuyNumber({ onBuyNumber, onBack }: BuyNumberProps) {
+  const { t } = useTranslation();
+
   // Services disponibles (avec tarification)
   const [availableServices, setAvailableServices] = useState<AvailableService[]>([]);
   const [selectedService, setSelectedService] = useState<AvailableService | null>(null);
@@ -210,10 +213,10 @@ export default function BuyNumber({ onBuyNumber, onBack }: BuyNumberProps) {
           </button>
           <div>
             <h1 className="text-2xl font-bold text-gray-900 font-montserrat">
-              Acheter un numéro
+              {t.buyNumber.title}
             </h1>
             <p className="text-gray-600 text-sm font-montserrat">
-              {selectedService ? `${selectedService.name} - Choisissez un pays` : 'Choisissez un service'}
+              {selectedService ? `${selectedService.name} - ${t.buyNumber.step2.title}` : t.buyNumber.step1.subtitle}
             </p>
           </div>
         </div>
@@ -224,8 +227,8 @@ export default function BuyNumber({ onBuyNumber, onBack }: BuyNumberProps) {
             <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <LoadingSpinner size="md" />
             </div>
-            <h3 className="font-semibold text-gray-900 mb-1">Chargement</h3>
-            <p className="text-gray-600 text-sm">Récupération des services...</p>
+            <h3 className="font-semibold text-gray-900 mb-1">{t.common.loading}</h3>
+            <p className="text-gray-600 text-sm">{t.buyNumber.step1.subtitle}</p>
           </div>
         ) : !selectedService ? (
           /* ÉTAPE 1: Sélection du SERVICE */
@@ -237,11 +240,11 @@ export default function BuyNumber({ onBuyNumber, onBack }: BuyNumberProps) {
                 </svg>
               </div>
               <div className="flex-1">
-                <h2 className="text-xl font-bold text-gray-900">Étape 1 : Choisir le service</h2>
-                <p className="text-gray-600 text-sm">WhatsApp, Telegram, Instagram...</p>
+                <h2 className="text-xl font-bold text-gray-900">{t.buyNumber.step1.title}</h2>
+                <p className="text-gray-600 text-sm">{t.buyNumber.step1.subtitle}</p>
               </div>
               <div className="text-xs text-gray-500 bg-purple-100 px-2 py-1 rounded-full">
-                {filteredServices.length} services
+                {filteredServices.length} {t.buyNumber.step1.services}
               </div>
             </div>
 
@@ -257,7 +260,7 @@ export default function BuyNumber({ onBuyNumber, onBack }: BuyNumberProps) {
                   type="text"
                   value={serviceSearch}
                   onChange={(e) => setServiceSearch(e.target.value)}
-                  placeholder="Rechercher un service..."
+                  placeholder={t.buyNumber.step1.searchPlaceholder}
                   className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-100 transition-all duration-200 text-sm"
                 />
                 {serviceSearch && (
@@ -279,8 +282,8 @@ export default function BuyNumber({ onBuyNumber, onBack }: BuyNumberProps) {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                   </div>
-                  <p className="text-gray-500 font-medium">Aucun service trouvé</p>
-                  <p className="text-gray-400 text-sm mt-1">Essayez un autre terme</p>
+                  <p className="text-gray-500 font-medium">{t.buyNumber.step1.noResults}</p>
+                  <p className="text-gray-400 text-sm mt-1">{t.buyNumber.step1.tryAnother}</p>
                 </div>
               ) : (
                 filteredServices.map((service) => (
@@ -305,15 +308,15 @@ export default function BuyNumber({ onBuyNumber, onBack }: BuyNumberProps) {
                           </h4>
                           {isFrequentlyUsed('services', service.code) && (
                             <span className="bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                              FRÉQUENT
+                              {t.buyNumber.step1.frequent}
                             </span>
                           )}
                         </div>
                         <div className="flex items-center space-x-3 text-sm text-gray-600">
-                          <span>{service.countriesCount} pays</span>
+                          <span>{service.countriesCount} {t.buyNumber.step1.countries}</span>
                           <span>•</span>
                           <span className="text-purple-600 font-semibold">
-                            à partir de {service.minPrice.toFixed(2)} $
+                            {t.buyNumber.step1.startingFrom} {service.minPrice.toFixed(2)} $
                           </span>
                         </div>
                       </div>
@@ -343,14 +346,14 @@ export default function BuyNumber({ onBuyNumber, onBack }: BuyNumberProps) {
                   </div>
                   <div>
                     <h2 className="text-xl font-bold text-purple-900">{selectedService.name}</h2>
-                    <p className="text-purple-700 text-sm">Étape 2 : Choisir le pays</p>
+                    <p className="text-purple-700 text-sm">{t.buyNumber.step2.title}</p>
                   </div>
                 </div>
                 <button
                   onClick={handleBackToServices}
                   className="text-purple-600 hover:text-purple-700 text-sm font-medium bg-white px-4 py-2 rounded-xl hover:bg-purple-50 transition-all duration-200"
                 >
-                  Changer
+                  {t.buyNumber.step2.change}
                 </button>
               </div>
             </div>
@@ -361,8 +364,8 @@ export default function BuyNumber({ onBuyNumber, onBack }: BuyNumberProps) {
                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <LoadingSpinner size="md" />
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-1">Chargement des pays</h3>
-                <p className="text-gray-600 text-sm">Récupération des tarifs...</p>
+                <h3 className="font-semibold text-gray-900 mb-1">{t.common.loading}</h3>
+                <p className="text-gray-600 text-sm">{t.buyNumber.step2.subtitle}</p>
               </div>
             ) : (
               <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
@@ -373,8 +376,8 @@ export default function BuyNumber({ onBuyNumber, onBack }: BuyNumberProps) {
                     </svg>
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-lg font-bold text-gray-900">Pays disponibles</h3>
-                    <p className="text-gray-600 text-sm">{filteredCountries.length} pays avec tarifs</p>
+                    <h3 className="text-lg font-bold text-gray-900">{t.buyNumber.step2.subtitle}</h3>
+                    <p className="text-gray-600 text-sm">{filteredCountries.length} {t.buyNumber.step2.countriesWithPrices}</p>
                   </div>
                 </div>
 
@@ -390,7 +393,7 @@ export default function BuyNumber({ onBuyNumber, onBack }: BuyNumberProps) {
                       type="text"
                       value={countrySearch}
                       onChange={(e) => setCountrySearch(e.target.value)}
-                      placeholder="Rechercher un pays..."
+                      placeholder={t.buyNumber.step2.searchPlaceholder}
                       className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200 text-sm"
                     />
                     {countrySearch && (
@@ -412,7 +415,7 @@ export default function BuyNumber({ onBuyNumber, onBack }: BuyNumberProps) {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                       </div>
-                      <p className="text-gray-500 font-medium">Aucun pays trouvé</p>
+                      <p className="text-gray-500 font-medium">{t.buyNumber.step2.noResults}</p>
                     </div>
                   ) : (
                     filteredCountries.map((country) => (
@@ -442,7 +445,7 @@ export default function BuyNumber({ onBuyNumber, onBack }: BuyNumberProps) {
                               </p>
                               {isFrequentlyUsed('countries', country.code) && (
                                 <span className="bg-blue-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                                  FRÉQUENT
+                                  {t.buyNumber.step1.frequent}
                                 </span>
                               )}
                             </div>
@@ -478,11 +481,11 @@ export default function BuyNumber({ onBuyNumber, onBack }: BuyNumberProps) {
                     </svg>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-amber-900 mb-2">Comment ca marche</h4>
+                    <h4 className="font-semibold text-amber-900 mb-2">{t.buyNumber.instructions.title}</h4>
                     <div className="space-y-1 text-sm text-amber-800">
-                      <p>1. Cliquez sur le pays de votre choix</p>
-                      <p>2. L'achat se déclenche automatiquement</p>
-                      <p>3. Votre numéro sera prêt instantanément</p>
+                      <p>1. {t.buyNumber.instructions.step1}</p>
+                      <p>2. {t.buyNumber.instructions.step2}</p>
+                      <p>3. {t.buyNumber.instructions.step3}</p>
                     </div>
                   </div>
                 </div>

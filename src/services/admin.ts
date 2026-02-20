@@ -105,6 +105,49 @@ export interface ReferenceService {
   logoUrl: string;
 }
 
+// Transaction Types
+export interface AdminTransaction {
+  id: string;
+  amount: number;
+  type: 'deposit' | 'withdraw' | 'refund';
+  status: 'pending' | 'success' | 'failed';
+  reference: string;
+  network?: string;
+  phoneNumber?: string;
+  createdAt: string;
+  updatedAt: string;
+  user: {
+    id: string;
+    username: string;
+    email: string;
+  } | null;
+}
+
+// Finance Overview Types
+export interface FinanceOverview {
+  chiffreAffaires: {
+    deposits: { total: number; count: number };
+    refunds: { total: number; count: number };
+    netRevenue: number;
+  };
+  transactions: {
+    pending: { total: number; count: number };
+    failed: { total: number; count: number };
+  };
+  operations: {
+    successful: { revenue: number; count: number };
+    failed: { potentialRevenue: number; count: number };
+    successRate: string | number;
+  };
+  userBalances: {
+    total: number;
+  };
+  period: {
+    startDate: string;
+    endDate: string;
+  };
+}
+
 // ============ SERVICE ============
 
 class AdminService {
@@ -288,6 +331,43 @@ class AdminService {
 
   async getAvailableServices(): Promise<ReferenceService[]> {
     return apiService.get<ReferenceService[]>('/admin/reference/services');
+  }
+
+  // Transactions
+  async getTransactions(params?: {
+    page?: number;
+    limit?: number;
+    userId?: string;
+    type?: 'deposit' | 'withdraw' | 'refund';
+    status?: 'pending' | 'success' | 'failed';
+    startDate?: string;
+    endDate?: string;
+    search?: string;
+  }): Promise<{ transactions: AdminTransaction[]; total: number; totalPages: number }> {
+    const query = new URLSearchParams();
+    if (params?.page) query.append('page', params.page.toString());
+    if (params?.limit) query.append('limit', params.limit.toString());
+    if (params?.userId) query.append('userId', params.userId);
+    if (params?.type) query.append('type', params.type);
+    if (params?.status) query.append('status', params.status);
+    if (params?.startDate) query.append('startDate', params.startDate);
+    if (params?.endDate) query.append('endDate', params.endDate);
+    if (params?.search) query.append('search', params.search);
+
+    return apiService.get(`/admin/transactions?${query.toString()}`);
+  }
+
+  async getTransactionById(id: string): Promise<AdminTransaction> {
+    return apiService.get<AdminTransaction>(`/admin/transactions/${id}`);
+  }
+
+  // Finance / Chiffre d'Affaires
+  async getFinanceOverview(startDate?: string, endDate?: string): Promise<FinanceOverview> {
+    const query = new URLSearchParams();
+    if (startDate) query.append('startDate', startDate);
+    if (endDate) query.append('endDate', endDate);
+
+    return apiService.get<FinanceOverview>(`/admin/finance/overview?${query.toString()}`);
   }
 }
 

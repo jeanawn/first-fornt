@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { adminService } from '../../services/admin';
-import type { AdminStats, DailyStats } from '../../services/admin';
+import type { AdminStats, DailyStats, FinanceOverview, AdminTransaction } from '../../services/admin';
 import LoadingSpinner from '../../components/LoadingSpinner';
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [dailyStats, setDailyStats] = useState<DailyStats[]>([]);
+  const [finance, setFinance] = useState<FinanceOverview | null>(null);
+  const [recentTransactions, setRecentTransactions] = useState<AdminTransaction[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -14,12 +16,16 @@ export default function AdminDashboard() {
 
   const loadData = async () => {
     try {
-      const [globalStats, daily] = await Promise.all([
+      const [globalStats, daily, financeData, transactionsData] = await Promise.all([
         adminService.getGlobalStats(),
         adminService.getDailyStats(7),
+        adminService.getFinanceOverview(),
+        adminService.getTransactions({ limit: 10 }),
       ]);
       setStats(globalStats);
       setDailyStats(daily);
+      setFinance(financeData);
+      setRecentTransactions(transactionsData.transactions);
     } catch (error) {
       console.error('Erreur chargement stats:', error);
     } finally {

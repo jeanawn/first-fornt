@@ -17,11 +17,10 @@ import ErrorNotification from './components/ErrorNotification';
 import { ToastContainer, useToast } from './components/Toast';
 import LoadingSpinner from './components/LoadingSpinner';
 import { authService } from './services/auth';
-import { balanceService } from './services/balance';
 import { operationsService } from './services/operations';
 import { notificationSound } from './utils/notificationSound';
 import { useTranslation } from './i18n';
-import type { User, Country, Service, PhoneNumber, Network, ApiError } from './types';
+import type { User, Country, Service, PhoneNumber, ApiError } from './types';
 
 type Page =
   | 'landing'
@@ -46,6 +45,10 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
   const [pendingTransactionId, setPendingTransactionId] = useState<string | null>(null);
+  const [pendingFedapayDeposit, setPendingFedapayDeposit] = useState<{
+    depositId: string;
+    paymentUrl: string;
+  } | null>(null);
   const [pendingOperation, setPendingOperation] = useState<{
     operationId: string;
     country: Country;
@@ -134,26 +137,14 @@ export default function App() {
   };
 
 
-  // Rechargement
-  const handleRecharge = async (amount: number, phoneNumber: string, network: Network) => {
-    try {
-      const response = await balanceService.loadBalance({
-        amount: amount, // Montant direct, pas de conversion
-        phoneNumber,
-        network: network.id
-      });
-      
-      // Stocker l'ID de transaction pour le polling
-      if (response && typeof response === 'object' && 'data' in response && 
-          response.data && typeof response.data === 'object' && 'id' in response.data) {
-        setPendingTransactionId(response.data.id as string);
-        setCurrentPage('payment-confirmation');
-      } else {
-        throw new Error('Transaction ID non reçu');
-      }
-    } catch (err) {
-      handleError(err);
-    }
+  // Rechargement via FedaPay
+  const handleRecharge = async (depositId: string, paymentUrl: string) => {
+    // Stocker les infos du dépôt
+    setPendingFedapayDeposit({ depositId, paymentUrl });
+    setCurrentPage('payment-confirmation');
+
+    // Ouvrir FedaPay dans un nouvel onglet
+    window.open(paymentUrl, '_blank');
   };
 
   // Messages d'erreur user-friendly
@@ -505,10 +496,12 @@ export default function App() {
       );
     }
 
-    if (currentPage === 'payment-confirmation' && pendingTransactionId) {
+    if (currentPage === 'payment-confirmation' && (pendingTransactionId || pendingFedapayDeposit)) {
       return (
         <PaymentConfirmation
           transactionId={pendingTransactionId}
+          fedapayDepositId={pendingFedapayDeposit?.depositId}
+          fedapayPaymentUrl={pendingFedapayDeposit?.paymentUrl}
           onBackToDashboard={async () => {
             // Recharger les infos utilisateur pour mettre à jour le solde
             try {
@@ -518,6 +511,7 @@ export default function App() {
               // Erreur silencieuse mise à jour utilisateur
             }
             setPendingTransactionId(null);
+            setPendingFedapayDeposit(null);
             setCurrentPage('dashboard');
           }}
         />

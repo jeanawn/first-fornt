@@ -107,6 +107,12 @@ class BalanceService {
     const response = await apiService.post<FedapayDeposit>(`/fedapay/deposits/${depositId}/check`, {});
     return response;
   }
+
+  // Force verify from FedaPay API (with timeout protection)
+  async forceVerifyDepositStatus(depositId: string): Promise<FedapayDeposit> {
+    const response = await apiService.post<FedapayDeposit>(`/fedapay/deposits/${depositId}/verify`, {});
+    return response;
+  }
 }
 
 export const balanceService = new BalanceService();

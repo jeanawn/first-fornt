@@ -21,7 +21,8 @@ export default function PaymentConfirmation({
   const [transaction, setTransaction] = useState<Transaction | null>(null);
   const [fedapayDeposit, setFedapayDeposit] = useState<FedapayDeposit | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [countdown, setCountdown] = useState(120); // 2 minutes pour FedaPay
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [countdown, setCountdown] = useState(180); // 3 minutes
   const [error, setError] = useState<string | null>(null);
 
   const isFedapay = !!fedapayDepositId;
@@ -44,7 +45,7 @@ export default function PaymentConfirmation({
       } catch {
         setError('Erreur lors de la vérification du statut');
         setIsLoading(false);
-        return true;
+        return false; // Continue polling
       }
     };
 
@@ -63,8 +64,6 @@ export default function PaymentConfirmation({
     const countdownTimer = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
-          clearInterval(countdownTimer);
-          clearInterval(pollInterval);
           return 0;
         }
         return prev - 1;
@@ -133,6 +132,22 @@ export default function PaymentConfirmation({
     }
   };
 
+  const handleForceVerify = async () => {
+    if (!fedapayDepositId || isVerifying) return;
+
+    setIsVerifying(true);
+    setError(null);
+
+    try {
+      const deposit = await balanceService.forceVerifyDepositStatus(fedapayDepositId);
+      setFedapayDeposit(deposit);
+    } catch (err: any) {
+      setError(err.message || 'Erreur lors de la vérification');
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
   // Rendu FedaPay
   const renderFedapayContent = () => {
     if (isLoading) {
@@ -143,29 +158,8 @@ export default function PaymentConfirmation({
           </div>
           <div className="text-center space-y-4">
             <h1 className="text-3xl font-bold text-gray-900">
-              Vérification du paiement...
+              Chargement...
             </h1>
-            <p className="text-lg text-gray-600">
-              Effectuez votre paiement sur FedaPay
-            </p>
-          </div>
-        </>
-      );
-    }
-
-    if (error) {
-      return (
-        <>
-          <div className="text-center">
-            <div className="w-24 h-24 bg-red-500 rounded-full flex items-center justify-center mx-auto shadow-xl">
-              <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </div>
-          </div>
-          <div className="text-center space-y-4">
-            <h1 className="text-3xl font-bold text-red-600">Erreur</h1>
-            <p className="text-lg text-gray-600">{error}</p>
           </div>
         </>
       );
@@ -208,10 +202,10 @@ export default function PaymentConfirmation({
           </div>
           <div className="text-center space-y-4">
             <h1 className="text-3xl font-bold text-red-600">
-              Paiement échoué
+              Paiement non confirmé
             </h1>
             <p className="text-lg text-gray-600">
-              Le paiement n'a pas pu être traité
+              Le paiement n'a pas été effectué ou a été annulé
             </p>
           </div>
         </>
@@ -228,15 +222,14 @@ export default function PaymentConfirmation({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <div className="absolute inset-0 rounded-full border-4 border-orange-200 animate-ping"></div>
           </div>
         </div>
         <div className="text-center space-y-4">
           <h1 className="text-3xl font-bold text-orange-600">
-            En attente de paiement
+            En attente de confirmation
           </h1>
           <p className="text-lg text-gray-600">
-            Complétez votre paiement sur FedaPay
+            Avez-vous effectué le paiement sur FedaPay ?
           </p>
         </div>
       </>
@@ -343,12 +336,22 @@ export default function PaymentConfirmation({
   };
 
   const status = getStatus();
+  const isPending = status === 'pending';
+  const isSuccess = status === 'approved' || status === 'success';
+  const isFailed = ['declined', 'canceled', 'failed'].includes(status);
 
   return (
     <Layout>
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="max-w-md w-full space-y-8">
           {isFedapay ? renderFedapayContent() : renderLegacyContent()}
+
+          {/* Error message */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-center">
+              <p className="text-red-700 text-sm">{error}</p>
+            </div>
+          )}
 
           {/* Détails FedaPay */}
           {isFedapay && fedapayDeposit && (
@@ -373,11 +376,11 @@ export default function PaymentConfirmation({
                     <div className="flex justify-between items-center">
                       <span className="text-orange-700 font-medium">Statut</span>
                       <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        status === 'approved' ? 'bg-green-100 text-green-800' :
-                        ['declined', 'canceled'].includes(status) ? 'bg-red-100 text-red-800' :
+                        isSuccess ? 'bg-green-100 text-green-800' :
+                        isFailed ? 'bg-red-100 text-red-800' :
                         'bg-yellow-100 text-yellow-800'
                       }`}>
-                        {status === 'approved' ? 'Confirmé' :
+                        {isSuccess ? 'Confirmé' :
                          status === 'declined' ? 'Refusé' :
                          status === 'canceled' ? 'Annulé' : 'En attente'}
                       </span>
@@ -385,19 +388,51 @@ export default function PaymentConfirmation({
                   </div>
                 </div>
 
-                {/* Bouton pour rouvrir FedaPay */}
-                {status === 'pending' && fedapayPaymentUrl && (
-                  <button
-                    onClick={handleOpenPayment}
-                    className="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold py-4 px-6 rounded-2xl hover:from-orange-600 hover:to-amber-600 transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg"
-                  >
-                    <div className="flex items-center justify-center space-x-3">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                      </svg>
-                      <span>Ouvrir FedaPay</span>
-                    </div>
-                  </button>
+                {/* Actions pour pending */}
+                {isPending && (
+                  <div className="space-y-3">
+                    {/* Bouton vérifier */}
+                    <button
+                      onClick={handleForceVerify}
+                      disabled={isVerifying}
+                      className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-bold py-4 px-6 rounded-2xl hover:from-blue-600 hover:to-indigo-600 disabled:from-gray-400 disabled:to-gray-500 transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg disabled:shadow-none"
+                    >
+                      <div className="flex items-center justify-center space-x-3">
+                        {isVerifying ? (
+                          <>
+                            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                            <span>Vérification...</span>
+                          </>
+                        ) : (
+                          <>
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            <span>Vérifier le paiement</span>
+                          </>
+                        )}
+                      </div>
+                    </button>
+
+                    {/* Bouton ouvrir FedaPay */}
+                    {fedapayPaymentUrl && (
+                      <button
+                        onClick={handleOpenPayment}
+                        className="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold py-4 px-6 rounded-2xl hover:from-orange-600 hover:to-amber-600 transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg"
+                      >
+                        <div className="flex items-center justify-center space-x-3">
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                          <span>Payer sur FedaPay</span>
+                        </div>
+                      </button>
+                    )}
+
+                    <p className="text-center text-sm text-gray-500">
+                      Si vous avez déjà payé, cliquez sur "Vérifier le paiement"
+                    </p>
+                  </div>
                 )}
               </div>
             </div>
@@ -408,26 +443,30 @@ export default function PaymentConfirmation({
             <button
               onClick={onBackToDashboard}
               className={`w-full font-bold py-4 px-6 rounded-2xl transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg ${
-                status === 'approved' || status === 'success'
+                isSuccess
                   ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700'
-                  : ['declined', 'canceled', 'failed'].includes(status)
-                  ? 'bg-gradient-to-r from-red-600 to-red-700 text-white hover:from-red-700 hover:to-red-800'
-                  : 'bg-gradient-to-r from-gray-600 to-gray-700 text-white hover:from-gray-700 hover:to-gray-800'
+                  : isFailed
+                  ? 'bg-gradient-to-r from-gray-600 to-gray-700 text-white hover:from-gray-700 hover:to-gray-800'
+                  : 'bg-gradient-to-r from-gray-500 to-gray-600 text-white hover:from-gray-600 hover:to-gray-700'
               }`}
             >
               <div className="flex items-center justify-center space-x-3">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2v0" />
                 </svg>
-                <span>Retour au tableau de bord</span>
+                <span>
+                  {isSuccess ? 'Retour au tableau de bord' :
+                   isFailed ? 'Retour au tableau de bord' :
+                   'Retour (le paiement sera vérifié en arrière-plan)'}
+                </span>
               </div>
             </button>
 
-            {/* Countdown */}
-            {status === 'pending' && (
+            {/* Countdown et status */}
+            {isPending && (
               <div className="text-center">
-                <p className="text-orange-600 text-sm mb-2">
-                  Vérification automatique toutes les 5 secondes
+                <p className="text-blue-600 text-sm mb-2">
+                  Vérification automatique en cours...
                 </p>
                 <p className="text-gray-500 text-sm">
                   Temps restant: <span className="font-bold text-orange-600">{Math.floor(countdown / 60)}:{(countdown % 60).toString().padStart(2, '0')}</span>

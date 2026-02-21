@@ -11,6 +11,7 @@ const NAV_ITEMS = [
   { id: 'dashboard', label: 'Dashboard', icon: '📊' },
   { id: 'users', label: 'Utilisateurs', icon: '👥' },
   { id: 'operations', label: 'Opérations', icon: '📱' },
+  { id: 'transactions', label: 'Transactions', icon: '💳' },
   { id: 'pricing', label: 'Tarification', icon: '💰' },
   { id: 'exchange-rates', label: 'Taux de change', icon: '💱' },
   { id: 'audit-logs', label: 'Logs', icon: '📋' },

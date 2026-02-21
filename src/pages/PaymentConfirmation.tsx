@@ -286,7 +286,7 @@ export default function PaymentConfirmation({
           <div className="text-center space-y-4">
             <h1 className="text-3xl font-bold text-green-600">Paiement réussi !</h1>
             <p className="text-lg text-gray-600">
-              Votre recharge de <strong>{transaction.amount.toFixed(2)} $</strong> a été confirmée
+              Votre recharge de <strong>{Number(transaction.amount || 0).toFixed(2)} $</strong> a été confirmée
             </p>
           </div>
         </>
@@ -371,7 +371,7 @@ export default function PaymentConfirmation({
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-orange-700 font-medium">Montant XOF</span>
-                      <span className="font-bold text-orange-900">{fedapayDeposit.amountXof.toLocaleString()} XOF</span>
+                      <span className="font-bold text-orange-900">{Number(fedapayDeposit.amountXof || 0).toLocaleString()} XOF</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-orange-700 font-medium">Statut</span>

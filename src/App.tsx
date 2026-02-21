@@ -62,21 +62,41 @@ export default function App() {
   // Translations
   const { t } = useTranslation();
 
-  // Vérifier l'authentification au démarrage
+  // Vérifier l'authentification au démarrage et gérer les callbacks FedaPay
   useEffect(() => {
     const initializeAuth = async () => {
       // Initialiser les préférences de notification
       notificationSound.loadUserPreferences();
-      
+
+      // Vérifier si c'est un retour de FedaPay
+      const urlParams = new URLSearchParams(window.location.search);
+      const fedapayStatus = urlParams.get('status');
+      const fedapayId = urlParams.get('id');
+
       if (authService.isAuthenticated()) {
         try {
           const currentUser = await authService.getCurrentUser();
           setUser(currentUser);
-          setCurrentPage('dashboard');
+
+          // Si retour de FedaPay, aller à la page de confirmation
+          if (fedapayStatus && fedapayId) {
+            // Nettoyer l'URL pour éviter les problèmes de reload
+            window.history.replaceState({}, document.title, window.location.pathname);
+
+            // Stocker l'ID du dépôt pour la page de confirmation
+            setPendingFedapayDeposit({ depositId: fedapayId, paymentUrl: '' });
+            setCurrentPage('payment-confirmation');
+          } else {
+            setCurrentPage('dashboard');
+          }
         } catch {
           // Token invalide, on le supprime
           authService.logout();
         }
+      } else if (fedapayStatus && fedapayId) {
+        // Utilisateur non connecté mais retour de FedaPay
+        // Nettoyer l'URL et rediriger vers login
+        window.history.replaceState({}, document.title, window.location.pathname);
       }
       setIsInitializing(false);
     };

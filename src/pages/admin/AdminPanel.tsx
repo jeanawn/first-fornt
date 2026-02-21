@@ -3,6 +3,7 @@ import AdminLayout from './AdminLayout';
 import AdminDashboard from './AdminDashboard';
 import AdminUsers from './AdminUsers';
 import AdminOperations from './AdminOperations';
+import AdminTransactions from './AdminTransactions';
 import AdminServicePricing from './AdminServicePricing';
 import AdminExchangeRates from './AdminExchangeRates';
 import AdminAuditLogs from './AdminAuditLogs';
@@ -22,6 +23,8 @@ export default function AdminPanel({ onLogout }: AdminPanelProps) {
         return <AdminUsers />;
       case 'operations':
         return <AdminOperations />;
+      case 'transactions':
+        return <AdminTransactions />;
       case 'pricing':
         return <AdminServicePricing />;
       case 'exchange-rates':

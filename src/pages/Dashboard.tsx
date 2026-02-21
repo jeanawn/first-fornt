@@ -186,7 +186,7 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
           
           <div className="space-y-1">
             <p className="text-4xl font-montserrat font-bold text-white">
-              {user.balance.toFixed(0).toLocaleString()}
+              {Number(user.balance || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
             </p>
             <p className="text-white/80 text-lg font-montserrat font-medium">$</p>
           </div>
@@ -356,7 +356,7 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
                         </p>
                         <div className="text-right">
                           <p className="text-sm font-semibold text-gray-700">
-                            {operation.price && !isNaN(operation.price) ? operation.price.toFixed(2) + ' $' : '—'}
+                            {operation.price && !isNaN(Number(operation.price)) ? Number(operation.price).toFixed(2) + ' $' : '—'}
                           </p>
                         </div>
                       </div>
@@ -442,11 +442,11 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
                     
                     <div className="text-right flex-shrink-0">
                       <p className={`text-sm font-bold ${
-                        transaction.type === 'deposit' ? 'text-green-600' : 
+                        transaction.type === 'deposit' ? 'text-green-600' :
                         transaction.type === 'refund' ? 'text-blue-600' : 'text-red-600'
                       }`}>
                         {transaction.type === 'deposit' ? '+' :
-                         transaction.type === 'refund' ? '+' : '-'}{transaction.amount.toFixed(2)} $
+                         transaction.type === 'refund' ? '+' : '-'}{Number(transaction.amount || 0).toFixed(2)} $
                       </p>
                       {transaction.reference && transaction.reference !== 'N/A' && (
                         <p className="text-xs text-gray-500 font-mono">

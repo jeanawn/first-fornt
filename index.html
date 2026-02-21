@@ -27,6 +27,27 @@
     <title>Xaary - Connectez-vous au monde</title>
   </head>
   <body>
+    <!-- Script pour gérer le callback FedaPay AVANT que React ne charge -->
+    <script>
+      (function() {
+        var params = new URLSearchParams(window.location.search);
+        var status = params.get('status');
+        var id = params.get('id');
+
+        if (status && id) {
+          // Stocker les infos du callback FedaPay
+          sessionStorage.setItem('fedapay_callback', JSON.stringify({
+            status: status,
+            id: id,
+            timestamp: Date.now()
+          }));
+
+          // Nettoyer l'URL immédiatement
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+      })();
+    </script>
+
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     

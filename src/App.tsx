@@ -68,10 +68,23 @@ export default function App() {
       // Initialiser les préférences de notification
       notificationSound.loadUserPreferences();
 
-      // Vérifier si c'est un retour de FedaPay
-      const urlParams = new URLSearchParams(window.location.search);
-      const fedapayStatus = urlParams.get('status');
-      const fedapayId = urlParams.get('id');
+      // Vérifier si c'est un retour de FedaPay (stocké dans sessionStorage par index.html)
+      let fedapayCallback: { status: string; id: string; timestamp: number } | null = null;
+      try {
+        const storedCallback = sessionStorage.getItem('fedapay_callback');
+        if (storedCallback) {
+          fedapayCallback = JSON.parse(storedCallback);
+          // Supprimer immédiatement pour éviter les doublons
+          sessionStorage.removeItem('fedapay_callback');
+
+          // Vérifier que le callback n'est pas trop vieux (5 minutes max)
+          if (fedapayCallback && Date.now() - fedapayCallback.timestamp > 5 * 60 * 1000) {
+            fedapayCallback = null;
+          }
+        }
+      } catch {
+        // Ignorer les erreurs de parsing
+      }
 
       if (authService.isAuthenticated()) {
         try {
@@ -79,12 +92,8 @@ export default function App() {
           setUser(currentUser);
 
           // Si retour de FedaPay, aller à la page de confirmation
-          if (fedapayStatus && fedapayId) {
-            // Nettoyer l'URL pour éviter les problèmes de reload
-            window.history.replaceState({}, document.title, window.location.pathname);
-
-            // Stocker l'ID du dépôt pour la page de confirmation
-            setPendingFedapayDeposit({ depositId: fedapayId, paymentUrl: '' });
+          if (fedapayCallback) {
+            setPendingFedapayDeposit({ depositId: fedapayCallback.id, paymentUrl: '' });
             setCurrentPage('payment-confirmation');
           } else {
             setCurrentPage('dashboard');
@@ -93,10 +102,6 @@ export default function App() {
           // Token invalide, on le supprime
           authService.logout();
         }
-      } else if (fedapayStatus && fedapayId) {
-        // Utilisateur non connecté mais retour de FedaPay
-        // Nettoyer l'URL et rediriger vers login
-        window.history.replaceState({}, document.title, window.location.pathname);
       }
       setIsInitializing(false);
     };

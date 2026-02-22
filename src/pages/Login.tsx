@@ -22,7 +22,7 @@ export default function Login({ onLogin, onForgotPassword, onRegister, onBackToH
     setIsLoading(true);
 
     try {
-      await onLogin(emailOrUsername, password);
+      onLogin(emailOrUsername, password);
     } finally {
       setIsLoading(false);
     }

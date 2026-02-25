@@ -286,8 +286,8 @@ export default function OperationDetails({ operationId, onBack }: OperationDetai
           </div>
         </div>
 
-        {/* Code SMS (si disponible) */}
-        {operation.sms ? (
+        {/* Code SMS (si disponible et statut SUCCESS) */}
+        {operation.sms && operation.status.toLowerCase() !== 'failed' ? (
           <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
             <div className="flex items-center space-x-3 mb-6">
               <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">

@@ -262,7 +262,7 @@ export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: Nu
             )}
           </div>
 
-          {phoneNumber.smsCode ? (
+          {phoneNumber.smsCode && phoneNumber.status !== 'FAILED' ? (
             <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 border-2 border-green-200">
               <div className="text-center space-y-4">
                 <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto">

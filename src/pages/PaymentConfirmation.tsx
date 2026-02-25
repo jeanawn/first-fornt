@@ -3,6 +3,7 @@ import Layout from '../components/Layout';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { transactionService } from '../services/transactions';
 import { balanceService, type FedapayDeposit } from '../services/balance';
+import { usePageTitle, PAGE_TITLES } from '../hooks/usePageTitle';
 import type { Transaction } from '../types';
 
 interface PaymentConfirmationProps {
@@ -18,6 +19,7 @@ export default function PaymentConfirmation({
   fedapayPaymentUrl,
   onBackToDashboard
 }: PaymentConfirmationProps) {
+  usePageTitle(PAGE_TITLES.paymentConfirmation);
   const [transaction, setTransaction] = useState<Transaction | null>(null);
   const [fedapayDeposit, setFedapayDeposit] = useState<FedapayDeposit | null>(null);
   const [isLoading, setIsLoading] = useState(true);

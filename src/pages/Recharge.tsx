@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Layout from '../components/Layout';
 import Input from '../components/Input';
 import { balanceService } from '../services/balance';
+import { usePageTitle, PAGE_TITLES } from '../hooks/usePageTitle';
 
 interface RechargeProps {
   onRecharge: (depositId: string, paymentUrl: string) => void;
@@ -9,6 +10,7 @@ interface RechargeProps {
 }
 
 export default function Recharge({ onRecharge, onBack }: RechargeProps) {
+  usePageTitle(PAGE_TITLES.recharge);
   const [amount, setAmount] = useState('');
   const [amountXof, setAmountXof] = useState<number | null>(null);
   const [exchangeRate, setExchangeRate] = useState<number | null>(null);

@@ -1,10 +1,12 @@
 import Layout from '../components/Layout';
+import { usePageTitle, PAGE_TITLES } from '../hooks/usePageTitle';
 
 interface TermsOfServiceProps {
   onBack: () => void;
 }
 
 export default function TermsOfService({ onBack }: TermsOfServiceProps) {
+  usePageTitle(PAGE_TITLES.termsOfService);
   return (
     <Layout>
       <div className="min-h-screen bg-gray-50 py-12">

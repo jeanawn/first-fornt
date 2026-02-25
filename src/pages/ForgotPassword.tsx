@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Layout from '../components/Layout';
 import Input from '../components/Input';
 import { usePasswordReset } from '../hooks/usePasswordReset';
+import { usePageTitle, PAGE_TITLES } from '../hooks/usePageTitle';
 
 type FlowStep = 'email' | 'reset' | 'success';
 
@@ -11,6 +12,7 @@ interface ForgotPasswordProps {
 }
 
 export default function ForgotPassword({ onBackToLogin }: ForgotPasswordProps) {
+  usePageTitle(PAGE_TITLES.forgotPassword);
   const [currentStep, setCurrentStep] = useState<FlowStep>('email');
   const [email, setEmail] = useState('');
   const [otpCode, setOtpCode] = useState('');

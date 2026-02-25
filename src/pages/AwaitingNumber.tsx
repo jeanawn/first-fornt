@@ -3,6 +3,7 @@ import Layout from '../components/Layout';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ImageWithFallback from '../components/ImageWithFallback';
 import type { Country, Service } from '../types';
+import { usePageTitle, PAGE_TITLES } from '../hooks/usePageTitle';
 
 // Fallbacks pour les pays et services
 const COUNTRY_FALLBACKS: Record<string, string> = {
@@ -36,6 +37,7 @@ interface AwaitingNumberProps {
 }
 
 export default function AwaitingNumber({ country, service, onBack }: AwaitingNumberProps) {
+  usePageTitle(PAGE_TITLES.awaitingNumber);
   const [dots, setDots] = useState('');
 
   // Animation des points

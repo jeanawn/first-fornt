@@ -6,6 +6,7 @@ import { operationsService } from '../services/operations';
 import type { AvailableService, CountryWithPrice } from '../services/operations';
 import type { Country, Service } from '../types';
 import { useTranslation } from '../i18n';
+import { usePageTitle, PAGE_TITLES } from '../hooks/usePageTitle';
 
 // Fallbacks pour les pays (emojis)
 const COUNTRY_FALLBACKS: Record<string, string> = {
@@ -58,6 +59,7 @@ const incrementUsage = (type: 'countries' | 'services', key: string) => {
 
 export default function BuyNumber({ onBuyNumber, onBack }: BuyNumberProps) {
   const { t } = useTranslation();
+  usePageTitle(PAGE_TITLES.buyNumber);
 
   // Services disponibles (avec tarification)
   const [availableServices, setAvailableServices] = useState<AvailableService[]>([]);

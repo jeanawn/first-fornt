@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import ImageWithFallback from '../components/ImageWithFallback';
 import usePersistentTimer from '../hooks/usePersistentTimer';
+import { usePageTitle, PAGE_TITLES } from '../hooks/usePageTitle';
 import type { PhoneNumber } from '../types';
 
 // Fallbacks
@@ -32,6 +33,7 @@ interface NumberDetailsProps {
 }
 
 export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: NumberDetailsProps) {
+  usePageTitle(PAGE_TITLES.numberDetails);
   const [copied, setCopied] = useState<'number' | 'sms' | null>(null);
 
   // Utilisation du hook persistant pour le timer
@@ -232,14 +234,24 @@ export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: Nu
         {/* Code SMS */}
         <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
           <div className="flex items-center space-x-3 mb-6">
-            <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
-              <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+              phoneNumber.smsCode ? 'bg-green-100' : phoneNumber.status === 'FAILED' ? 'bg-red-100' : 'bg-blue-100'
+            }`}>
+              <svg className={`w-6 h-6 ${
+                phoneNumber.smsCode ? 'text-green-600' : phoneNumber.status === 'FAILED' ? 'text-red-600' : 'text-blue-600'
+              }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>
             </div>
             <div className="flex-1">
               <h3 className="text-xl font-bold text-gray-900">Code SMS</h3>
-              <p className="text-gray-600 text-sm">Code de vérification reçu</p>
+              <p className="text-gray-600 text-sm">
+                {phoneNumber.smsCode
+                  ? 'Code de vérification reçu'
+                  : phoneNumber.status === 'FAILED'
+                    ? 'Code non reçu'
+                    : 'En attente de réception'}
+              </p>
             </div>
             {!phoneNumber.smsCode && (phoneNumber.status === 'PENDING' || phoneNumber.status === 'PROCESSING') && (
               <div className="flex items-center space-x-2">

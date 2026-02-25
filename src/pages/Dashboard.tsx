@@ -6,6 +6,7 @@ import { operationsService } from '../services/operations';
 import { transactionService } from '../services/transactions';
 import type { Operation } from '../services/operations';
 import { useTranslation } from '../i18n';
+import { usePageTitle, PAGE_TITLES } from '../hooks/usePageTitle';
 
 // Fallbacks pour les services 
 const SERVICE_FALLBACKS: Record<string, string> = {
@@ -30,6 +31,7 @@ interface DashboardProps {
 
 export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onViewOperation, onGoToAdmin }: DashboardProps) {
   const { t, language } = useTranslation();
+  usePageTitle(PAGE_TITLES.dashboard);
   const [operations, setOperations] = useState<Operation[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoadingOperations, setIsLoadingOperations] = useState(true);

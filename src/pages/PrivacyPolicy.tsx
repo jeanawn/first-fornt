@@ -1,10 +1,12 @@
 import Layout from '../components/Layout';
+import { usePageTitle, PAGE_TITLES } from '../hooks/usePageTitle';
 
 interface PrivacyPolicyProps {
   onBack: () => void;
 }
 
 export default function PrivacyPolicy({ onBack }: PrivacyPolicyProps) {
+  usePageTitle(PAGE_TITLES.privacyPolicy);
   return (
     <Layout>
       <div className="min-h-screen bg-gray-50 py-12">

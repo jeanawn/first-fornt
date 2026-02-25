@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Layout from '../components/Layout';
 import Input from '../components/Input';
+import { usePageTitle, PAGE_TITLES } from '../hooks/usePageTitle';
 
 interface RegisterProps {
   onRegister: (username: string, email: string, password: string) => void;
@@ -9,6 +10,7 @@ interface RegisterProps {
 }
 
 export default function Register({ onRegister, onBackToLogin }: RegisterProps) {
+  usePageTitle(PAGE_TITLES.register);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

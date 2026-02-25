@@ -200,6 +200,13 @@ export default function App() {
         message: t.errors.serviceUnavailable.message
       };
     }
+    // Intercepter les messages techniques du backend (fournisseur, non trouvé, etc.)
+    if (errorLower.includes('fournisseur') || errorLower.includes('non trouvé') || errorLower.includes('not found') || errorLower.includes('provider')) {
+      return {
+        title: t.errors.numberUnavailable.title,
+        message: t.errors.numberUnavailable.message
+      };
+    }
 
     return {
       title: t.common.error,

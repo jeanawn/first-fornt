@@ -1,5 +1,6 @@
 import { useTranslation } from '../i18n';
 import { LanguageSwitcher } from '../i18n/LanguageSwitcher';
+import { usePageTitle, PAGE_TITLES } from '../hooks/usePageTitle';
 
 interface LandingPageProps {
   onGoToLogin: () => void;
@@ -10,6 +11,7 @@ interface LandingPageProps {
 
 export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacyPolicy, onGoToTermsOfService }: LandingPageProps) {
   const { t } = useTranslation();
+  usePageTitle(PAGE_TITLES.landing);
 
   const features = [
     {

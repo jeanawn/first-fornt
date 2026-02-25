@@ -3,6 +3,7 @@ import Layout from '../components/Layout';
 import Input from '../components/Input';
 import { useTranslation } from '../i18n';
 import { LanguageSwitcher } from '../i18n/LanguageSwitcher';
+import { usePageTitle, PAGE_TITLES } from '../hooks/usePageTitle';
 
 interface LoginProps {
   onLogin: (emailOrUsername: string, password: string) => void;
@@ -13,6 +14,7 @@ interface LoginProps {
 
 export default function Login({ onLogin, onForgotPassword, onRegister, onBackToHome }: LoginProps) {
   const { t } = useTranslation();
+  usePageTitle(PAGE_TITLES.login);
   const [emailOrUsername, setEmailOrUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);

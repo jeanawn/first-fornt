@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import LoadingSpinner from '../components/LoadingSpinner';
 import usePersistentTimer from '../hooks/usePersistentTimer';
+import { usePageTitle, PAGE_TITLES } from '../hooks/usePageTitle';
 import { operationsService } from '../services/operations';
 import type { Operation } from '../services/operations';
 
@@ -23,6 +24,7 @@ interface OperationDetailsProps {
 }
 
 export default function OperationDetails({ operationId, onBack }: OperationDetailsProps) {
+  usePageTitle(PAGE_TITLES.operationDetails);
   const [operation, setOperation] = useState<Operation | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState<'number' | 'sms' | null>(null);

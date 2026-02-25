@@ -7,6 +7,17 @@ import AdminTransactions from './AdminTransactions';
 import AdminServicePricing from './AdminServicePricing';
 import AdminExchangeRates from './AdminExchangeRates';
 import AdminAuditLogs from './AdminAuditLogs';
+import { usePageTitle, PAGE_TITLES } from '../../hooks/usePageTitle';
+
+const ADMIN_PAGE_TITLES: Record<string, string> = {
+  'dashboard': PAGE_TITLES.adminDashboard,
+  'users': PAGE_TITLES.adminUsers,
+  'operations': PAGE_TITLES.adminOperations,
+  'transactions': PAGE_TITLES.adminTransactions,
+  'pricing': PAGE_TITLES.adminServicePricing,
+  'exchange-rates': PAGE_TITLES.adminExchangeRates,
+  'audit-logs': PAGE_TITLES.adminAuditLogs,
+};
 
 interface AdminPanelProps {
   onLogout: () => void;
@@ -14,6 +25,7 @@ interface AdminPanelProps {
 
 export default function AdminPanel({ onLogout }: AdminPanelProps) {
   const [currentPage, setCurrentPage] = useState('dashboard');
+  usePageTitle(ADMIN_PAGE_TITLES[currentPage] || PAGE_TITLES.admin);
 
   const renderPage = () => {
     switch (currentPage) {

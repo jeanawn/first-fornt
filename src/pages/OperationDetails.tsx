@@ -341,21 +341,7 @@ export default function OperationDetails({ operationId, onBack }: OperationDetai
               </div>
             </div>
           </div>
-        ) : operation.status.toLowerCase() === 'failed' ? (
-          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-            <div className="text-center py-12">
-              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </div>
-              <h4 className="font-bold text-red-600 text-lg mb-1">Opération échouée</h4>
-              <p className="text-red-500 text-sm">
-                Aucun SMS n'a été reçu pour cette opération
-              </p>
-            </div>
-          </div>
-        ) : operation.status.toLowerCase() === 'pending' || operation.status.toLowerCase() === 'processing' ? (
+        ) : (operation.status.toLowerCase() === 'pending' || operation.status.toLowerCase() === 'processing') ? (
           <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
             <div className="text-center py-12">
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">

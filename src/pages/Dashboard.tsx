@@ -8,18 +8,6 @@ import type { Operation } from '../services/operations';
 import { useTranslation } from '../i18n';
 import { usePageTitle, PAGE_TITLES } from '../hooks/usePageTitle';
 
-// Fallbacks pour les services 
-const SERVICE_FALLBACKS: Record<string, string> = {
-  'whatsapp': '💬',
-  'telegram': '✈️',
-  'discord': '🎮',
-  'instagram': '📸',
-  'facebook': '👥',
-  'twitter': '🐦',
-  'tiktok': '🎵',
-  'snapchat': '👻'
-};
-
 interface DashboardProps {
   user: User;
   onRecharge: () => void;

@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { useTranslation } from '../i18n';
 
 type Page = 'dashboard' | 'buy-number' | 'recharge' | string;
@@ -14,7 +15,7 @@ interface TabItem {
   labelFr: string;
   labelEn: string;
   onClick: () => void;
-  icon: (active: boolean) => JSX.Element;
+  icon: (active: boolean) => ReactElement;
 }
 
 export default function BottomNav({

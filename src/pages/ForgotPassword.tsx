@@ -400,15 +400,6 @@ export default function ForgotPassword({ onBackToLogin }: ForgotPasswordProps) {
     }
   };
 
-  const getStepColor = () => {
-    switch (currentStep) {
-      case 'email': return 'bg-orange-600 text-orange-600';
-      case 'reset': return 'bg-blue-600 text-blue-600';
-      case 'success': return 'bg-green-600 text-green-600';
-      default: return 'bg-gray-500 text-gray-600';
-    }
-  };
-
   const getStepBgColor = () => {
     switch (currentStep) {
       case 'email': return 'bg-orange-600';
@@ -426,8 +417,6 @@ export default function ForgotPassword({ onBackToLogin }: ForgotPasswordProps) {
       default: return 'text-gray-600';
     }
   };
-
-  const getStepProgressColor = () => 'bg-orange-600';
 
   const getStepProgressWidth = () => {
     switch (currentStep) {

@@ -50,10 +50,22 @@ export default function AdminDashboard() {
   }
 
   const statCards = [
-    { label: 'Utilisateurs', value: stats.totalUsers, icon: '👥', color: 'bg-blue-500', subLabel: `${stats.activeUsers} actifs` },
-    { label: 'Opérations', value: stats.totalOperations, icon: '📱', color: 'bg-green-500', subLabel: `${stats.successfulOperations} réussies` },
-    { label: 'En attente', value: stats.pendingOperations, icon: '⏳', color: 'bg-yellow-500', subLabel: `${stats.failedOperations} échecs` },
-    { label: 'Revenus', value: `${stats.totalRevenue.toFixed(0)}`, icon: '💰', color: 'bg-purple-500', subLabel: `${stats.totalRefunds.toFixed(0)} remboursés` },
+    {
+      label: 'Utilisateurs', value: stats.totalUsers, color: 'bg-blue-500', subLabel: `${stats.activeUsers} actifs`,
+      icon: <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>,
+    },
+    {
+      label: 'Opérations', value: stats.totalOperations, color: 'bg-green-500', subLabel: `${stats.successfulOperations} réussies`,
+      icon: <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>,
+    },
+    {
+      label: 'En attente', value: stats.pendingOperations, color: 'bg-yellow-500', subLabel: `${stats.failedOperations} échecs`,
+      icon: <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+    },
+    {
+      label: 'Revenus', value: `${stats.totalRevenue.toFixed(0)}`, color: 'bg-purple-500', subLabel: `${stats.totalRefunds.toFixed(0)} remboursés`,
+      icon: <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+    },
   ];
 
   return (
@@ -63,7 +75,7 @@ export default function AdminDashboard() {
         {statCards.map((card, index) => (
           <div key={index} className="bg-white rounded-xl shadow-md p-6">
             <div className="flex items-center justify-between mb-4">
-              <div className={`w-12 h-12 ${card.color} rounded-lg flex items-center justify-center text-2xl text-white`}>
+              <div className={`w-12 h-12 ${card.color} rounded-lg flex items-center justify-center`}>
                 {card.icon}
               </div>
               <span className="text-3xl font-bold text-gray-900">{card.value}</span>
@@ -163,19 +175,19 @@ export default function AdminDashboard() {
           <h3 className="text-lg font-bold text-gray-900 mb-4">Chiffre d'Affaires</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* CA Brut */}
-            <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white">
+            <div className="bg-green-600 rounded-xl p-6 text-white">
               <p className="text-sm opacity-80">Dépôts réussis</p>
               <p className="text-3xl font-bold mt-2">${Number(finance.chiffreAffaires.deposits.total).toFixed(2)}</p>
               <p className="text-sm opacity-80 mt-1">{finance.chiffreAffaires.deposits.count} transactions</p>
             </div>
             {/* Remboursements */}
-            <div className="bg-gradient-to-br from-red-500 to-red-600 rounded-xl p-6 text-white">
+            <div className="bg-red-600 rounded-xl p-6 text-white">
               <p className="text-sm opacity-80">Remboursements</p>
               <p className="text-3xl font-bold mt-2">${Number(finance.chiffreAffaires.refunds.total).toFixed(2)}</p>
               <p className="text-sm opacity-80 mt-1">{finance.chiffreAffaires.refunds.count} remboursements</p>
             </div>
             {/* CA Net */}
-            <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white">
+            <div className="bg-blue-600 rounded-xl p-6 text-white">
               <p className="text-sm opacity-80">Revenu Net</p>
               <p className="text-3xl font-bold mt-2">${Number(finance.chiffreAffaires.netRevenue).toFixed(2)}</p>
               <p className="text-sm opacity-80 mt-1">Taux succès: {finance.operations.successRate}%</p>

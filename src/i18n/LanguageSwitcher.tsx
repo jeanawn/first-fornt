@@ -146,7 +146,7 @@ export function LanguageSwitcher({
               className={`
                 w-full flex items-center space-x-3 px-4 py-3 text-left transition-colors
                 ${language === lang.code
-                  ? 'bg-gradient-to-r from-primary-50 to-secondary-50 text-primary-700'
+                  ? 'bg-primary-50 text-primary-700'
                   : 'text-gray-700 hover:bg-gray-50'
                 }
               `}

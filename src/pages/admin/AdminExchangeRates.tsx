@@ -174,7 +174,7 @@ export default function AdminExchangeRates() {
 
       {/* Converter */}
       {showConverter && (
-        <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl p-6 border border-purple-200">
+        <div className="bg-indigo-50 rounded-xl p-6 border border-purple-200">
           <h3 className="text-lg font-bold text-purple-900 mb-4">💱 Convertisseur de devises</h3>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
             <div>

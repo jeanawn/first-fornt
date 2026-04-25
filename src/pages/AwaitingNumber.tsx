@@ -67,20 +67,20 @@ export default function AwaitingNumber({ country, service, onBack }: AwaitingNum
           </button>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">
-              Préparation en cours 📱
+              Préparation en cours
             </h1>
             <p className="text-gray-600 text-sm">Obtention du numéro virtuel</p>
           </div>
         </div>
 
         {/* Statut en cours */}
-        <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl p-6 text-white shadow-lg">
+        <div className="bg-blue-600 rounded-2xl p-6 text-white shadow-lg">
           <div className="text-center space-y-4">
             <div className="w-16 h-16 bg-white/20 rounded-xl flex items-center justify-center mx-auto backdrop-blur-sm">
               <LoadingSpinner size="md" color="white" />
             </div>
             <div>
-              <p className="text-white/80 text-sm font-medium">🔄 Opération en cours</p>
+              <p className="text-white/80 text-sm font-medium">Opération en cours</p>
               <p className="text-2xl font-bold">Obtention du numéro{dots}</p>
               <p className="text-white/90 text-sm mt-2">Cela peut prendre quelques instants</p>
             </div>
@@ -144,7 +144,7 @@ export default function AwaitingNumber({ country, service, onBack }: AwaitingNum
         </div>
 
         {/* Progression */}
-        <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-2xl p-6 border border-amber-200">
+        <div className="bg-amber-50 rounded-2xl p-6 border border-amber-200">
           <div className="flex items-start space-x-3">
             <div className="flex-shrink-0">
               <div className="w-10 h-10 bg-amber-500 rounded-xl flex items-center justify-center">
@@ -154,19 +154,21 @@ export default function AwaitingNumber({ country, service, onBack }: AwaitingNum
               </div>
             </div>
             <div>
-              <h4 className="font-semibold text-amber-900 mb-2">⚡ Étapes en cours</h4>
+              <h4 className="font-semibold text-amber-900 mb-2">Étapes en cours</h4>
               <div className="space-y-2 text-sm text-amber-800">
                 <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <p>✓ Commande validée</p>
+                  <svg className="w-3.5 h-3.5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <p>Commande validée</p>
                 </div>
                 <div className="flex items-center space-x-2">
                   <LoadingSpinner size="xs" />
-                  <p>🔄 Attribution du numéro en cours</p>
+                  <p>Attribution du numéro en cours</p>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-                  <p className="text-amber-600">⏳ En attente du SMS</p>
+                  <div className="w-2 h-2 bg-gray-300 rounded-full flex-shrink-0"></div>
+                  <p className="text-amber-600">En attente du SMS</p>
                 </div>
               </div>
             </div>
@@ -174,7 +176,7 @@ export default function AwaitingNumber({ country, service, onBack }: AwaitingNum
         </div>
 
         {/* Information rassurante */}
-        <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-200">
+        <div className="bg-green-50 rounded-2xl p-6 border border-green-200">
           <div className="flex items-start space-x-3">
             <div className="flex-shrink-0">
               <div className="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center">
@@ -184,7 +186,7 @@ export default function AwaitingNumber({ country, service, onBack }: AwaitingNum
               </div>
             </div>
             <div>
-              <h4 className="font-semibold text-green-900 mb-2">🛡️ Garantie automatique</h4>
+              <h4 className="font-semibold text-green-900 mb-2">Garantie automatique</h4>
               <p className="text-green-800 text-sm">
                 Si aucun numéro n'est attribué dans les 5 prochaines minutes,
                 votre solde sera automatiquement remboursé.

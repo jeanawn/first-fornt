@@ -87,26 +87,26 @@ export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: Nu
 
   const getStatusColor = () => {
     switch (phoneNumber.status) {
-      case 'PROCESSING': return 'from-blue-500 to-indigo-600';
-      case 'PENDING': return 'from-yellow-500 to-amber-600';
-      case 'SUCCESS': return 'from-green-500 to-emerald-600';
-      case 'FAILED': return 'from-red-500 to-red-600';
-      default: return 'from-gray-500 to-gray-600';
+      case 'PROCESSING': return 'bg-blue-600';
+      case 'PENDING': return 'bg-amber-500';
+      case 'SUCCESS': return 'bg-green-600';
+      case 'FAILED': return 'bg-red-600';
+      default: return 'bg-gray-500';
     }
   };
 
   const getStatusText = () => {
     switch (phoneNumber.status) {
-      case 'PROCESSING': return '🔄 Traitement';
-      case 'PENDING': return '⏳ En attente';
-      case 'SUCCESS': return '✅ Terminé';
-      case 'FAILED': return '❌ Échec';
+      case 'PROCESSING': return 'Traitement';
+      case 'PENDING': return 'En attente';
+      case 'SUCCESS': return 'Terminé';
+      case 'FAILED': return 'Échec';
       default: return phoneNumber.status;
     }
   };
 
   return (
-    <Layout>
+    <Layout showBottomNav>
       <div className="space-y-8 max-w-md mx-auto">
         {/* Header moderne avec bouton retour */}
         <div className="flex items-center space-x-4">
@@ -120,14 +120,14 @@ export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: Nu
           </button>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">
-              Numéro virtuel 📱
+              Numéro virtuel
             </h1>
             <p className="text-gray-600 text-sm">Créé le {formatCreationDate(phoneNumber.createdDate)}</p>
           </div>
         </div>
 
         {/* Statut */}
-        <div className={`bg-gradient-to-r ${getStatusColor()} rounded-2xl p-6 text-white shadow-lg`}>
+        <div className={`${getStatusColor()} rounded-2xl p-6 text-white shadow-lg`}>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-white/80 text-sm font-medium">Statut de l'opération</p>
@@ -193,8 +193,13 @@ export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: Nu
             </div>
 
             {/* Numéro de téléphone */}
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200">
-              <p className="text-blue-900 font-medium mb-2">📞 Numéro de téléphone</p>
+            <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+              <div className="flex items-center gap-1.5 mb-2">
+                <svg className="w-4 h-4 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+                <p className="text-blue-900 font-medium">Numéro de téléphone</p>
+              </div>
               <div className="flex items-center justify-between">
                 <p className="text-2xl font-mono font-bold text-blue-800">
                   {phoneNumber.number}
@@ -216,7 +221,7 @@ export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: Nu
               </div>
               {copied === 'number' && (
                 <p className="text-blue-700 text-sm mt-2 font-medium">
-                  ✓ Numéro copié !
+                  Numéro copié
                 </p>
               )}
             </div>
@@ -224,7 +229,12 @@ export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: Nu
             {/* Temps restant */}
             <div className="flex items-center justify-center p-4 bg-amber-50 rounded-xl border border-amber-200">
               <div className="text-center">
-                <p className="text-amber-900 font-medium mb-1">⏱️ Temps restant</p>
+                <div className="flex items-center gap-1.5 mb-1">
+                  <svg className="w-4 h-4 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <p className="text-amber-900 font-medium">Temps restant</p>
+                </div>
                 <p className="text-3xl font-mono font-bold text-amber-800">{timeRemaining}</p>
               </div>
             </div>
@@ -263,7 +273,7 @@ export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: Nu
           </div>
 
           {phoneNumber.smsCode && phoneNumber.status !== 'FAILED' ? (
-            <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 border-2 border-green-200">
+            <div className="bg-green-50 rounded-2xl p-6 border-2 border-green-200">
               <div className="text-center space-y-4">
                 <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto">
                   <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -271,7 +281,7 @@ export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: Nu
                   </svg>
                 </div>
                 <div>
-                  <h4 className="text-green-900 font-bold text-lg mb-2">🎉 Code reçu !</h4>
+                  <h4 className="text-green-900 font-bold text-lg mb-2">Code reçu</h4>
                   <div className="bg-white rounded-xl p-4 border border-green-300">
                     <p className="text-4xl font-mono font-bold text-green-800 mb-2">
                       {phoneNumber.smsCode}
@@ -326,8 +336,8 @@ export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: Nu
               </h4>
               <p className="text-blue-600 text-sm mb-4">
                 {phoneNumber.status === 'PROCESSING'
-                  ? '🔄 Attribution du numéro en cours...'
-                  : '⚡ Vérification automatique toutes les 10 secondes'
+                  ? 'Attribution du numéro en cours...'
+                  : 'Vérification automatique toutes les 10 secondes'
                 }
               </p>
               <div className="bg-blue-50 rounded-xl p-4 border border-blue-200 max-w-xs mx-auto">
@@ -343,7 +353,7 @@ export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: Nu
         </div>
 
         {/* Garantie de remboursement */}
-        <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-200 mb-6">
+        <div className="bg-green-50 rounded-2xl p-6 border border-green-200 mb-6">
           <div className="flex items-start space-x-3">
             <div className="flex-shrink-0">
               <div className="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center">
@@ -353,7 +363,12 @@ export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: Nu
               </div>
             </div>
             <div>
-              <h4 className="font-bold text-green-900 mb-2">🛡️ Garantie 100% Remboursement</h4>
+              <div className="flex items-center gap-2 mb-2">
+                <svg className="w-4 h-4 text-green-700 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+                <h4 className="font-bold text-green-900">Garantie 100% Remboursement</h4>
+              </div>
               <p className="text-green-800 text-sm leading-relaxed">
                 <strong>Aucun risque :</strong> Si vous ne recevez pas de code SMS dans les 15 minutes,
                 votre solde sera automatiquement remboursé. Pas besoin de contacter le support !
@@ -369,7 +384,7 @@ export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: Nu
         </div>
 
         {/* Instructions modernisées */}
-        <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-2xl p-6 border border-amber-200">
+        <div className="bg-amber-50 rounded-2xl p-6 border border-amber-200">
           <div className="flex items-start space-x-3">
             <div className="flex-shrink-0">
               <div className="w-10 h-10 bg-amber-500 rounded-xl flex items-center justify-center">

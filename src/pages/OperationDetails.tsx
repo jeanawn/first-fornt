@@ -77,14 +77,14 @@ export default function OperationDetails({ operationId, onBack }: OperationDetai
   };
 
   const getStatusColor = () => {
-    if (!operation) return 'from-gray-500 to-gray-600';
+    if (!operation) return 'bg-gray-500';
 
     switch (operation.status.toLowerCase()) {
-      case 'processing': return 'from-blue-500 to-indigo-600';
-      case 'pending': return 'from-yellow-500 to-amber-600';
-      case 'success': return 'from-green-500 to-emerald-600';
-      case 'failed': return 'from-red-500 to-red-600';
-      default: return 'from-gray-500 to-gray-600';
+      case 'processing': return 'bg-blue-600';
+      case 'pending': return 'bg-amber-500';
+      case 'success': return 'bg-green-600';
+      case 'failed': return 'bg-red-600';
+      default: return 'bg-gray-500';
     }
   };
 
@@ -92,29 +92,49 @@ export default function OperationDetails({ operationId, onBack }: OperationDetai
     if (!operation) return '';
 
     switch (operation.status.toLowerCase()) {
-      case 'processing': return '🔄 En cours';
-      case 'pending': return '⏳ En attente';
-      case 'success': return '✅ Terminé';
-      case 'failed': return '❌ Échec';
+      case 'processing': return 'En cours';
+      case 'pending': return 'En attente';
+      case 'success': return 'Terminé';
+      case 'failed': return 'Échec';
       default: return operation.status;
     }
   };
 
   const getStatusIcon = () => {
-    if (!operation) return '';
+    if (!operation) return null;
 
     switch (operation.status.toLowerCase()) {
-      case 'processing': return '🔄';
-      case 'pending': return '⏳';
-      case 'success': return '✅';
-      case 'failed': return '❌';
-      default: return '📱';
+      case 'processing': return (
+        <svg className="w-7 h-7 text-white animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+      );
+      case 'pending': return (
+        <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      );
+      case 'success': return (
+        <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+        </svg>
+      );
+      case 'failed': return (
+        <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      );
+      default: return (
+        <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+        </svg>
+      );
     }
   };
 
   if (loading) {
     return (
-      <Layout>
+      <Layout showBottomNav>
         <div className="max-w-md mx-auto mt-8">
           <div className="text-center py-12">
             <LoadingSpinner size="lg" />
@@ -127,7 +147,7 @@ export default function OperationDetails({ operationId, onBack }: OperationDetai
 
   if (!operation) {
     return (
-      <Layout>
+      <Layout showBottomNav>
         <div className="max-w-md mx-auto mt-8">
           <div className="text-center py-12">
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -152,7 +172,7 @@ export default function OperationDetails({ operationId, onBack }: OperationDetai
   }
 
   return (
-    <Layout>
+    <Layout showBottomNav>
       <div className="space-y-8 max-w-md mx-auto">
         {/* Header avec bouton retour */}
         <div className="flex items-center space-x-4">
@@ -173,14 +193,14 @@ export default function OperationDetails({ operationId, onBack }: OperationDetai
         </div>
 
         {/* Statut */}
-        <div className={`bg-gradient-to-r ${getStatusColor()} rounded-2xl p-6 text-white shadow-lg`}>
+        <div className={`${getStatusColor()} rounded-2xl p-6 text-white shadow-lg`}>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-white/80 text-sm font-medium">Statut de l'opération</p>
               <p className="text-2xl font-bold">{getStatusText()}</p>
             </div>
-            <div className="w-16 h-16 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-              <div className="text-3xl">{getStatusIcon()}</div>
+            <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center">
+              {getStatusIcon()}
             </div>
           </div>
         </div>
@@ -217,7 +237,9 @@ export default function OperationDetails({ operationId, onBack }: OperationDetai
             <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
-                  <span className="text-lg">🌍</span>
+                  <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
                 </div>
                 <div>
                   <p className="font-semibold text-gray-900">Pays</p>
@@ -245,8 +267,13 @@ export default function OperationDetails({ operationId, onBack }: OperationDetai
 
             {/* Numéro (si disponible) */}
             {operation.number && (
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200">
-                <p className="text-blue-900 font-medium mb-2">📞 Numéro de téléphone</p>
+              <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+                <div className="flex items-center gap-1.5 mb-2">
+                  <svg className="w-4 h-4 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                  <p className="text-blue-900 font-medium">Numéro de téléphone</p>
+                </div>
                 <div className="flex items-center justify-between">
                   <p className="text-2xl font-mono font-bold text-blue-800">
                     {operation.number}
@@ -268,7 +295,7 @@ export default function OperationDetails({ operationId, onBack }: OperationDetai
                 </div>
                 {copied === 'number' && (
                   <p className="text-blue-700 text-sm mt-2 font-medium">
-                    ✓ Numéro copié !
+                    Numéro copié
                   </p>
                 )}
               </div>
@@ -278,7 +305,12 @@ export default function OperationDetails({ operationId, onBack }: OperationDetai
             {(operation.status.toLowerCase() === 'pending' || operation.status.toLowerCase() === 'processing') && !isExpired && (
               <div className="flex items-center justify-center p-4 bg-amber-50 rounded-xl border border-amber-200">
                 <div className="text-center">
-                  <p className="text-amber-900 font-medium mb-1">⏱️ Temps restant</p>
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <svg className="w-4 h-4 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p className="text-amber-900 font-medium">Temps restant</p>
+                  </div>
                   <p className="text-3xl font-mono font-bold text-amber-800">{timeRemaining}</p>
                 </div>
               </div>
@@ -301,7 +333,7 @@ export default function OperationDetails({ operationId, onBack }: OperationDetai
               </div>
             </div>
 
-            <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 border-2 border-green-200">
+            <div className="bg-green-50 rounded-2xl p-6 border-2 border-green-200">
               <div className="text-center space-y-4">
                 <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto">
                   <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -309,7 +341,7 @@ export default function OperationDetails({ operationId, onBack }: OperationDetai
                   </svg>
                 </div>
                 <div>
-                  <h4 className="text-green-900 font-bold text-lg mb-2">🎉 Code reçu !</h4>
+                  <h4 className="text-green-900 font-bold text-lg mb-2">Code reçu</h4>
                   <div className="bg-white rounded-xl p-4 border border-green-300">
                     <p className="text-4xl font-mono font-bold text-green-800 mb-2">
                       {operation.sms}
@@ -354,8 +386,8 @@ export default function OperationDetails({ operationId, onBack }: OperationDetai
               </h4>
               <p className="text-blue-600 text-sm mb-4">
                 {operation.status.toLowerCase() === 'processing'
-                  ? '🔄 Attribution du numéro en cours...'
-                  : '⚡ Vérification automatique du SMS...'
+                  ? 'Attribution du numéro en cours...'
+                  : 'Vérification automatique du SMS...'
                 }
               </p>
               <div className="bg-blue-50 rounded-xl p-4 border border-blue-200 max-w-xs mx-auto">

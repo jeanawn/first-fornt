@@ -99,7 +99,7 @@ export default function TermsOfService({ onBack }: TermsOfServiceProps) {
 
               <section className="mb-8">
                 <h2 className="text-2xl font-bold text-gray-900 font-montserrat mb-4">4. Utilisation acceptable</h2>
-                <div className="bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-lg p-6">
+                <div className="bg-red-50 border border-red-200 rounded-lg p-6">
                   <h3 className="text-xl font-bold text-red-900 font-montserrat mb-4">🚫 Utilisations interdites</h3>
                   <div className="grid md:grid-cols-2 gap-4">
                     <ul className="text-red-800 font-montserrat text-sm space-y-2">
@@ -219,7 +219,7 @@ export default function TermsOfService({ onBack }: TermsOfServiceProps) {
 
               <section className="mb-8">
                 <h2 className="text-2xl font-bold text-gray-900 font-montserrat mb-4">10. Contact et réclamations</h2>
-                <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-lg p-6">
+                <div className="bg-blue-50 rounded-lg p-6">
                   <p className="text-gray-700 font-montserrat mb-4">
                     Pour toute question concernant ces conditions ou pour signaler un problème :
                   </p>
@@ -237,7 +237,7 @@ export default function TermsOfService({ onBack }: TermsOfServiceProps) {
                 </div>
               </section>
 
-              <div className="bg-gradient-to-r from-primary-50 to-secondary-50 rounded-lg p-6 text-center">
+              <div className="bg-primary-50 rounded-lg p-6 text-center">
                 <p className="text-gray-700 font-montserrat">
                   <strong>Merci d'utiliser Xaary !</strong><br/>
                   En respectant ces conditions, vous contribuez à maintenir un service de qualité pour tous.

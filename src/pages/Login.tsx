@@ -60,7 +60,7 @@ export default function Login({ onLogin, onForgotPassword, onRegister, onBackToH
               />
             </div>
             <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary-800 bg-clip-text text-transparent font-montserrat">
+              <h1 className="text-4xl font-bold text-primary font-montserrat">
                 Xaary
               </h1>
               <p className="text-gray-600 text-lg mt-2 font-montserrat">
@@ -113,7 +113,7 @@ export default function Login({ onLogin, onForgotPassword, onRegister, onBackToH
               <button
                 type="submit"
                 disabled={isLoading || !emailOrUsername || !password}
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-4 px-6 rounded-2xl hover:from-blue-700 hover:to-purple-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg disabled:shadow-none"
+                className="w-full bg-blue-600 text-white font-bold py-4 px-6 rounded-2xl hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg disabled:shadow-none"
               >
                 <div className="flex items-center justify-center space-x-3">
                   {isLoading ? (

@@ -72,7 +72,7 @@ export default function Register({ onRegister, onBackToLogin }: RegisterProps) {
               />
             </div>
             <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary-800 bg-clip-text text-transparent font-montserrat">
+              <h1 className="text-4xl font-bold text-primary font-montserrat">
                 Créer un compte
               </h1>
               <p className="text-gray-600 text-lg mt-2 font-montserrat">
@@ -196,7 +196,7 @@ export default function Register({ onRegister, onBackToLogin }: RegisterProps) {
               <button
                 type="submit"
                 disabled={isLoading || !username || !email || !password || !confirmPassword}
-                className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold py-4 px-6 rounded-2xl hover:from-green-700 hover:to-emerald-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg disabled:shadow-none"
+                className="w-full bg-green-600 text-white font-bold py-4 px-6 rounded-2xl hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg disabled:shadow-none"
               >
                 <div className="flex items-center justify-center space-x-3">
                   {isLoading ? (
@@ -234,7 +234,7 @@ export default function Register({ onRegister, onBackToLogin }: RegisterProps) {
 
           {/* Information supplémentaire */}
           <div className="text-center">
-            <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-200">
+            <div className="bg-green-50 rounded-2xl p-6 border border-green-200">
               <div className="flex items-center justify-center space-x-2 mb-3">
                 <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
                   <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

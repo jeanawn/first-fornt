@@ -201,7 +201,7 @@ export default function BuyNumber({ onBuyNumber, onBack }: BuyNumberProps) {
   );
 
   return (
-    <Layout>
+    <Layout showBottomNav>
       <div className="space-y-8 max-w-md mx-auto">
         {/* Header */}
         <div className="flex items-center space-x-4">
@@ -295,7 +295,7 @@ export default function BuyNumber({ onBuyNumber, onBack }: BuyNumberProps) {
                     className="group w-full p-4 rounded-xl border-2 border-gray-200 bg-white hover:border-purple-300 hover:bg-purple-50 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] text-left"
                   >
                     <div className="flex items-center space-x-4">
-                      <div className="w-14 h-14 bg-gradient-to-br from-purple-100 to-indigo-100 rounded-xl flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                      <div className="w-14 h-14 bg-indigo-100 rounded-xl flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
                         <ImageWithFallback
                           src={service.logoUrl}
                           fallback={SERVICE_FALLBACKS[service.code] || '📱'}
@@ -335,7 +335,7 @@ export default function BuyNumber({ onBuyNumber, onBack }: BuyNumberProps) {
           /* ÉTAPE 2: Sélection du PAYS */
           <>
             {/* Service sélectionné */}
-            <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl p-6 border border-purple-200">
+            <div className="bg-indigo-50 rounded-2xl p-6 border border-purple-200">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center shadow-sm">
@@ -475,7 +475,7 @@ export default function BuyNumber({ onBuyNumber, onBack }: BuyNumberProps) {
 
             {/* Instructions */}
             {!isLoadingCountries && filteredCountries.length > 0 && (
-              <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-2xl p-6 border border-amber-200">
+              <div className="bg-amber-50 rounded-2xl p-6 border border-amber-200">
                 <div className="flex items-start space-x-3">
                   <div className="w-10 h-10 bg-amber-500 rounded-xl flex items-center justify-center flex-shrink-0">
                     <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

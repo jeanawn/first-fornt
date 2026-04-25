@@ -143,7 +143,7 @@ export default function ForgotPassword({ onBackToLogin }: ForgotPasswordProps) {
         <button
           type="submit"
           disabled={isLoading || !email}
-          className="w-full bg-gradient-to-r from-orange-600 to-red-600 text-white font-bold py-4 px-6 rounded-2xl hover:from-orange-700 hover:to-red-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg disabled:shadow-none"
+          className="w-full bg-orange-600 text-white font-bold py-4 px-6 rounded-2xl hover:bg-orange-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg disabled:shadow-none"
         >
           <div className="flex items-center justify-center space-x-3">
             {isLoading ? (
@@ -295,7 +295,7 @@ export default function ForgotPassword({ onBackToLogin }: ForgotPasswordProps) {
         <button
           type="submit"
           disabled={isLoading || otpCode.length !== 6 || !newPassword || !confirmPassword || newPassword !== confirmPassword}
-          className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold py-4 px-6 rounded-2xl hover:from-green-700 hover:to-emerald-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg disabled:shadow-none"
+          className="w-full bg-green-600 text-white font-bold py-4 px-6 rounded-2xl hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg disabled:shadow-none"
         >
           <div className="flex items-center justify-center space-x-3">
             {isLoading ? (
@@ -320,7 +320,7 @@ export default function ForgotPassword({ onBackToLogin }: ForgotPasswordProps) {
   // Étape 4 : Succès
   const renderSuccessStep = () => (
     <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100 text-center space-y-6">
-      <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-lg">
+      <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto shadow-lg">
         <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
         </svg>
@@ -349,7 +349,7 @@ export default function ForgotPassword({ onBackToLogin }: ForgotPasswordProps) {
 
       <button
         onClick={onBackToLogin}
-        className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-4 px-6 rounded-2xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg"
+        className="w-full bg-blue-600 text-white font-bold py-4 px-6 rounded-2xl hover:bg-blue-700 transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg"
       >
         <div className="flex items-center justify-center space-x-2">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -402,12 +402,32 @@ export default function ForgotPassword({ onBackToLogin }: ForgotPasswordProps) {
 
   const getStepColor = () => {
     switch (currentStep) {
-      case 'email': return 'from-orange-500 to-red-600';
-      case 'reset': return 'from-blue-500 to-indigo-600';
-      case 'success': return 'from-green-500 to-emerald-600';
-      default: return 'from-gray-500 to-gray-600';
+      case 'email': return 'bg-orange-600 text-orange-600';
+      case 'reset': return 'bg-blue-600 text-blue-600';
+      case 'success': return 'bg-green-600 text-green-600';
+      default: return 'bg-gray-500 text-gray-600';
     }
   };
+
+  const getStepBgColor = () => {
+    switch (currentStep) {
+      case 'email': return 'bg-orange-600';
+      case 'reset': return 'bg-blue-600';
+      case 'success': return 'bg-green-600';
+      default: return 'bg-gray-500';
+    }
+  };
+
+  const getStepTextColor = () => {
+    switch (currentStep) {
+      case 'email': return 'text-orange-600';
+      case 'reset': return 'text-blue-600';
+      case 'success': return 'text-green-600';
+      default: return 'text-gray-600';
+    }
+  };
+
+  const getStepProgressColor = () => 'bg-orange-600';
 
   const getStepProgressWidth = () => {
     switch (currentStep) {
@@ -425,18 +445,18 @@ export default function ForgotPassword({ onBackToLogin }: ForgotPasswordProps) {
           {/* Progress Bar */}
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div
-              className="bg-gradient-to-r from-orange-500 to-red-600 h-2 rounded-full transition-all duration-500 ease-out"
+              className="bg-orange-600 h-2 rounded-full transition-all duration-500 ease-out"
               style={{ width: getStepProgressWidth() }}
             ></div>
           </div>
 
           {/* Header */}
           <div className="text-center space-y-4">
-            <div className={`w-20 h-20 bg-gradient-to-br ${getStepColor()} rounded-3xl mx-auto flex items-center justify-center shadow-xl`}>
+            <div className={`w-20 h-20 ${getStepBgColor()} rounded-3xl mx-auto flex items-center justify-center shadow-xl`}>
               {getStepIcon()}
             </div>
             <div>
-              <h1 className={`text-4xl font-bold bg-gradient-to-r ${getStepColor().replace('to-br', 'to-r')} bg-clip-text text-transparent`}>
+              <h1 className={`text-4xl font-bold ${getStepTextColor()}`}>
                 {getStepTitle()}
               </h1>
               <p className="text-gray-600 text-lg mt-2">
@@ -470,7 +490,7 @@ export default function ForgotPassword({ onBackToLogin }: ForgotPasswordProps) {
           {/* Information supplémentaire - Only show on email step */}
           {currentStep === 'email' && (
             <div className="text-center">
-              <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-2xl p-6 border border-orange-200">
+              <div className="bg-orange-50 rounded-2xl p-6 border border-orange-200">
                 <div className="flex items-center justify-center space-x-2 mb-3">
                   <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
                     <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

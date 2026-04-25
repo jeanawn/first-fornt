@@ -101,7 +101,7 @@ export default function PrivacyPolicy({ onBack }: PrivacyPolicyProps) {
 
               <section className="mb-8">
                 <h2 className="text-2xl font-bold text-gray-900 font-montserrat mb-4">4. Protection des données</h2>
-                <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-6">
+                <div className="bg-green-50 border border-green-200 rounded-lg p-6">
                   <div className="flex items-center mb-4">
                     <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mr-4">
                       <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

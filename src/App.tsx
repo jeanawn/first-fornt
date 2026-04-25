@@ -15,6 +15,8 @@ import TermsOfService from './pages/TermsOfService';
 import { AdminPanel } from './pages/admin';
 import ErrorNotification from './components/ErrorNotification';
 import { ToastContainer, useToast } from './components/Toast';
+import BottomNav from './components/BottomNav';
+import InstallPrompt from './components/InstallPrompt';
 import LoadingSpinner from './components/LoadingSpinner';
 import { authService } from './services/auth';
 import { operationsService } from './services/operations';
@@ -566,11 +568,23 @@ export default function App() {
     );
   };
 
+  const bottomNavPages = ['dashboard', 'buy-number', 'recharge', 'operation-details', 'number-details'];
+  const showBottomNav = !!user && bottomNavPages.includes(currentPage);
+
   return (
     <>
       {renderPage()}
       <ErrorNotification error={error} onClose={clearError} />
       <ToastContainer toasts={toasts} onClose={removeToast} />
+      {showBottomNav && (
+        <BottomNav
+          currentPage={currentPage}
+          onGoToDashboard={() => setCurrentPage('dashboard')}
+          onGoToBuyNumber={() => setCurrentPage('buy-number')}
+          onGoToRecharge={() => setCurrentPage('recharge')}
+        />
+      )}
+      <InstallPrompt />
     </>
   );
 }

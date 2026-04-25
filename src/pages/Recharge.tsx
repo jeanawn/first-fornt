@@ -91,7 +91,7 @@ export default function Recharge({ onRecharge, onBack }: RechargeProps) {
   };
 
   return (
-    <Layout>
+    <Layout showBottomNav>
       <div className="space-y-8 max-w-md mx-auto">
         {/* Header */}
         <div className="flex items-center space-x-4">
@@ -110,7 +110,7 @@ export default function Recharge({ onRecharge, onBack }: RechargeProps) {
         </div>
 
         {/* Info card */}
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200 shadow-sm">
+        <div className="bg-blue-50 rounded-2xl p-6 border border-blue-200 shadow-sm">
           <div className="flex items-start space-x-3">
             <div className="flex-shrink-0">
               <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center">
@@ -157,7 +157,7 @@ export default function Recharge({ onRecharge, onBack }: RechargeProps) {
                   onClick={() => setAmount(suggestedAmount.toString())}
                   className={`group p-4 rounded-xl border-2 text-center transition-all duration-200 hover:scale-105 active:scale-95 ${
                     amount === suggestedAmount.toString()
-                      ? 'border-green-500 bg-gradient-to-r from-green-50 to-emerald-50 shadow-md'
+                      ? 'border-green-500 bg-green-50 shadow-md'
                       : 'border-gray-200 bg-white hover:border-green-300 hover:bg-green-50'
                   }`}
                 >
@@ -190,7 +190,7 @@ export default function Recharge({ onRecharge, onBack }: RechargeProps) {
 
           {/* Conversion display */}
           {amount && parseFloat(amount) > 0 && (
-            <div className="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-2xl p-6 border border-orange-200 shadow-sm">
+            <div className="bg-orange-50 rounded-2xl p-6 border border-orange-200 shadow-sm">
               <div className="flex items-center space-x-3 mb-4">
                 <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
                   <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -242,7 +242,7 @@ export default function Recharge({ onRecharge, onBack }: RechargeProps) {
 
           {/* Summary */}
           {amount && amountXof && (
-            <div className="bg-gradient-to-r from-gray-50 to-white rounded-2xl p-6 border-2 border-gray-200 shadow-sm">
+            <div className="bg-gray-50 rounded-2xl p-6 border-2 border-gray-200 shadow-sm">
               <div className="flex items-center space-x-3 mb-4">
                 <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
                   <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -273,7 +273,7 @@ export default function Recharge({ onRecharge, onBack }: RechargeProps) {
             <button
               type="submit"
               disabled={isLoading || isConverting || !amount || parseFloat(amount) < 1}
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-4 px-6 rounded-2xl hover:from-blue-700 hover:to-purple-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg disabled:shadow-none"
+              className="w-full bg-blue-600 text-white font-bold py-4 px-6 rounded-2xl hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg disabled:shadow-none"
             >
               <div className="flex items-center justify-center space-x-3">
                 {isLoading ? (

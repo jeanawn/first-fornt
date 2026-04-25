@@ -15,22 +15,38 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
 
   const features = [
     {
-      icon: "🌍",
+      icon: (
+        <svg className="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      ),
       title: t.landing.features.coverage.title,
       description: t.landing.features.coverage.description,
     },
     {
-      icon: "⚡",
+      icon: (
+        <svg className="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+      ),
       title: t.landing.features.instant.title,
       description: t.landing.features.instant.description,
     },
     {
-      icon: "🔒",
+      icon: (
+        <svg className="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        </svg>
+      ),
       title: t.landing.features.secure.title,
       description: t.landing.features.secure.description,
     },
     {
-      icon: "💰",
+      icon: (
+        <svg className="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      ),
       title: t.landing.features.pricing.title,
       description: t.landing.features.pricing.description,
     }
@@ -86,20 +102,20 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
       </header>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary-50 to-secondary-50 py-20">
+      <section className="relative overflow-hidden bg-primary-50 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             {/* Badge */}
             <div className="inline-flex items-center bg-white rounded-full px-6 py-2 shadow-md mb-8">
               <span className="text-primary font-montserrat font-semibold text-sm">
-                🚀 {t.landing.hero.badge}
+                {t.landing.hero.badge}
               </span>
             </div>
 
             {/* Main Heading */}
             <h1 className="text-5xl md:text-6xl font-black text-gray-900 font-montserrat mb-6 leading-tight">
               {t.landing.hero.title}{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
+              <span className="text-primary">
                 Xaary
               </span>
             </h1>
@@ -113,7 +129,7 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
               <button
                 onClick={onGoToRegister}
-                className="w-full sm:w-auto bg-gradient-to-r from-primary to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white px-8 py-4 rounded-2xl font-montserrat font-bold text-lg transition-all duration-300 hover:scale-105 shadow-xl"
+                className="w-full sm:w-auto bg-primary hover:bg-primary-700 text-white px-8 py-4 rounded-2xl font-montserrat font-bold text-lg transition-all duration-300 hover:scale-105 shadow-xl"
               >
                 {t.landing.hero.cta}
               </button>
@@ -163,7 +179,7 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
               <div key={index} className="bg-gray-50 rounded-2xl p-8 text-center hover:bg-primary-50 transition-all duration-300 hover:scale-105 border border-gray-200">
-                <div className="text-4xl mb-4">{feature.icon}</div>
+                <div className="flex justify-center mb-4">{feature.icon}</div>
                 <h3 className="text-xl font-bold text-gray-900 font-montserrat mb-3">
                   {feature.title}
                 </h3>
@@ -190,7 +206,7 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
           </div>
 
           <div className="bg-white rounded-3xl shadow-xl border border-gray-200 overflow-hidden">
-            <div className="bg-gradient-to-r from-primary to-secondary p-8 text-center">
+            <div className="bg-primary-700 p-8 text-center">
               <p className="text-primary-100 font-montserrat text-lg mb-2">
                 {t.landing.pricing.startingFrom}
               </p>
@@ -241,7 +257,7 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
 
               <button
                 onClick={onGoToRegister}
-                className="w-full bg-gradient-to-r from-primary to-secondary text-white py-4 rounded-2xl font-montserrat font-bold text-lg transition-all duration-300 hover:scale-[1.02] shadow-lg hover:shadow-xl"
+                className="w-full bg-primary hover:bg-primary-700 text-white py-4 rounded-2xl font-montserrat font-bold text-lg transition-all duration-300 hover:scale-[1.02] shadow-lg hover:shadow-xl"
               >
                 {t.landing.pricing.cta}
               </button>
@@ -251,7 +267,7 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-primary to-secondary">
+      <section className="py-20 bg-primary-700">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl font-black text-white font-montserrat mb-6">
             {t.landing.cta.title}

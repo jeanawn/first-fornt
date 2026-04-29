@@ -177,19 +177,19 @@ export default function AdminDashboard() {
             {/* CA Brut */}
             <div className="bg-green-600 rounded-xl p-6 text-white">
               <p className="text-sm opacity-80">Dépôts réussis</p>
-              <p className="text-3xl font-bold mt-2">${Number(finance.chiffreAffaires.deposits.total).toFixed(2)}</p>
+              <p className="text-3xl font-bold mt-2">{Number(finance.chiffreAffaires.deposits.total).toLocaleString()} FCFA</p>
               <p className="text-sm opacity-80 mt-1">{finance.chiffreAffaires.deposits.count} transactions</p>
             </div>
             {/* Remboursements */}
             <div className="bg-red-600 rounded-xl p-6 text-white">
               <p className="text-sm opacity-80">Remboursements</p>
-              <p className="text-3xl font-bold mt-2">${Number(finance.chiffreAffaires.refunds.total).toFixed(2)}</p>
+              <p className="text-3xl font-bold mt-2">{Number(finance.chiffreAffaires.refunds.total).toLocaleString()} FCFA</p>
               <p className="text-sm opacity-80 mt-1">{finance.chiffreAffaires.refunds.count} remboursements</p>
             </div>
             {/* CA Net */}
             <div className="bg-blue-600 rounded-xl p-6 text-white">
               <p className="text-sm opacity-80">Revenu Net</p>
-              <p className="text-3xl font-bold mt-2">${Number(finance.chiffreAffaires.netRevenue).toFixed(2)}</p>
+              <p className="text-3xl font-bold mt-2">{Number(finance.chiffreAffaires.netRevenue).toLocaleString()} FCFA</p>
               <p className="text-sm opacity-80 mt-1">Taux succès: {finance.operations.successRate}%</p>
             </div>
           </div>
@@ -198,22 +198,22 @@ export default function AdminDashboard() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
             <div className="p-4 bg-yellow-50 rounded-lg">
               <p className="text-sm text-yellow-700">En attente</p>
-              <p className="text-xl font-bold text-yellow-800">${Number(finance.transactions.pending.total).toFixed(2)}</p>
+              <p className="text-xl font-bold text-yellow-800">{Number(finance.transactions.pending.total).toLocaleString()} FCFA</p>
               <p className="text-xs text-yellow-600">{finance.transactions.pending.count} transactions</p>
             </div>
             <div className="p-4 bg-red-50 rounded-lg">
               <p className="text-sm text-red-700">Échouées</p>
-              <p className="text-xl font-bold text-red-800">${Number(finance.transactions.failed.total).toFixed(2)}</p>
+              <p className="text-xl font-bold text-red-800">{Number(finance.transactions.failed.total).toLocaleString()} FCFA</p>
               <p className="text-xs text-red-600">{finance.transactions.failed.count} transactions</p>
             </div>
             <div className="p-4 bg-green-50 rounded-lg">
               <p className="text-sm text-green-700">Revenus SMS</p>
-              <p className="text-xl font-bold text-green-800">${Number(finance.operations.successful.revenue).toFixed(2)}</p>
+              <p className="text-xl font-bold text-green-800">{Number(finance.operations.successful.revenue).toLocaleString()} FCFA</p>
               <p className="text-xs text-green-600">{finance.operations.successful.count} opérations</p>
             </div>
             <div className="p-4 bg-purple-50 rounded-lg">
               <p className="text-sm text-purple-700">Soldes utilisateurs</p>
-              <p className="text-xl font-bold text-purple-800">${Number(finance.userBalances.total).toFixed(2)}</p>
+              <p className="text-xl font-bold text-purple-800">{Number(finance.userBalances.total).toLocaleString()} FCFA</p>
               <p className="text-xs text-purple-600">Total en compte</p>
             </div>
           </div>

@@ -137,7 +137,7 @@ export default function AwaitingNumber({ country, service, onBack }: AwaitingNum
                 </div>
               </div>
               <div className="text-right">
-                <p className="font-semibold text-gray-900">{service.price.toFixed(2)} $</p>
+                <p className="font-semibold text-gray-900">{service.price.toLocaleString()} FCFA</p>
               </div>
             </div>
           </div>

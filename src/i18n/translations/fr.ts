@@ -263,15 +263,15 @@ export const fr = {
     fetchingInfo: 'Récupération des informations de transaction',
     success: {
       title: 'Paiement réussi !',
-      message: 'Votre recharge de {amount} $ a été confirmée',
+      message: 'Votre recharge de {amount} FCFA a été confirmée',
     },
     failed: {
       title: 'Paiement échoué',
-      message: 'Le paiement de {amount} $ n\'a pas pu être traité',
+      message: 'Le paiement de {amount} FCFA n\'a pas pu être traité',
     },
     pending: {
       title: 'Paiement en cours...',
-      message: 'Vérification du paiement de {amount} $',
+      message: 'Vérification du paiement de {amount} FCFA',
     },
     details: {
       title: 'Détails de la transaction',

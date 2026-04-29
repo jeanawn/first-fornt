@@ -139,8 +139,8 @@ export default function AdminUsers() {
                       </td>
                       <td className="px-4 py-3 text-gray-600">{user.email}</td>
                       <td className="px-4 py-3 text-right">
-                        <span className="font-semibold text-green-600">{user.balance.toFixed(0)}</span>
-                        <span className="text-gray-400 text-sm ml-1">$</span>
+                        <span className="font-semibold text-green-600">{user.balance.toLocaleString()}</span>
+                        <span className="text-gray-400 text-sm ml-1">FCFA</span>
                       </td>
                       <td className="px-4 py-3 text-center">
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${

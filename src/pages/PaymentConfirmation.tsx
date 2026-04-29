@@ -185,7 +185,7 @@ export default function PaymentConfirmation({
               Paiement réussi !
             </h1>
             <p className="text-lg text-gray-600">
-              Votre compte a été crédité de <strong>{fedapayDeposit.amountUsd}$</strong>
+              Votre compte a été crédité de <strong>{Number(fedapayDeposit.amount || 0).toLocaleString()} FCFA</strong>
             </p>
           </div>
         </>
@@ -288,7 +288,7 @@ export default function PaymentConfirmation({
           <div className="text-center space-y-4">
             <h1 className="text-3xl font-bold text-green-600">Paiement réussi !</h1>
             <p className="text-lg text-gray-600">
-              Votre recharge de <strong>{Number(transaction.amount || 0).toFixed(2)} $</strong> a été confirmée
+              Votre recharge de <strong>{Number(transaction.amount || 0).toLocaleString()} FCFA</strong> a été confirmée
             </p>
           </div>
         </>
@@ -368,12 +368,8 @@ export default function PaymentConfirmation({
                 <div className="bg-orange-50 rounded-2xl p-6 border border-orange-200">
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-orange-700 font-medium">Montant USD</span>
-                      <span className="font-bold text-orange-900 text-lg">{fedapayDeposit.amountUsd}$</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-orange-700 font-medium">Montant XOF</span>
-                      <span className="font-bold text-orange-900">{Number(fedapayDeposit.amountXof || 0).toLocaleString()} XOF</span>
+                      <span className="text-orange-700 font-medium">Montant</span>
+                      <span className="font-bold text-orange-900 text-lg">{Number(fedapayDeposit.amount || 0).toLocaleString()} FCFA</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-orange-700 font-medium">Statut</span>

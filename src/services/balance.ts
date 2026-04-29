@@ -15,24 +15,15 @@ export interface LoadBalanceResponse extends ApiResponse {
 }
 
 // FedaPay interfaces
-export interface ConvertCurrencyResponse {
-  amountUsd: number;
-  amountXof: number;
-  rate: number;
-  currency: string;
-}
-
 export interface CreateFedapayDepositRequest {
-  amountUsd: number;
+  amount: number;
   description?: string;
 }
 
 export interface FedapayDepositResponse {
   success: boolean;
   depositId: string;
-  amountUsd: number;
-  amountXof: number;
-  exchangeRate: number;
+  amount: number;
   paymentUrl: string;
   status: string;
 }
@@ -40,9 +31,7 @@ export interface FedapayDepositResponse {
 export interface FedapayDeposit {
   id: string;
   userId: string;
-  amountUsd: number;
-  amountXof: number;
-  exchangeRate: number;
+  amount: number;
   fedapayTransactionId: string;
   fedapayReference: string;
   status: 'pending' | 'approved' | 'declined' | 'canceled' | 'refunded' | 'transferred';
@@ -69,13 +58,6 @@ class BalanceService {
   }
 
   // FedaPay methods
-  async convertToXof(amountUsd: number): Promise<ConvertCurrencyResponse> {
-    const response = await apiService.get<ConvertCurrencyResponse>(
-      `/fedapay/convert?amount=${amountUsd}`
-    );
-    return response;
-  }
-
   async createFedapayDeposit(request: CreateFedapayDepositRequest): Promise<FedapayDepositResponse> {
     const response = await apiService.post<FedapayDepositResponse>('/fedapay/deposit', request);
     return response;

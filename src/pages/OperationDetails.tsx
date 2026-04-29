@@ -135,7 +135,18 @@ export default function OperationDetails({ operationId, onBack }: OperationDetai
   if (loading) {
     return (
       <Layout showBottomNav>
-        <div className="max-w-md mx-auto mt-8">
+        <div className="space-y-8 max-w-md mx-auto">
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={onBack}
+              className="p-3 bg-white rounded-xl shadow-md border border-gray-200 hover:shadow-lg hover:scale-105 transition-all duration-200 active:scale-95"
+            >
+              <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <h1 className="text-2xl font-bold text-gray-900">Détails</h1>
+          </div>
           <div className="text-center py-12">
             <LoadingSpinner size="lg" />
             <p className="mt-4 text-gray-600">Chargement des détails...</p>
@@ -259,7 +270,7 @@ export default function OperationDetails({ operationId, onBack }: OperationDetai
                 <div>
                   <p className="font-semibold text-gray-900">Prix</p>
                   <p className="text-gray-600 text-sm">
-                    {operation.price && !isNaN(operation.price) ? `${operation.price.toFixed(2)} $` : 'N/A'}
+                    {operation.price && !isNaN(operation.price) ? `${operation.price.toLocaleString()} FCFA` : 'N/A'}
                   </p>
                 </div>
               </div>

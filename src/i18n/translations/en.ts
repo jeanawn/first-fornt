@@ -265,15 +265,15 @@ export const en: Translations = {
     fetchingInfo: 'Fetching transaction information',
     success: {
       title: 'Payment successful!',
-      message: 'Your top-up of ${amount} has been confirmed',
+      message: 'Your top-up of {amount} FCFA has been confirmed',
     },
     failed: {
       title: 'Payment failed',
-      message: 'The payment of ${amount} could not be processed',
+      message: 'The payment of {amount} FCFA could not be processed',
     },
     pending: {
       title: 'Payment in progress...',
-      message: 'Verifying payment of ${amount}',
+      message: 'Verifying payment of {amount} FCFA',
     },
     details: {
       title: 'Transaction details',

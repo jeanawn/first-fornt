@@ -211,8 +211,8 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
                 {t.landing.pricing.startingFrom}
               </p>
               <div className="flex items-center justify-center">
-                <span className="text-7xl font-black text-white font-montserrat">2</span>
-                <span className="text-4xl font-bold text-white font-montserrat ml-2">$</span>
+                <span className="text-5xl font-black text-white font-montserrat">1 000</span>
+                <span className="text-3xl font-bold text-white font-montserrat ml-2">FCFA</span>
               </div>
               <p className="text-primary-100 font-montserrat text-lg mt-2">
                 {t.landing.pricing.perNumber}

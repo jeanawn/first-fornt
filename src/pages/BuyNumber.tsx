@@ -318,7 +318,7 @@ export default function BuyNumber({ onBuyNumber, onBack }: BuyNumberProps) {
                           <span>{service.countriesCount} {t.buyNumber.step1.countries}</span>
                           <span>•</span>
                           <span className="text-purple-600 font-semibold">
-                            {t.buyNumber.step1.startingFrom} {service.minPrice.toFixed(2)} $
+                            {t.buyNumber.step1.startingFrom} {service.minPrice.toLocaleString()} FCFA
                           </span>
                         </div>
                       </div>
@@ -455,7 +455,7 @@ export default function BuyNumber({ onBuyNumber, onBack }: BuyNumberProps) {
                           </div>
                           <div className="flex items-center space-x-3">
                             <div className="bg-green-100 text-green-700 px-3 py-1.5 rounded-xl font-bold">
-                              {country.price.toFixed(2)} $
+                              {country.price.toLocaleString()} FCFA
                             </div>
                             {isProcessing ? (
                               <LoadingSpinner size="sm" />

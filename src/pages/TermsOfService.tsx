@@ -125,7 +125,7 @@ export default function TermsOfService({ onBack }: TermsOfServiceProps) {
                     <h3 className="font-semibold text-blue-900 font-montserrat mb-2">💳 Paiements</h3>
                     <ul className="text-blue-800 font-montserrat text-sm space-y-1">
                       <li>• Paiement requis avant utilisation</li>
-                      <li>• Tarifs affichés en dollars ($)</li>
+                      <li>• Tarifs affichés en FCFA</li>
                       <li>• Paiements sécurisés par SSL</li>
                       <li>• Pas de frais cachés</li>
                     </ul>

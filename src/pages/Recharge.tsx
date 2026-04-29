@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import Layout from '../components/Layout';
 import Input from '../components/Input';
 import { balanceService } from '../services/balance';
@@ -12,59 +12,17 @@ interface RechargeProps {
 export default function Recharge({ onRecharge, onBack }: RechargeProps) {
   usePageTitle(PAGE_TITLES.recharge);
   const [amount, setAmount] = useState('');
-  const [amountXof, setAmountXof] = useState<number | null>(null);
-  const [exchangeRate, setExchangeRate] = useState<number | null>(null);
-  const [isConverting, setIsConverting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const suggestedAmounts = [5, 10, 20];
-
-  // Debounced conversion
-  const convertAmount = useCallback(async (amountUsd: number) => {
-    if (amountUsd <= 0) {
-      setAmountXof(null);
-      setExchangeRate(null);
-      return;
-    }
-
-    setIsConverting(true);
-    setError(null);
-
-    try {
-      const result = await balanceService.convertToXof(amountUsd);
-      setAmountXof(result.amountXof);
-      setExchangeRate(result.rate);
-    } catch (err) {
-      console.error('Conversion error:', err);
-      setError('Erreur lors de la conversion');
-      setAmountXof(null);
-    } finally {
-      setIsConverting(false);
-    }
-  }, []);
-
-  // Effect to convert when amount changes
-  useEffect(() => {
-    const amountNum = parseFloat(amount);
-    if (!isNaN(amountNum) && amountNum > 0) {
-      const timeoutId = setTimeout(() => {
-        convertAmount(amountNum);
-      }, 300); // Debounce 300ms
-
-      return () => clearTimeout(timeoutId);
-    } else {
-      setAmountXof(null);
-      setExchangeRate(null);
-    }
-  }, [amount, convertAmount]);
+  const suggestedAmounts = [1000, 5000, 10000];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const amountNum = parseFloat(amount);
 
-    if (isNaN(amountNum) || amountNum < 1) {
-      setError('Veuillez entrer un montant valide (minimum 1$)');
+    if (isNaN(amountNum) || amountNum < 500) {
+      setError('Veuillez entrer un montant valide (minimum 500 FCFA)');
       return;
     }
 
@@ -73,8 +31,8 @@ export default function Recharge({ onRecharge, onBack }: RechargeProps) {
 
     try {
       const response = await balanceService.createFedapayDeposit({
-        amountUsd: amountNum,
-        description: `Recharge de ${amountNum}$`,
+        amount: amountNum,
+        description: `Recharge de ${amountNum} FCFA`,
       });
 
       if (response.success && response.paymentUrl) {
@@ -122,8 +80,8 @@ export default function Recharge({ onRecharge, onBack }: RechargeProps) {
             <div>
               <h4 className="font-semibold text-blue-900 mb-1">Information</h4>
               <p className="text-sm text-blue-800">
-                Entrez le montant en <strong>USD ($)</strong> que vous souhaitez recharger.
-                Vous serez redirigé vers FedaPay pour effectuer le paiement en <strong>XOF</strong>.
+                Entrez le montant en <strong>FCFA</strong> que vous souhaitez recharger.
+                Vous serez redirigé vers FedaPay pour effectuer le paiement.
               </p>
             </div>
           </div>
@@ -161,11 +119,12 @@ export default function Recharge({ onRecharge, onBack }: RechargeProps) {
                       : 'border-gray-200 bg-white hover:border-green-300 hover:bg-green-50'
                   }`}
                 >
-                  <div className={`text-2xl font-bold ${
+                  <div className={`text-lg font-bold ${
                     amount === suggestedAmount.toString() ? 'text-green-700' : 'text-gray-900'
                   }`}>
-                    {suggestedAmount}$
+                    {suggestedAmount.toLocaleString()}
                   </div>
+                  <div className="text-xs text-gray-500 mt-1">FCFA</div>
                 </button>
               ))}
             </div>
@@ -173,75 +132,23 @@ export default function Recharge({ onRecharge, onBack }: RechargeProps) {
             {/* Custom amount input */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Ou saisir un montant personnalisé (USD)
+                Ou saisir un montant personnalisé (FCFA)
               </label>
               <Input
                 type="number"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                placeholder="Ex: 15"
-                min="1"
-                step="1"
+                placeholder="Ex: 2000"
+                min="500"
+                step="100"
                 required
                 className="text-center text-lg font-semibold"
               />
             </div>
           </div>
 
-          {/* Conversion display */}
-          {amount && parseFloat(amount) > 0 && (
-            <div className="bg-orange-50 rounded-2xl p-6 border border-orange-200 shadow-sm">
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-bold text-gray-900">Conversion</h3>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-gray-900">{parseFloat(amount)}$</div>
-                  <div className="text-sm text-gray-600">USD</div>
-                </div>
-
-                <div className="flex items-center justify-center px-4">
-                  {isConverting ? (
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-500"></div>
-                  ) : (
-                    <svg className="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                    </svg>
-                  )}
-                </div>
-
-                <div className="text-center">
-                  {isConverting ? (
-                    <div className="text-2xl font-bold text-gray-400">...</div>
-                  ) : amountXof !== null ? (
-                    <>
-                      <div className="text-3xl font-bold text-orange-600">
-                        {amountXof.toLocaleString()}
-                      </div>
-                      <div className="text-sm text-gray-600">XOF</div>
-                    </>
-                  ) : (
-                    <div className="text-2xl font-bold text-gray-400">--</div>
-                  )}
-                </div>
-              </div>
-
-              {exchangeRate && (
-                <div className="mt-4 text-center text-sm text-gray-600">
-                  Taux: 1 USD = {exchangeRate.toLocaleString()} XOF
-                </div>
-              )}
-            </div>
-          )}
-
           {/* Summary */}
-          {amount && amountXof && (
+          {amount && parseFloat(amount) >= 500 && (
             <div className="bg-gray-50 rounded-2xl p-6 border-2 border-gray-200 shadow-sm">
               <div className="flex items-center space-x-3 mb-4">
                 <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -253,16 +160,12 @@ export default function Recharge({ onRecharge, onBack }: RechargeProps) {
               </div>
               <div className="space-y-3">
                 <div className="flex justify-between items-center py-2">
-                  <span className="text-gray-600">Vous payez</span>
-                  <span className="font-bold text-lg text-green-600">{parseFloat(amount)}$</span>
-                </div>
-                <div className="flex justify-between items-center py-2">
-                  <span className="text-gray-600">Montant FedaPay</span>
-                  <span className="font-bold text-lg text-orange-600">{amountXof.toLocaleString()} XOF</span>
+                  <span className="text-gray-600">Montant</span>
+                  <span className="font-bold text-lg text-green-600">{parseFloat(amount).toLocaleString()} FCFA</span>
                 </div>
                 <div className="flex justify-between items-center py-2 border-t border-gray-200 pt-3">
                   <span className="text-gray-600">Crédit sur votre compte</span>
-                  <span className="font-bold text-lg text-blue-600">{parseFloat(amount)}$</span>
+                  <span className="font-bold text-lg text-blue-600">{parseFloat(amount).toLocaleString()} FCFA</span>
                 </div>
               </div>
             </div>
@@ -272,7 +175,7 @@ export default function Recharge({ onRecharge, onBack }: RechargeProps) {
           <div className="pt-4">
             <button
               type="submit"
-              disabled={isLoading || isConverting || !amount || parseFloat(amount) < 1}
+              disabled={isLoading || !amount || parseFloat(amount) < 500}
               className="w-full bg-blue-600 text-white font-bold py-4 px-6 rounded-2xl hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg disabled:shadow-none"
             >
               <div className="flex items-center justify-center space-x-3">

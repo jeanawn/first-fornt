@@ -191,9 +191,9 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
               </p>
               <div className="flex items-baseline gap-2">
                 <span className="text-5xl font-bold tracking-tight text-white font-montserrat">
-                  {Number(user.balance || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
+                  {Number(user.balance || 0).toLocaleString()}
                 </span>
-                <span className="text-2xl font-medium text-gray-500 font-montserrat">$</span>
+                <span className="text-2xl font-medium text-gray-500 font-montserrat">FCFA</span>
               </div>
             </div>
             <button
@@ -355,7 +355,7 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
                         </p>
                         <div className="text-right">
                           <p className="text-sm font-semibold text-gray-700">
-                            {operation.price && !isNaN(Number(operation.price)) ? Number(operation.price).toFixed(2) + ' $' : '—'}
+                            {operation.price && !isNaN(Number(operation.price)) ? Number(operation.price).toLocaleString() + ' FCFA' : '—'}
                           </p>
                         </div>
                       </div>
@@ -454,7 +454,7 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
                         transaction.type === 'refund' ? 'text-blue-600' : 'text-red-600'
                       }`}>
                         {transaction.type === 'deposit' ? '+' :
-                         transaction.type === 'refund' ? '+' : '-'}{Number(transaction.amount || 0).toFixed(2)} $
+                         transaction.type === 'refund' ? '+' : '-'}{Number(transaction.amount || 0).toLocaleString()} FCFA
                       </p>
                       {transaction.reference && transaction.reference !== 'N/A' && (
                         <p className="text-xs text-gray-500 font-mono">

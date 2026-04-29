@@ -32,11 +32,11 @@ export const en: Translations = {
       register: 'Sign up',
     },
     hero: {
-      badge: 'Connect to the world',
-      title: 'Connect to the world with',
-      subtitle: 'Access temporary virtual numbers from around the world for your verifications. Simple, secure and instant.',
+      badge: 'Verify your accounts easily',
+      title: 'Verify an account with a number',
+      subtitle: 'Get a virtual number to receive the verification SMS on WhatsApp, TikTok, Telegram and many more.',
       cta: 'Get started for free',
-      discover: 'Discover features',
+      discover: 'See how it works',
     },
     stats: {
       countries: 'Countries covered',
@@ -61,6 +61,25 @@ export const en: Translations = {
       pricing: {
         title: 'Transparent Pricing',
         description: 'Competitive rates, secure payment',
+      },
+    },
+    reviews: {
+      title: 'They verified their accounts',
+      subtitle: 'Fast, simple — and it actually works',
+      review1: {
+        text: 'Needed to re-verify my WhatsApp after a SIM change. Got the code in under 2 min. Perfect!',
+        name: 'Moussa D.',
+        service: 'WhatsApp',
+      },
+      review2: {
+        text: 'Second TikTok account created without hassle. The number worked on the first try.',
+        name: 'Fatou K.',
+        service: 'TikTok',
+      },
+      review3: {
+        text: 'Lost access to my Telegram. Got the SMS in seconds, account recovered!',
+        name: 'Ibrahima S.',
+        service: 'Telegram',
       },
     },
     pricing: {

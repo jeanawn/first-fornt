@@ -193,8 +193,45 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
       </section>
 
 
+      {/* Reviews Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-black text-gray-900 font-montserrat mb-3">
+              {t.landing.reviews.title}
+            </h2>
+            <p className="text-lg text-gray-500 font-montserrat">
+              {t.landing.reviews.subtitle}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[t.landing.reviews.review1, t.landing.reviews.review2, t.landing.reviews.review3].map((review, index) => (
+              <div key={index} className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm flex flex-col gap-4">
+                <div className="flex gap-1">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <svg key={i} className="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+                <p className="text-gray-700 font-montserrat text-sm leading-relaxed flex-1">
+                  "{review.text}"
+                </p>
+                <div className="flex items-center justify-between">
+                  <span className="font-montserrat font-semibold text-gray-900 text-sm">{review.name}</span>
+                  <span className="bg-primary-50 text-primary font-montserrat font-semibold text-xs px-3 py-1 rounded-full">
+                    {review.service}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 bg-gray-50">
+      <section id="pricing" className="py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-black text-gray-900 font-montserrat mb-4">

@@ -30,11 +30,11 @@ export const fr = {
       register: "S'inscrire",
     },
     hero: {
-      badge: 'Connectez-vous au monde',
-      title: 'Connectez-vous au monde avec',
-      subtitle: 'Accédez à des numéros virtuels temporaires du monde entier pour vos vérifications. Simple, sécurisé et instantané.',
+      badge: 'Vérifiez vos comptes facilement',
+      title: 'Vérifiez un compte avec un numéro',
+      subtitle: 'Obtenez un numéro virtuel pour recevoir le SMS de vérification sur WhatsApp, TikTok, Telegram et bien plus encore.',
       cta: 'Commencer gratuitement',
-      discover: 'Découvrir les fonctionnalités',
+      discover: 'Voir comment ça marche',
     },
     stats: {
       countries: 'Pays couverts',
@@ -59,6 +59,25 @@ export const fr = {
       pricing: {
         title: 'Prix Transparents',
         description: 'Tarifs compétitifs, paiement sécurisé',
+      },
+    },
+    reviews: {
+      title: 'Ils ont vérifié leurs comptes',
+      subtitle: 'Rapide, simple — et ça marche vraiment',
+      review1: {
+        text: 'Avais besoin de revérifier mon WhatsApp après un changement de SIM. Le code est arrivé en moins de 2 min. Nickel !',
+        name: 'Moussa D.',
+        service: 'WhatsApp',
+      },
+      review2: {
+        text: 'Second compte TikTok créé sans galère. Le numéro a fonctionné du premier coup.',
+        name: 'Fatou K.',
+        service: 'TikTok',
+      },
+      review3: {
+        text: "Perdu l'accès à mon Telegram. Le SMS est arrivé en quelques secondes, compte récupéré !",
+        name: 'Ibrahima S.',
+        service: 'Telegram',
       },
     },
     pricing: {

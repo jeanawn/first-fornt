@@ -230,72 +230,67 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
           </div>
         </div>
 
-        {/* Referral Card */}
-        {user.referralCode && (
-          <div className="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-2xl px-5 py-4 border border-yellow-200">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-8 h-8 bg-yellow-400 rounded-lg flex items-center justify-center">
-                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
-                </svg>
-              </div>
-              <div>
-                <p className="text-xs font-bold text-yellow-800 uppercase tracking-wider font-montserrat">{t.dashboard.referral.title}</p>
-                <p className="text-xs text-yellow-700 font-montserrat">{t.dashboard.referral.subtitle}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="flex-1 bg-white rounded-xl px-4 py-3 border border-yellow-200">
-                <span className="font-mono font-bold text-lg text-gray-900 tracking-[0.2em]">{user.referralCode}</span>
-              </div>
-              <button
-                onClick={copyReferralCode}
-                className="flex items-center gap-1.5 bg-yellow-400 hover:bg-yellow-500 text-white text-xs font-semibold px-3 py-3 rounded-xl transition-colors font-montserrat"
-                title={t.dashboard.referral.copyCode}
-              >
-                {copiedReferral ? (
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                  </svg>
-                ) : (
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                  </svg>
-                )}
-              </button>
-              <button
-                onClick={shareReferralCode}
-                className="flex items-center gap-1.5 bg-white hover:bg-yellow-50 text-yellow-700 border border-yellow-300 text-xs font-semibold px-3 py-3 rounded-xl transition-colors font-montserrat"
-                title={t.dashboard.referral.shareCode}
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Buy Number */}
+        {/* Buy Number - CTA principal */}
         <button
           onClick={onBuyNumber}
-          className="w-full group flex items-center justify-between bg-white rounded-2xl px-5 py-4 border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all"
+          className="w-full group flex items-center justify-between bg-gradient-to-r from-primary to-primary-700 rounded-2xl px-5 py-5 shadow-md hover:shadow-lg hover:from-primary-600 hover:to-primary-800 transition-all"
         >
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-primary-50 rounded-xl flex items-center justify-center">
-              <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
               </svg>
             </div>
             <div className="text-left">
-              <p className="font-semibold text-gray-900 text-sm font-montserrat">{t.dashboard.buyNumber}</p>
-              <p className="text-xs text-gray-500 font-montserrat">{language === 'fr' ? 'Numéro virtuel SMS' : 'Virtual SMS number'}</p>
+              <p className="font-bold text-white text-base font-montserrat">{t.dashboard.buyNumber}</p>
+              <p className="text-xs text-blue-100 font-montserrat">{language === 'fr' ? 'Numéro virtuel SMS' : 'Virtual SMS number'}</p>
             </div>
           </div>
-          <svg className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
+          <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center group-hover:bg-white/30 transition-colors">
+            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
         </button>
+
+        {/* Referral - compact et discret */}
+        {user.referralCode && (
+          <div className="flex items-center gap-3 bg-gray-50 rounded-xl px-4 py-3 border border-gray-200">
+            <div className="w-7 h-7 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0">
+              <svg className="w-3.5 h-3.5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+              </svg>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs text-gray-400 font-montserrat">{t.dashboard.referral.title}</p>
+              <p className="font-mono font-bold text-sm text-gray-800 tracking-widest">{user.referralCode}</p>
+            </div>
+            <button
+              onClick={copyReferralCode}
+              className="p-2 rounded-lg hover:bg-gray-200 text-gray-400 hover:text-gray-600 transition-colors"
+              title={t.dashboard.referral.copyCode}
+            >
+              {copiedReferral ? (
+                <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                </svg>
+              ) : (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+              )}
+            </button>
+            <button
+              onClick={shareReferralCode}
+              className="p-2 rounded-lg hover:bg-gray-200 text-gray-400 hover:text-gray-600 transition-colors"
+              title={t.dashboard.referral.shareCode}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+              </svg>
+            </button>
+          </div>
+        )}
 
         {/* Admin Button - Only for admins */}
         {onGoToAdmin && (

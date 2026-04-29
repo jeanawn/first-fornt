@@ -11,6 +11,7 @@ export interface RegisterRequest {
   username: string;
   email: string;
   password: string;
+  referralCode?: string;
 }
 
 export interface ForgotPasswordRequest {

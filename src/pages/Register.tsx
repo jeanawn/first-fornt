@@ -2,19 +2,22 @@ import { useState } from 'react';
 import Layout from '../components/Layout';
 import Input from '../components/Input';
 import { usePageTitle, PAGE_TITLES } from '../hooks/usePageTitle';
+import { useTranslation } from '../i18n';
 
 interface RegisterProps {
-  onRegister: (username: string, email: string, password: string) => void;
+  onRegister: (username: string, email: string, password: string, referralCode?: string) => void;
   onBackToLogin: () => void;
   onBackToHome?: () => void;
 }
 
 export default function Register({ onRegister, onBackToLogin }: RegisterProps) {
   usePageTitle(PAGE_TITLES.register);
+  const { t } = useTranslation();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [referralCode, setReferralCode] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -52,7 +55,7 @@ export default function Register({ onRegister, onBackToLogin }: RegisterProps) {
 
     setIsLoading(true);
     try {
-      await onRegister(username, email, password);
+      await onRegister(username, email, password, referralCode.trim() || undefined);
     } finally {
       setIsLoading(false);
     }
@@ -190,6 +193,26 @@ export default function Register({ onRegister, onBackToLogin }: RegisterProps) {
                 {errors.confirmPassword && (
                   <p className="text-red-600 text-xs mt-1 font-medium">{errors.confirmPassword}</p>
                 )}
+              </div>
+
+              {/* Code de parrainage */}
+              <div>
+                <div className="flex items-center space-x-2 mb-2">
+                  <div className="w-5 h-5 bg-yellow-100 rounded-lg flex items-center justify-center">
+                    <svg className="w-3 h-3 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                    </svg>
+                  </div>
+                  <label className="block text-sm font-semibold text-gray-900">{t.auth.register.referralCode}</label>
+                </div>
+                <Input
+                  type="text"
+                  value={referralCode}
+                  onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
+                  placeholder={t.auth.register.referralCodePlaceholder}
+                  className="text-lg p-4 rounded-xl border-2 border-gray-200 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-100 transition-all duration-200 font-mono tracking-widest"
+                />
+                <p className="text-gray-400 text-xs mt-1">{t.auth.register.referralCodeHint}</p>
               </div>
 
               {/* Bouton d'inscription */}

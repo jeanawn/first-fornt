@@ -5,6 +5,9 @@ export interface User {
   balance: number;
   isActive: boolean;
   role?: 'user' | 'admin';
+  referralCode?: string;
+  referredByUserId?: string | null;
+  referralBonusPaid?: boolean;
   createdDate?: string;
   createdAt?: string;
   updatedAt?: string;

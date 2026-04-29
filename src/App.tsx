@@ -145,14 +145,14 @@ export default function App() {
     }
   };
 
-  const handleRegister = async (username: string, email: string, password: string) => {
+  const handleRegister = async (username: string, email: string, password: string, referralCode?: string) => {
     try {
       // Nettoyer les données précédentes
       setUser(null);
       setCurrentPhoneNumber(null);
       setError(null);
-      
-      await authService.register({ username, email, password });
+
+      await authService.register({ username, email, password, ...(referralCode ? { referralCode } : {}) });
       // Auto-connexion après inscription
       await authService.login({ username, password });
       const currentUser = await authService.getCurrentUser();

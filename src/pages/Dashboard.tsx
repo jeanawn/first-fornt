@@ -25,6 +25,7 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
   const [isLoadingOperations, setIsLoadingOperations] = useState(true);
   const [isLoadingTransactions, setIsLoadingTransactions] = useState(true);
   const [copiedSms, setCopiedSms] = useState<string | null>(null);
+  const [copiedReferral, setCopiedReferral] = useState(false);
   const [activeTab, setActiveTab] = useState<'operations' | 'transactions'>('operations');
 
   // Charger les opérations récentes
@@ -103,6 +104,27 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
       setCopiedSms(operationId);
       setTimeout(() => setCopiedSms(null), 2000);
     });
+  };
+
+  const copyReferralCode = () => {
+    if (!user.referralCode) return;
+    navigator.clipboard.writeText(user.referralCode).then(() => {
+      setCopiedReferral(true);
+      setTimeout(() => setCopiedReferral(false), 2000);
+    });
+  };
+
+  const shareReferralCode = () => {
+    if (!user.referralCode) return;
+    const shareText = t.dashboard.referral.shareText + ` Code : ${user.referralCode}`;
+    if (navigator.share) {
+      navigator.share({ text: shareText });
+    } else {
+      navigator.clipboard.writeText(shareText).then(() => {
+        setCopiedReferral(true);
+        setTimeout(() => setCopiedReferral(false), 2000);
+      });
+    }
   };
 
   // Fonctions utilitaires pour les transactions
@@ -207,6 +229,52 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
             </button>
           </div>
         </div>
+
+        {/* Referral Card */}
+        {user.referralCode && (
+          <div className="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-2xl px-5 py-4 border border-yellow-200">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-8 h-8 bg-yellow-400 rounded-lg flex items-center justify-center">
+                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-xs font-bold text-yellow-800 uppercase tracking-wider font-montserrat">{t.dashboard.referral.title}</p>
+                <p className="text-xs text-yellow-700 font-montserrat">{t.dashboard.referral.subtitle}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="flex-1 bg-white rounded-xl px-4 py-3 border border-yellow-200">
+                <span className="font-mono font-bold text-lg text-gray-900 tracking-[0.2em]">{user.referralCode}</span>
+              </div>
+              <button
+                onClick={copyReferralCode}
+                className="flex items-center gap-1.5 bg-yellow-400 hover:bg-yellow-500 text-white text-xs font-semibold px-3 py-3 rounded-xl transition-colors font-montserrat"
+                title={t.dashboard.referral.copyCode}
+              >
+                {copiedReferral ? (
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                  </svg>
+                ) : (
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                )}
+              </button>
+              <button
+                onClick={shareReferralCode}
+                className="flex items-center gap-1.5 bg-white hover:bg-yellow-50 text-yellow-700 border border-yellow-300 text-xs font-semibold px-3 py-3 rounded-xl transition-colors font-montserrat"
+                title={t.dashboard.referral.shareCode}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Buy Number */}
         <button

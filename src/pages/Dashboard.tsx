@@ -233,24 +233,22 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
         {/* Buy Number - CTA principal */}
         <button
           onClick={onBuyNumber}
-          className="w-full group flex items-center justify-between bg-gradient-to-r from-primary to-primary-700 rounded-2xl px-5 py-5 shadow-md hover:shadow-lg hover:from-primary-600 hover:to-primary-800 transition-all"
+          className="w-full group flex items-center justify-between bg-white border border-gray-200 rounded-2xl px-5 py-4 hover:bg-gray-50 transition-all"
         >
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center">
+              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
               </svg>
             </div>
             <div className="text-left">
-              <p className="font-bold text-white text-base font-montserrat">{t.dashboard.buyNumber}</p>
-              <p className="text-xs text-blue-100 font-montserrat">{language === 'fr' ? 'Numéro virtuel SMS' : 'Virtual SMS number'}</p>
+              <p className="font-semibold text-gray-800 text-sm font-montserrat">{t.dashboard.buyNumber}</p>
+              <p className="text-xs text-gray-400 font-montserrat">{language === 'fr' ? 'Numéro virtuel SMS' : 'Virtual SMS number'}</p>
             </div>
           </div>
-          <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center group-hover:bg-white/30 transition-colors">
-            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-            </svg>
-          </div>
+          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
         </button>
 
         {/* Referral - compact et discret */}

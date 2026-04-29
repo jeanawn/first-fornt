@@ -159,9 +159,6 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
           </div>
         </div>
 
-        {/* Background decoration */}
-        <div className="absolute top-10 right-10 w-72 h-72 bg-secondary-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-        <div className="absolute bottom-10 left-10 w-72 h-72 bg-primary-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style={{animationDelay: '2s'}}></div>
       </section>
 
       {/* Features Section */}
@@ -194,79 +191,51 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
 
 
       {/* Referral Section */}
-      <section className="py-20 bg-gray-900">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
-            <div className="inline-flex items-center gap-2 bg-yellow-400/20 text-yellow-300 rounded-full px-5 py-2 mb-6 font-montserrat font-semibold text-sm">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
-              </svg>
-              Programme de parrainage
-            </div>
-            <h2 className="text-4xl font-black text-white font-montserrat mb-4">
+      <section className="py-20 bg-white border-t border-gray-100">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-12">
+            <p className="text-primary font-montserrat font-semibold text-sm mb-3">Parrainage</p>
+            <h2 className="text-3xl font-black text-gray-900 font-montserrat mb-4">
               {t.landing.referral.title}
             </h2>
-            <p className="text-lg text-gray-400 font-montserrat max-w-2xl mx-auto">
+            <p className="text-gray-500 font-montserrat max-w-xl">
               {t.landing.referral.subtitle}
             </p>
           </div>
 
           {/* Steps */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center mb-12">
-            {/* Step 1 */}
-            <div className="bg-white/5 rounded-2xl p-6 text-center border border-white/10">
-              <div className="w-12 h-12 bg-yellow-400 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <svg className="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                </svg>
+          <div className="space-y-6 mb-10">
+            <div className="flex items-start gap-5">
+              <span className="flex-shrink-0 w-8 h-8 rounded-full border-2 border-primary text-primary font-montserrat font-bold text-sm flex items-center justify-center">1</span>
+              <div>
+                <p className="font-semibold text-gray-900 font-montserrat">{t.landing.referral.step1Label}</p>
+                <p className="text-gray-500 font-montserrat text-sm mt-0.5">{t.landing.referral.step1Desc}</p>
               </div>
-              <p className="font-bold text-white font-montserrat mb-1">{t.landing.referral.step1Label}</p>
-              <p className="text-gray-400 text-sm font-montserrat">{t.landing.referral.step1Desc}</p>
             </div>
 
-            {/* Arrow */}
-            <div className="hidden md:flex justify-center">
-              <svg className="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </div>
-
-            {/* Step 2 */}
-            <div className="bg-white/5 rounded-2xl p-6 text-center border border-white/10">
-              <div className="w-12 h-12 bg-yellow-400 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <svg className="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                </svg>
+            <div className="flex items-start gap-5">
+              <span className="flex-shrink-0 w-8 h-8 rounded-full border-2 border-primary text-primary font-montserrat font-bold text-sm flex items-center justify-center">2</span>
+              <div>
+                <p className="font-semibold text-gray-900 font-montserrat">{t.landing.referral.step2Label}</p>
+                <p className="text-gray-500 font-montserrat text-sm mt-0.5">{t.landing.referral.step2Desc}</p>
               </div>
-              <p className="font-bold text-white font-montserrat mb-1">{t.landing.referral.step2Label}</p>
-              <p className="text-gray-400 text-sm font-montserrat">{t.landing.referral.step2Desc}</p>
             </div>
 
-            {/* Step 3 with reward */}
-            <div className="bg-yellow-400 rounded-2xl p-6 text-center relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-yellow-300 to-amber-500 opacity-50"></div>
-              <div className="relative">
-                <div className="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <p className="font-bold text-gray-900 font-montserrat mb-1">{t.landing.referral.rewardLabel}</p>
-                <p className="text-3xl font-black text-gray-900 font-montserrat">{t.landing.referral.rewardAmount}</p>
-                <p className="text-gray-800 text-xs font-montserrat mt-1">{t.landing.referral.step3Desc}</p>
+            <div className="flex items-start gap-5">
+              <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-white font-montserrat font-bold text-sm flex items-center justify-center">3</span>
+              <div>
+                <p className="font-semibold text-gray-900 font-montserrat">{t.landing.referral.rewardLabel} — <span className="text-primary">{t.landing.referral.rewardAmount}</span></p>
+                <p className="text-gray-500 font-montserrat text-sm mt-0.5">{t.landing.referral.step3Desc}</p>
               </div>
             </div>
           </div>
 
-          {/* CTA */}
-          <div className="text-center">
-            <button
-              onClick={onGoToRegister}
-              className="bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-black px-10 py-4 rounded-2xl font-montserrat text-lg transition-all duration-300 hover:scale-105 shadow-xl"
-            >
-              {t.landing.referral.cta}
-            </button>
-          </div>
+          <button
+            onClick={onGoToRegister}
+            className="bg-primary hover:bg-primary-700 text-white px-8 py-3 rounded-xl font-montserrat font-semibold transition-all duration-200 hover:scale-[1.02] shadow-lg"
+          >
+            {t.landing.referral.cta}
+          </button>
         </div>
       </section>
 

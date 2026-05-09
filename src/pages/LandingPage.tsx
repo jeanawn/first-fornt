@@ -399,55 +399,9 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-            {/* SMS Number — basic offer */}
-            <div className="bg-white rounded-3xl border border-gray-200 p-8 flex flex-col">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 rounded-xl bg-primary-50 text-primary flex items-center justify-center">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 font-montserrat">
-                  {t.landing.offers.sms.label}
-                </h3>
-              </div>
-              <p className="text-gray-500 font-montserrat text-sm mb-6">
-                {t.landing.offers.sms.tagline}
-              </p>
-
-              <div className="mb-6 pb-6 border-b border-gray-100">
-                <p className="text-xs uppercase tracking-wide text-gray-400 font-montserrat font-semibold mb-2">
-                  {t.landing.offers.sms.priceFrom}
-                </p>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-black text-gray-900 font-montserrat">{t.landing.offers.sms.priceValue}</span>
-                  <span className="text-xl font-bold text-gray-700 font-montserrat">{t.landing.offers.sms.priceCurrency}</span>
-                </div>
-                <p className="text-sm text-gray-500 font-montserrat mt-1">{t.landing.offers.sms.priceNote}</p>
-              </div>
-
-              <ul className="space-y-3 mb-8 flex-1">
-                {[t.landing.offers.sms.feature1, t.landing.offers.sms.feature2, t.landing.offers.sms.feature3, t.landing.offers.sms.feature4].map((f, i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <svg className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.25} d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span className="text-gray-700 font-montserrat text-sm leading-relaxed">{f}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <button
-                onClick={onGoToRegister}
-                className="w-full bg-white text-primary border-2 border-primary hover:bg-primary hover:text-white py-3.5 rounded-2xl font-montserrat font-bold transition-all duration-200"
-              >
-                {t.landing.offers.sms.cta}
-              </button>
-            </div>
-
+          <div className="max-w-md mx-auto">
             {/* WhatsApp durable — featured offer */}
-            <div className="relative bg-gradient-to-br from-primary to-primary-700 rounded-3xl p-8 flex flex-col text-white shadow-2xl md:-mt-4 md:mb-4">
+            <div className="relative bg-gradient-to-br from-primary to-primary-700 rounded-3xl p-8 flex flex-col text-white shadow-2xl">
               <div className="absolute -top-3 left-8 bg-yellow-400 text-gray-900 px-3 py-1 rounded-full text-xs font-montserrat font-bold uppercase tracking-wide shadow-md">
                 {t.landing.offers.whatsapp.badge}
               </div>
@@ -476,7 +430,6 @@ export default function LandingPage({ onGoToLogin, onGoToRegister, onGoToPrivacy
                     <span className="text-xl font-bold font-montserrat">{t.landing.offers.whatsapp.priceCurrency}</span>
                   )}
                 </div>
-                <p className="text-sm text-primary-100 font-montserrat mt-1">{t.landing.offers.whatsapp.priceNote}</p>
               </div>
 
               <ul className="space-y-3 mb-8 flex-1">

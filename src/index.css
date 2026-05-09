@@ -25,6 +25,19 @@ select {
   font-size: 16px;
 }
 
+/* ── Marquee (platforms slider) ── */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.marquee-track {
+  animation: marquee 32s linear infinite;
+  width: max-content;
+}
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
 /* ── Safe area utilities (notch / home indicator) ── */
 .pt-safe {
   padding-top: env(safe-area-inset-top);

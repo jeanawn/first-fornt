@@ -22,7 +22,12 @@ export default function Layout({
           style={{ paddingTop: 'env(safe-area-inset-top)' }}
         >
           <div className="max-w-md mx-auto px-4 h-14 flex items-center justify-between">
-            <div className="flex items-center space-x-2.5">
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new CustomEvent('app:navigate-home'))}
+              className="flex items-center space-x-2.5 -ml-1 px-1 py-1 rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-colors"
+              aria-label="Accueil"
+            >
               <div className="w-8 h-8 bg-white rounded-lg border border-gray-100 shadow-sm p-1 flex-shrink-0">
                 <img
                   src="https://i.postimg.cc/fRm60V7Z/LOGO-XAARY-500x500.png"
@@ -31,7 +36,7 @@ export default function Layout({
                 />
               </div>
               <span className="text-lg font-bold text-gray-900 font-montserrat">Xaary</span>
-            </div>
+            </button>
 
             {showLanguageSwitcher && (
               <LanguageSwitcher variant="minimal" />

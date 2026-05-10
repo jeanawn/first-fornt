@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -110,6 +110,39 @@ export default function App() {
 
     initializeAuth();
   }, []);
+
+  // Synchroniser currentPage avec l'historique navigateur (bouton retour)
+  const isInitialHistoryMount = useRef(true);
+  useEffect(() => {
+    if (isInitialHistoryMount.current) {
+      isInitialHistoryMount.current = false;
+      window.history.replaceState({ page: currentPage }, '');
+      return;
+    }
+    // Si l'état actuel correspond déjà (cas popstate), ne pas re-pousser
+    if (window.history.state?.page === currentPage) return;
+    window.history.pushState({ page: currentPage }, '');
+  }, [currentPage]);
+
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      const page = event.state?.page as Page | undefined;
+      if (page) {
+        setCurrentPage(page);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  // Logo cliquable : retour landing ou dashboard selon connexion
+  useEffect(() => {
+    const handleNavigateHome = () => {
+      setCurrentPage(user ? 'dashboard' : 'landing');
+    };
+    window.addEventListener('app:navigate-home', handleNavigateHome);
+    return () => window.removeEventListener('app:navigate-home', handleNavigateHome);
+  }, [user]);
 
   // Gestion des erreurs utilisateur
   const handleError = (err: unknown) => {

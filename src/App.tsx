@@ -135,14 +135,14 @@ export default function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  // Logo cliquable : retour landing ou dashboard selon connexion
+  // Logo cliquable : toujours retour landing page
   useEffect(() => {
     const handleNavigateHome = () => {
-      setCurrentPage(user ? 'dashboard' : 'landing');
+      setCurrentPage('landing');
     };
     window.addEventListener('app:navigate-home', handleNavigateHome);
     return () => window.removeEventListener('app:navigate-home', handleNavigateHome);
-  }, [user]);
+  }, []);
 
   // Gestion des erreurs utilisateur
   const handleError = (err: unknown) => {

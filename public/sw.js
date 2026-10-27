@@ -1,4 +1,4 @@
-const CACHE_NAME = 'xaary-v1';
+const CACHE_NAME = 'xaary-v2';
 const urlsToCache = [
   '/',
   '/manifest.json',

@@ -17,7 +17,6 @@ import ErrorNotification from './components/ErrorNotification';
 import { ToastContainer, useToast } from './components/Toast';
 import BottomNav from './components/BottomNav';
 import InstallPrompt from './components/InstallPrompt';
-import WhatsAppButton from './components/WhatsAppButton';
 import LoadingSpinner from './components/LoadingSpinner';
 import { authService } from './services/auth';
 import { operationsService } from './services/operations';
@@ -619,7 +618,6 @@ export default function App() {
         />
       )}
       <InstallPrompt />
-      <WhatsAppButton liftAboveBottomNav={showBottomNav} />
     </>
   );
 }

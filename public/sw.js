@@ -8,6 +8,8 @@ const urlsToCache = [
 
 // Installation du Service Worker
 self.addEventListener('install', (event) => {
+  // Activer immédiatement la nouvelle version sans attendre la fermeture des onglets
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
@@ -29,6 +31,9 @@ self.addEventListener('activate', (event) => {
           }
         })
       );
+    }).then(() => {
+      // Prendre le contrôle des onglets déjà ouverts
+      return self.clients.claim();
     })
   );
 });

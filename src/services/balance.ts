@@ -1,18 +1,4 @@
 import { apiService } from './api';
-import type { ApiResponse } from './api';
-
-// Legacy interfaces (kept for backward compatibility)
-export interface LoadBalanceRequest {
-  amount: number;
-  phoneNumber: string;
-  network: string;
-}
-
-export interface LoadBalanceResponse extends ApiResponse {
-  success: boolean;
-  transactionId: string;
-  message: string;
-}
 
 // FedaPay interfaces
 export interface CreateFedapayDepositRequest {
@@ -42,22 +28,7 @@ export interface FedapayDeposit {
   updatedAt: string;
 }
 
-// Mapping des réseaux de l'UI vers les codes API (legacy)
-export const NETWORK_CODES: Record<string, string> = {
-  'Togocel': 'yas_tg',
-  'MTN BENIN': 'mtn_bj',
-  'MOOV BENIN': 'moov_bj',
-  'MOOV TOGO': 'moov_tg'
-};
-
 class BalanceService {
-  // Legacy method
-  async loadBalance(request: LoadBalanceRequest): Promise<LoadBalanceResponse> {
-    const response = await apiService.post<LoadBalanceResponse>('/load', request);
-    return response;
-  }
-
-  // FedaPay methods
   async createFedapayDeposit(request: CreateFedapayDepositRequest): Promise<FedapayDepositResponse> {
     const response = await apiService.post<FedapayDepositResponse>('/fedapay/deposit', request);
     return response;

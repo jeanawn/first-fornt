@@ -22,6 +22,7 @@ import { authService } from './services/auth';
 import { operationsService } from './services/operations';
 import { notificationSound } from './utils/notificationSound';
 import { useTranslation } from './i18n';
+import { useMetaPixelPageView } from './hooks/useMetaPixel';
 import type { User, Country, Service, PhoneNumber, ApiError } from './types';
 
 type Page =
@@ -57,6 +58,8 @@ export default function App() {
     service: Service;
   } | null>(null);
   const [selectedOperationId, setSelectedOperationId] = useState<string | null>(null);
+
+  useMetaPixelPageView(currentPage);
 
   // Toast notifications
   const { toasts, removeToast, showError, showWarning } = useToast();

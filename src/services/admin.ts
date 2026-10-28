@@ -166,12 +166,14 @@ class AdminService {
     limit?: number;
     search?: string;
     isActive?: boolean;
+    role?: 'user' | 'admin';
   }): Promise<{ users: AdminUser[]; total: number; totalPages: number }> {
     const query = new URLSearchParams();
     if (params?.page) query.append('page', params.page.toString());
     if (params?.limit) query.append('limit', params.limit.toString());
     if (params?.search) query.append('search', params.search);
     if (params?.isActive !== undefined) query.append('isActive', params.isActive.toString());
+    if (params?.role) query.append('role', params.role);
 
     return apiService.get(`/admin/users?${query.toString()}`);
   }
@@ -182,6 +184,10 @@ class AdminService {
 
   async updateUserStatus(id: string, isActive: boolean): Promise<{ success: boolean }> {
     return apiService.patch(`/admin/users/${id}/status`, { isActive });
+  }
+
+  async updateUserRole(id: string, role: 'user' | 'admin', reason?: string): Promise<{ success: boolean; user: AdminUser }> {
+    return apiService.patch(`/admin/users/${id}/role`, { role, reason });
   }
 
   async creditUser(id: string, amount: number, reason?: string): Promise<{ success: boolean; newBalance: number }> {

@@ -4,6 +4,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import { transactionService } from '../services/transactions';
 import { balanceService, type FedapayDeposit } from '../services/balance';
 import { usePageTitle, PAGE_TITLES } from '../hooks/usePageTitle';
+import { trackPurchaseOnce } from '../hooks/useMetaPixel';
 import type { Transaction } from '../types';
 
 interface PaymentConfirmationProps {
@@ -127,6 +128,18 @@ export default function PaymentConfirmation({
       clearInterval(countdownTimer);
     };
   }, [transactionId, isFedapay, onBackToDashboard]);
+
+  // Conversion Meta Pixel sur paiement confirme (FedaPay)
+  useEffect(() => {
+    if (fedapayDeposit?.status !== 'approved') return;
+    trackPurchaseOnce(fedapayDeposit.id, Number(fedapayDeposit.amount || 0));
+  }, [fedapayDeposit]);
+
+  // Conversion Meta Pixel sur paiement confirme (legacy)
+  useEffect(() => {
+    if (transaction?.status !== 'success') return;
+    trackPurchaseOnce(transaction.id, Number(transaction.amount || 0));
+  }, [transaction]);
 
   const handleOpenPayment = () => {
     if (fedapayPaymentUrl) {

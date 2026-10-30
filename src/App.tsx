@@ -22,7 +22,7 @@ import { authService } from './services/auth';
 import { operationsService } from './services/operations';
 import { notificationSound } from './utils/notificationSound';
 import { useTranslation } from './i18n';
-import { trackLead, useMetaPixelPageView } from './hooks/useMetaPixel';
+import { trackLead, trackNumberPurchaseOnce, useMetaPixelPageView } from './hooks/useMetaPixel';
 import type { User, Country, Service, PhoneNumber, ApiError } from './types';
 
 type Page =
@@ -268,6 +268,9 @@ export default function App() {
         showError(title, message);
         return; // Ne pas continuer vers la page d'attente
       }
+
+      // Le solde est debite des la creation de l'operation
+      trackNumberPurchaseOnce(response.operationId, service, country);
 
       // Stocker les infos de l'opération en attente
       setPendingOperation({

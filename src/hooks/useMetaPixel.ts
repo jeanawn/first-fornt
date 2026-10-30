@@ -22,6 +22,13 @@ export function trackPixelEvent(event: string, params?: Record<string, unknown>)
   window.fbq?.('track', event, params);
 }
 
+/**
+ * Envoie un evenement personnalise, hors catalogue standard Meta
+ */
+export function trackCustomPixelEvent(event: string, params?: Record<string, unknown>) {
+  window.fbq?.('trackCustom', event, params);
+}
+
 const TRACKED_LOG_SIZE = 50;
 
 function readTrackedLog(key: string): string[] {
@@ -44,7 +51,8 @@ function trackEventOnce(
   storageKey: string,
   reference: string,
   event: string,
-  params?: Record<string, unknown>
+  params?: Record<string, unknown>,
+  send: (event: string, params?: Record<string, unknown>) => void = trackPixelEvent
 ) {
   if (!reference) return;
 
@@ -58,7 +66,7 @@ function trackEventOnce(
     // Stockage indisponible : on envoie quand meme, quitte a doublonner
   }
 
-  trackPixelEvent(event, params);
+  send(event, params);
 }
 
 function isValidAmount(amount: number): boolean {
@@ -67,6 +75,7 @@ function isValidAmount(amount: number): boolean {
 
 const PURCHASE_LOG_KEY = 'fb_tracked_purchases';
 const PAYMENT_INFO_LOG_KEY = 'fb_tracked_payment_infos';
+const NUMBER_PURCHASE_LOG_KEY = 'fb_tracked_number_purchases';
 
 /**
  * Achat confirme : envoye une seule fois par reference de paiement
@@ -141,6 +150,40 @@ export function trackAddPaymentInfoOnce(reference: string, amount: number) {
     value: Math.round(amount),
     currency: CURRENCY,
   });
+}
+
+/**
+ * Achat d'un numero regle sur le solde du compte
+ *
+ * Evenement personnalise et non Purchase : la recharge du solde est deja
+ * comptee comme Purchase, reutiliser l'evenement standard doublerait le
+ * chiffre d'affaires remonte a Meta. La valeur reste transmise, un
+ * evenement personnalise n'alimentant pas la colonne Achats
+ */
+export function trackNumberPurchaseOnce(
+  operationId: string,
+  service: { code?: string; id: string; name: string; price: number },
+  country: { code: string; name: string }
+) {
+  // Meme identifiant que AddToCart, pour relier panier et achat
+  const contentId = `${service.code || service.id}_${country.code}`;
+
+  trackEventOnce(
+    NUMBER_PURCHASE_LOG_KEY,
+    operationId,
+    'NumberPurchased',
+    {
+      content_type: 'product',
+      content_ids: [contentId],
+      content_name: `${service.name} - ${country.name}`,
+      content_category: CONTENT_CATEGORY,
+      contents: [{ id: contentId, quantity: 1 }],
+      ...(isValidAmount(service.price)
+        ? { value: Math.round(service.price), currency: CURRENCY }
+        : {}),
+    },
+    trackCustomPixelEvent
+  );
 }
 
 /**

@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { PIXEL_LOG_PREFIX } from '../utils/storage';
 
 type FbqArgs = [track: string, event: string, params?: Record<string, unknown>];
 
@@ -73,9 +74,9 @@ function isValidAmount(amount: number): boolean {
   return Number.isFinite(amount) && amount > 0;
 }
 
-const PURCHASE_LOG_KEY = 'fb_tracked_purchases';
-const PAYMENT_INFO_LOG_KEY = 'fb_tracked_payment_infos';
-const NUMBER_PURCHASE_LOG_KEY = 'fb_tracked_number_purchases';
+const PURCHASE_LOG_KEY = `${PIXEL_LOG_PREFIX}purchases`;
+const PAYMENT_INFO_LOG_KEY = `${PIXEL_LOG_PREFIX}payment_infos`;
+const NUMBER_PURCHASE_LOG_KEY = `${PIXEL_LOG_PREFIX}number_purchases`;
 
 /**
  * Achat confirme : envoye une seule fois par reference de paiement

@@ -1,3 +1,5 @@
+import { clearAppStorage } from '../utils/storage';
+
 const API_BASE_URL = 'https://api.xaary.com';
 
 export interface ApiResponse<T = unknown> {
@@ -25,7 +27,7 @@ class ApiService {
     if (!response.ok) {
       // Si token invalide ou expiré, nettoyer automatiquement
       if (response.status === 401 || response.status === 403) {
-        localStorage.clear();
+        clearAppStorage();
         window.location.reload();
       }
       

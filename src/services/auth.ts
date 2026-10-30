@@ -1,6 +1,7 @@
 import { apiService } from './api';
 import type { ApiResponse } from './api';
 import type { User } from '../types';
+import { clearAppStorage } from '../utils/storage';
 
 export interface LoginRequest {
   username: string;
@@ -69,21 +70,9 @@ class AuthService {
   }
 
   clearAllData(): void {
-    // Supprimer TOUT le localStorage pour être sûr
-    localStorage.clear();
-    
-    // Alternative plus ciblée si localStorage.clear() pose problème
-    // localStorage.removeItem('auth_token');
-    // localStorage.removeItem('userPreferences');
-    // 
-    // const keysToRemove: string[] = [];
-    // for (let i = 0; i < localStorage.length; i++) {
-    //   const key = localStorage.key(i);
-    //   if (key) {
-    //     keysToRemove.push(key);
-    //   }
-    // }
-    // keysToRemove.forEach(key => localStorage.removeItem(key));
+    // Supprimer TOUT le localStorage pour être sûr, sauf les journaux du
+    // pixel : les effacer rejouerait des conversions déjà comptées
+    clearAppStorage();
   }
 
   isAuthenticated(): boolean {

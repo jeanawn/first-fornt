@@ -173,12 +173,16 @@ export default function App() {
       setError(null);
       
       await authService.login({ username: emailOrUsername, password });
-      trackLogin();
       const currentUser = await authService.getCurrentUser();
       
       // Vérification supplémentaire des données utilisateur
       
       setUser(currentUser);
+
+      // Envoye une fois la session reellement etablie : un echec de
+      // getCurrentUser renvoie l'utilisateur sur l'ecran de connexion
+      trackLogin();
+
       setCurrentPage('dashboard');
     } catch (err) {
       // En cas d'erreur, s'assurer que tout est nettoyé

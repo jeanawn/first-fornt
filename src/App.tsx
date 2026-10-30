@@ -22,7 +22,7 @@ import { authService } from './services/auth';
 import { operationsService } from './services/operations';
 import { notificationSound } from './utils/notificationSound';
 import { useTranslation } from './i18n';
-import { trackLead, trackNumberPurchaseOnce, useMetaPixelPageView } from './hooks/useMetaPixel';
+import { trackLead, trackLogin, trackNumberPurchaseOnce, useMetaPixelPageView } from './hooks/useMetaPixel';
 import type { User, Country, Service, PhoneNumber, ApiError } from './types';
 
 type Page =
@@ -167,6 +167,7 @@ export default function App() {
       setError(null);
       
       await authService.login({ username: emailOrUsername, password });
+      trackLogin();
       const currentUser = await authService.getCurrentUser();
       
       // Vérification supplémentaire des données utilisateur

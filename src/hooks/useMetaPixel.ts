@@ -187,6 +187,20 @@ export function trackNumberPurchaseOnce(
 }
 
 /**
+ * Connexion a un compte existant
+ *
+ * Evenement personnalise : Meta n'a pas d'evenement standard pour la
+ * connexion. Volontairement non dedoublonne, chaque session comptant
+ */
+export function trackLogin(params?: Record<string, unknown>) {
+  trackCustomPixelEvent('Login', {
+    content_name: 'login',
+    content_category: 'account',
+    ...params,
+  });
+}
+
+/**
  * Lead : un compte vient d'etre cree
  */
 export function trackLead(params?: Record<string, unknown>) {

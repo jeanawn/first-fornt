@@ -3,6 +3,7 @@ import Layout from '../components/Layout';
 import Input from '../components/Input';
 import { balanceService } from '../services/balance';
 import { usePageTitle, PAGE_TITLES } from '../hooks/usePageTitle';
+import { trackAddPaymentInfoOnce, trackInitiateCheckout } from '../hooks/useMetaPixel';
 
 interface RechargeProps {
   onRecharge: (depositId: string, paymentUrl: string) => void;
@@ -28,6 +29,7 @@ export default function Recharge({ onRecharge, onBack }: RechargeProps) {
 
     setIsLoading(true);
     setError(null);
+    trackInitiateCheckout(amountNum);
 
     try {
       const response = await balanceService.createFedapayDeposit({
@@ -36,6 +38,9 @@ export default function Recharge({ onRecharge, onBack }: RechargeProps) {
       });
 
       if (response.success && response.paymentUrl) {
+        // La page FedaPay s'ouvre dans la foulee : l'utilisateur saisit
+        // ses informations de paiement
+        trackAddPaymentInfoOnce(response.depositId, amountNum);
         onRecharge(response.depositId, response.paymentUrl);
       } else {
         setError('Erreur lors de la création du paiement');

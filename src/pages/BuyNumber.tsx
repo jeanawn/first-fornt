@@ -7,6 +7,7 @@ import type { AvailableService, CountryWithPrice } from '../services/operations'
 import type { Country, Service } from '../types';
 import { useTranslation } from '../i18n';
 import { usePageTitle, PAGE_TITLES } from '../hooks/usePageTitle';
+import { trackAddToCart, trackViewContent } from '../hooks/useMetaPixel';
 
 // Fallbacks pour les pays (emojis)
 const COUNTRY_FALLBACKS: Record<string, string> = {
@@ -119,6 +120,7 @@ export default function BuyNumber({ onBuyNumber, onBack }: BuyNumberProps) {
   }, [selectedService]);
 
   const handleServiceSelect = (service: AvailableService) => {
+    trackViewContent(service);
     incrementUsage('services', service.code);
     setUserPrefs(getUserPreferences());
     setSelectedService(service);
@@ -128,6 +130,7 @@ export default function BuyNumber({ onBuyNumber, onBack }: BuyNumberProps) {
   const handleCountrySelect = async (country: CountryWithPrice) => {
     if (!selectedService) return;
 
+    trackAddToCart(selectedService, country);
     incrementUsage('countries', country.code);
     setUserPrefs(getUserPreferences());
 

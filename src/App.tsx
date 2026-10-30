@@ -22,7 +22,7 @@ import { authService } from './services/auth';
 import { operationsService } from './services/operations';
 import { notificationSound } from './utils/notificationSound';
 import { useTranslation } from './i18n';
-import { useMetaPixelPageView } from './hooks/useMetaPixel';
+import { trackLead, useMetaPixelPageView } from './hooks/useMetaPixel';
 import type { User, Country, Service, PhoneNumber, ApiError } from './types';
 
 type Page =
@@ -189,6 +189,7 @@ export default function App() {
       setError(null);
 
       await authService.register({ username, email, password, ...(referralCode ? { referralCode } : {}) });
+      trackLead({ content_name: referralCode ? 'signup_referral' : 'signup' });
       // Auto-connexion après inscription
       await authService.login({ username, password });
       const currentUser = await authService.getCurrentUser();

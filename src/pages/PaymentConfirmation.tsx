@@ -4,7 +4,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import { transactionService } from '../services/transactions';
 import { balanceService, type FedapayDeposit } from '../services/balance';
 import { usePageTitle, PAGE_TITLES } from '../hooks/usePageTitle';
-import { trackPurchaseOnce } from '../hooks/useMetaPixel';
+import { trackAddPaymentInfoOnce, trackPurchaseOnce } from '../hooks/useMetaPixel';
 import type { Transaction } from '../types';
 
 interface PaymentConfirmationProps {
@@ -143,6 +143,11 @@ export default function PaymentConfirmation({
 
   const handleOpenPayment = () => {
     if (fedapayPaymentUrl) {
+      // Deja envoye lors de la creation du depot : le dedoublonnage evite
+      // un second evenement si l'utilisateur rouvre la page de paiement
+      if (fedapayDepositId) {
+        trackAddPaymentInfoOnce(fedapayDepositId, Number(fedapayDeposit?.amount || 0));
+      }
       window.open(fedapayPaymentUrl, '_blank');
     }
   };

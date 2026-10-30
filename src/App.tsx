@@ -22,7 +22,13 @@ import { authService } from './services/auth';
 import { operationsService } from './services/operations';
 import { notificationSound } from './utils/notificationSound';
 import { useTranslation } from './i18n';
-import { trackLead, trackLogin, trackNumberPurchaseOnce, useMetaPixelPageView } from './hooks/useMetaPixel';
+import {
+  trackLead,
+  trackLogin,
+  trackLogout,
+  trackNumberPurchaseOnce,
+  useMetaPixelPageView,
+} from './hooks/useMetaPixel';
 import type { User, Country, Service, PhoneNumber, ApiError } from './types';
 
 type Page =
@@ -396,6 +402,10 @@ export default function App() {
   };
 
   const handleLogout = async () => {
+    // Envoye avant l'appel serveur : la fonction se termine par un
+    // rechargement complet qui couperait une requete encore en vol
+    trackLogout();
+
     try {
       // Déconnexion côté serveur + nettoyage localStorage
       await authService.logout();

@@ -201,6 +201,21 @@ export function trackLogin(params?: Record<string, unknown>) {
 }
 
 /**
+ * Deconnexion du compte
+ *
+ * Evenement personnalise, Meta n'ayant pas d'evenement standard.
+ * A envoyer avant tout nettoyage ou rechargement de page : le pixel
+ * emet sa requete de maniere asynchrone et un reload la couperait
+ */
+export function trackLogout(params?: Record<string, unknown>) {
+  trackCustomPixelEvent('Logout', {
+    content_name: 'logout',
+    content_category: 'account',
+    ...params,
+  });
+}
+
+/**
  * Lead : un compte vient d'etre cree
  */
 export function trackLead(params?: Record<string, unknown>) {

@@ -217,6 +217,21 @@ export function trackLogout(params?: Record<string, unknown>) {
 }
 
 /**
+ * Partage du code de parrainage
+ *
+ * Evenement personnalise, Meta n'ayant pas d'evenement standard pour le
+ * partage. Le code lui-meme n'est jamais transmis : c'est un identifiant
+ * rattachable a un compte, et la methode suffit a segmenter l'usage
+ */
+export function trackReferralShare(method: 'native_share' | 'clipboard' | 'copy') {
+  trackCustomPixelEvent('ReferralShared', {
+    content_name: 'referral_code',
+    content_category: 'referral',
+    method,
+  });
+}
+
+/**
  * Lead : un compte vient d'etre cree
  */
 export function trackLead(params?: Record<string, unknown>) {

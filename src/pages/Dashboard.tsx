@@ -7,6 +7,7 @@ import { transactionService } from '../services/transactions';
 import type { Operation } from '../services/operations';
 import { useTranslation } from '../i18n';
 import { usePageTitle, PAGE_TITLES } from '../hooks/usePageTitle';
+import { trackReferralShare } from '../hooks/useMetaPixel';
 
 interface DashboardProps {
   user: User;
@@ -109,6 +110,7 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
   const copyReferralCode = () => {
     if (!user.referralCode) return;
     navigator.clipboard.writeText(user.referralCode).then(() => {
+      trackReferralShare('copy');
       setCopiedReferral(true);
       setTimeout(() => setCopiedReferral(false), 2000);
     });
@@ -118,9 +120,14 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
     if (!user.referralCode) return;
     const shareText = t.dashboard.referral.shareText + ` Code : ${user.referralCode}`;
     if (navigator.share) {
-      navigator.share({ text: shareText });
+      // La promesse est rejetee si l'utilisateur ferme la feuille de
+      // partage : on ne compte que les partages reellement envoyes
+      navigator.share({ text: shareText })
+        .then(() => trackReferralShare('native_share'))
+        .catch(() => {});
     } else {
       navigator.clipboard.writeText(shareText).then(() => {
+        trackReferralShare('clipboard');
         setCopiedReferral(true);
         setTimeout(() => setCopiedReferral(false), 2000);
       });

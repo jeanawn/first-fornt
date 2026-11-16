@@ -1,8 +1,24 @@
 import { useState, useEffect } from 'react';
+import type { FormEvent } from 'react';
 import { adminService } from '../../services/admin';
 import type { ServicePricing, ReferenceCountry, ReferenceService } from '../../services/admin';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { CURRENCY_LABEL, formatAmount } from '../../utils/currency';
+import {
+  Badge,
+  Button,
+  Card,
+  EmptyState,
+  IconButton,
+  Label,
+  Modal,
+  PageHeader,
+  TableHead,
+  fieldClass,
+  tdClass,
+  thClass,
+} from '../../components/admin/ui';
+import { CloseIcon, EditIcon, PlusIcon, TrashIcon } from '../../components/icons';
 
 /** CFA zone currencies all display as FCFA; others keep their ISO code. */
 function currencyLabel(currency: string): string {
@@ -71,7 +87,7 @@ export default function AdminServicePricing() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
 
@@ -180,7 +196,7 @@ export default function AdminServicePricing() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className="flex h-64 items-center justify-center">
         <LoadingSpinner size="lg" />
       </div>
     );
@@ -188,50 +204,60 @@ export default function AdminServicePricing() {
 
   return (
     <div className="space-y-6">
-      {/* Messages */}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex justify-between items-center">
-          <span>{error}</span>
-          <button onClick={() => setError(null)} className="text-red-500 hover:text-red-700">X</button>
+        <div
+          role="alert"
+          className="flex items-start justify-between gap-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3"
+        >
+          <p className="text-sm text-rose-700">{error}</p>
+          <IconButton
+            label="Fermer"
+            onClick={() => setError(null)}
+            icon={<CloseIcon />}
+            className="h-6 w-6 flex-shrink-0 text-rose-600 hover:bg-rose-100 hover:text-rose-800"
+          />
         </div>
       )}
       {successMessage && (
-        <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+        <div
+          role="status"
+          className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700"
+        >
           {successMessage}
         </div>
       )}
 
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Tarification des services</h2>
-          <p className="text-gray-600">
-            {pricings.length} tarifs configurés
-            {loadingOptions && ' | Chargement des options...'}
-          </p>
-        </div>
-        <button
-          onClick={() => { resetForm(); setEditingPricing(null); setShowModal(true); }}
-          disabled={loadingOptions || services.length === 0 || countries.length === 0}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <span>+</span>
-          <span>Nouveau tarif</span>
-        </button>
-      </div>
+      <PageHeader
+        title="Tarification des services"
+        description={
+          loadingOptions
+            ? `${pricings.length} tarifs configurés · chargement des options…`
+            : `${pricings.length} tarifs configurés`
+        }
+        actions={
+          <Button
+            variant="primary"
+            onClick={() => { resetForm(); setEditingPricing(null); setShowModal(true); }}
+            disabled={loadingOptions || services.length === 0 || countries.length === 0}
+            icon={<PlusIcon />}
+          >
+            Nouveau tarif
+          </Button>
+        }
+      />
 
-      {/* Filters */}
-      <div className="bg-white rounded-xl shadow-md p-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <Card className="p-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Service</label>
+            <Label htmlFor="filter-service">Service</Label>
             <select
+              id="filter-service"
               value={searchService}
               onChange={(e) => setSearchService(e.target.value)}
               disabled={loadingOptions}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+              className={fieldClass}
             >
-              <option value="">{loadingOptions ? 'Chargement...' : 'Tous les services'}</option>
+              <option value="">{loadingOptions ? 'Chargement…' : 'Tous les services'}</option>
               {services.map((service) => (
                 <option key={service.code} value={service.code}>
                   {service.name}
@@ -240,14 +266,15 @@ export default function AdminServicePricing() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Pays</label>
+            <Label htmlFor="filter-country">Pays</Label>
             <select
+              id="filter-country"
               value={searchCountry}
               onChange={(e) => setSearchCountry(e.target.value)}
               disabled={loadingOptions}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+              className={fieldClass}
             >
-              <option value="">{loadingOptions ? 'Chargement...' : 'Tous les pays'}</option>
+              <option value="">{loadingOptions ? 'Chargement…' : 'Tous les pays'}</option>
               {countries.map((country) => (
                 <option key={country.code} value={country.code}>
                   {country.name} ({country.code})
@@ -256,86 +283,90 @@ export default function AdminServicePricing() {
             </select>
           </div>
         </div>
-      </div>
+      </Card>
 
-      {/* Table */}
-      <div className="bg-white rounded-xl shadow-md overflow-hidden">
+      <Card className="overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Service</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pays</th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Prix</th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Coût</th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Marge</th>
-                <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Statut</th>
-                <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
+            <TableHead>
+              <th className={thClass}>Service</th>
+              <th className={thClass}>Pays</th>
+              <th className={`${thClass} text-right`}>Prix</th>
+              <th className={`${thClass} text-right`}>Coût</th>
+              <th className={`${thClass} text-right`}>Marge</th>
+              <th className={`${thClass} text-center`}>Statut</th>
+              <th className={`${thClass} text-right`}>Actions</th>
+            </TableHead>
+            <tbody className="divide-y divide-gray-100">
               {filteredPricings.map((pricing) => (
-                <tr key={pricing.id} className={`hover:bg-gray-50 ${!pricing.isActive ? 'opacity-50' : ''}`}>
-                  <td className="px-4 py-3">
-                    <div>
-                      <span className="font-medium text-gray-900">{getServiceName(pricing.serviceCode)}</span>
-                      <span className="text-xs text-gray-500 ml-1">({pricing.serviceCode})</span>
-                    </div>
+                <tr
+                  key={pricing.id}
+                  className={`transition-colors hover:bg-gray-50 ${!pricing.isActive ? 'opacity-60' : ''}`}
+                >
+                  <td className={tdClass}>
+                    <span className="font-medium text-gray-900">
+                      {getServiceName(pricing.serviceCode)}
+                    </span>
+                    <span className="ml-1 text-xs text-gray-400">({pricing.serviceCode})</span>
                   </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2">
+                  <td className={tdClass}>
+                    <span className="flex items-center gap-2">
                       {getCountryFlag(pricing.countryCode) && (
                         <img
                           src={getCountryFlag(pricing.countryCode)}
-                          alt={pricing.countryCode}
-                          className="w-5 h-4 object-cover rounded-sm"
+                          alt=""
+                          width={20}
+                          height={16}
+                          className="h-4 w-5 rounded-sm object-cover ring-1 ring-gray-200"
                         />
                       )}
-                      <div>
+                      <span>
                         <span className="text-gray-900">{getCountryName(pricing.countryCode)}</span>
-                        <span className="text-xs text-gray-500 ml-1">({pricing.countryCode})</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <span className="font-semibold text-green-600">
-                      {formatAmount(pricing.price)} {currencyLabel(pricing.currency)}
+                        <span className="ml-1 text-xs text-gray-400">({pricing.countryCode})</span>
+                      </span>
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-right text-gray-600">
-                    {pricing.costPrice ? `${formatAmount(pricing.costPrice)} ${currencyLabel(pricing.currency)}` : '-'}
+                  <td className={`${tdClass} whitespace-nowrap text-right font-medium tabular-nums text-gray-900`}>
+                    {formatAmount(pricing.price)}
+                    <span className="ml-1 text-xs font-normal text-gray-400">
+                      {currencyLabel(pricing.currency)}
+                    </span>
                   </td>
-                  <td className="px-4 py-3 text-right text-gray-600">
-                    {pricing.margin ? `${pricing.margin}%` : '-'}
+                  <td className={`${tdClass} whitespace-nowrap text-right tabular-nums text-gray-500`}>
+                    {pricing.costPrice
+                      ? `${formatAmount(pricing.costPrice)} ${currencyLabel(pricing.currency)}`
+                      : '—'}
                   </td>
-                  <td className="px-4 py-3 text-center">
+                  <td className={`${tdClass} text-right tabular-nums text-gray-500`}>
+                    {pricing.margin ? `${pricing.margin}%` : '—'}
+                  </td>
+                  <td className={`${tdClass} text-center`}>
                     <button
+                      type="button"
                       onClick={() => handleToggleActive(pricing)}
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        pricing.isActive
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-red-100 text-red-800'
-                      }`}
+                      title={pricing.isActive ? 'Désactiver ce tarif' : 'Activer ce tarif'}
+                      className="rounded-md transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
                     >
-                      {pricing.isActive ? 'Actif' : 'Inactif'}
+                      {pricing.isActive ? (
+                        <Badge tone="success">Actif</Badge>
+                      ) : (
+                        <Badge tone="danger">Inactif</Badge>
+                      )}
                     </button>
                   </td>
-                  <td className="px-4 py-3 text-center">
-                    <div className="flex items-center justify-center space-x-2">
-                      <button
+                  <td className={`${tdClass} text-right`}>
+                    <div className="flex items-center justify-end gap-1">
+                      <IconButton
+                        label={`Modifier le tarif ${getServiceName(pricing.serviceCode)}`}
                         onClick={() => handleEdit(pricing)}
-                        className="p-1 text-blue-600 hover:bg-blue-100 rounded"
-                        title="Modifier"
-                      >
-                        ✏️
-                      </button>
-                      <button
+                        icon={<EditIcon />}
+                      />
+                      <IconButton
+                        label={`Supprimer le tarif ${getServiceName(pricing.serviceCode)}`}
                         onClick={() => handleDelete(pricing.id)}
-                        className="p-1 text-red-600 hover:bg-red-100 rounded"
-                        title="Supprimer"
-                      >
-                        🗑️
-                      </button>
+                        icon={<TrashIcon />}
+                        className="hover:bg-rose-50 hover:text-rose-700"
+                      />
                     </div>
                   </td>
                 </tr>
@@ -343,141 +374,135 @@ export default function AdminServicePricing() {
             </tbody>
           </table>
         </div>
-        {filteredPricings.length === 0 && (
-          <div className="text-center py-8 text-gray-500">
-            Aucun tarif trouvé
-          </div>
-        )}
-      </div>
+        {filteredPricings.length === 0 && <EmptyState>Aucun tarif trouvé</EmptyState>}
+      </Card>
 
-      {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 p-6">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">
-              {editingPricing ? 'Modifier le tarif' : 'Nouveau tarif'}
-            </h3>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Service *</label>
-                  <select
-                    value={formData.serviceCode}
-                    onChange={(e) => setFormData({ ...formData, serviceCode: e.target.value })}
-                    required
-                    disabled={!!editingPricing || loadingOptions}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
-                  >
-                    <option value="">Sélectionner un service</option>
-                    {services.map((service) => (
-                      <option key={service.code} value={service.code}>
-                        {service.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Pays *</label>
-                  <select
-                    value={formData.countryCode}
-                    onChange={(e) => setFormData({ ...formData, countryCode: e.target.value })}
-                    required
-                    disabled={!!editingPricing || loadingOptions}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
-                  >
-                    <option value="">Sélectionner un pays</option>
-                    {countries.map((country) => (
-                      <option key={country.code} value={country.code}>
-                        {country.name} ({country.code})
-                      </option>
-                    ))}
-                  </select>
-                </div>
+        <Modal
+          title={editingPricing ? 'Modifier le tarif' : 'Nouveau tarif'}
+          onClose={() => { setShowModal(false); setEditingPricing(null); }}
+        >
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="form-service">Service *</Label>
+                <select
+                  id="form-service"
+                  value={formData.serviceCode}
+                  onChange={(e) => setFormData({ ...formData, serviceCode: e.target.value })}
+                  required
+                  disabled={!!editingPricing || loadingOptions}
+                  className={fieldClass}
+                >
+                  <option value="">Sélectionner un service</option>
+                  {services.map((service) => (
+                    <option key={service.code} value={service.code}>
+                      {service.name}
+                    </option>
+                  ))}
+                </select>
               </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Prix de vente *</label>
-                  <input
-                    type="number"
-                    step="1"
-                    value={formData.price}
-                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                    required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    placeholder="1500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Devise</label>
-                  <select
-                    value={formData.currency}
-                    onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="XOF">XOF (FCFA)</option>
-                    <option value="XAF">XAF (FCFA)</option>
-                    <option value="USD">USD ($)</option>
-                    <option value="EUR">EUR (€)</option>
-                    <option value="NGN">NGN (₦)</option>
-                  </select>
-                </div>
+              <div>
+                <Label htmlFor="form-country">Pays *</Label>
+                <select
+                  id="form-country"
+                  value={formData.countryCode}
+                  onChange={(e) => setFormData({ ...formData, countryCode: e.target.value })}
+                  required
+                  disabled={!!editingPricing || loadingOptions}
+                  className={fieldClass}
+                >
+                  <option value="">Sélectionner un pays</option>
+                  {countries.map((country) => (
+                    <option key={country.code} value={country.code}>
+                      {country.name} ({country.code})
+                    </option>
+                  ))}
+                </select>
               </div>
+            </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Prix d'achat</label>
-                  <input
-                    type="number"
-                    step="1"
-                    value={formData.costPrice}
-                    onChange={(e) => setFormData({ ...formData, costPrice: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    placeholder="800"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Marge (%)</label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    value={formData.margin}
-                    onChange={(e) => setFormData({ ...formData, margin: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    placeholder="20"
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-2">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="form-price">Prix de vente *</Label>
                 <input
-                  type="checkbox"
-                  id="isActive"
-                  checked={formData.isActive}
-                  onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                  className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                  id="form-price"
+                  type="number"
+                  step="1"
+                  value={formData.price}
+                  onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                  required
+                  className={fieldClass}
+                  placeholder="1500"
                 />
-                <label htmlFor="isActive" className="text-sm text-gray-700">Actif</label>
               </div>
+              <div>
+                <Label htmlFor="form-currency">Devise</Label>
+                <select
+                  id="form-currency"
+                  value={formData.currency}
+                  onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
+                  className={fieldClass}
+                >
+                  <option value="XOF">XOF (FCFA)</option>
+                  <option value="XAF">XAF (FCFA)</option>
+                  <option value="USD">USD ($)</option>
+                  <option value="EUR">EUR (€)</option>
+                  <option value="NGN">NGN (₦)</option>
+                </select>
+              </div>
+            </div>
 
-              <div className="flex space-x-3 pt-4">
-                <button
-                  type="button"
-                  onClick={() => { setShowModal(false); setEditingPricing(null); }}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
-                >
-                  Annuler
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                >
-                  {editingPricing ? 'Mettre à jour' : 'Créer'}
-                </button>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="form-cost">Prix d'achat</Label>
+                <input
+                  id="form-cost"
+                  type="number"
+                  step="1"
+                  value={formData.costPrice}
+                  onChange={(e) => setFormData({ ...formData, costPrice: e.target.value })}
+                  className={fieldClass}
+                  placeholder="800"
+                />
               </div>
-            </form>
-          </div>
-        </div>
+              <div>
+                <Label htmlFor="form-margin">Marge (%)</Label>
+                <input
+                  id="form-margin"
+                  type="number"
+                  step="0.1"
+                  value={formData.margin}
+                  onChange={(e) => setFormData({ ...formData, margin: e.target.value })}
+                  className={fieldClass}
+                  placeholder="20"
+                />
+              </div>
+            </div>
+
+            <label className="flex items-center gap-2 text-sm text-gray-700">
+              <input
+                type="checkbox"
+                checked={formData.isActive}
+                onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                className="h-4 w-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900"
+              />
+              Actif
+            </label>
+
+            <div className="flex gap-3 pt-2">
+              <Button
+                onClick={() => { setShowModal(false); setEditingPricing(null); }}
+                className="flex-1"
+              >
+                Annuler
+              </Button>
+              <Button type="submit" variant="primary" className="flex-1">
+                {editingPricing ? 'Mettre à jour' : 'Créer'}
+              </Button>
+            </div>
+          </form>
+        </Modal>
       )}
     </div>
   );

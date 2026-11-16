@@ -4,6 +4,30 @@ import type { AdminUser } from '../../services/admin';
 import { authService } from '../../services/auth';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { formatAmount, formatCurrency } from '../../utils/currency';
+import {
+  Badge,
+  Button,
+  Card,
+  EmptyState,
+  IconButton,
+  Label,
+  Modal,
+  PageHeader,
+  Pagination,
+  TableHead,
+  fieldBaseClass,
+  fieldClass,
+  tdClass,
+  thClass,
+} from '../../components/admin/ui';
+import {
+  ArrowRightIcon,
+  CloseIcon,
+  MinusIcon,
+  PlusIcon,
+  SearchIcon,
+  ShieldIcon,
+} from '../../components/icons';
 
 export default function AdminUsers() {
   const [users, setUsers] = useState<AdminUser[]>([]);
@@ -128,146 +152,161 @@ export default function AdminUsers() {
     setBalanceError(null);
   };
 
+  const closeBalanceModal = () => {
+    setShowBalanceModal(null);
+    setSelectedUser(null);
+    setBalanceError(null);
+  };
+
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Utilisateurs</h2>
-          <p className="text-gray-600">Gestion des comptes utilisateurs</p>
-        </div>
-      </div>
+      <PageHeader title="Utilisateurs" description="Gestion des comptes utilisateurs" />
 
-      {/* Search */}
-      <div className="bg-white rounded-xl shadow-md p-4">
-        <div className="flex space-x-4">
-          <div className="flex-1">
+      <Card className="p-4">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="min-w-[220px] flex-1">
+            <label htmlFor="user-search" className="sr-only">
+              Rechercher un utilisateur
+            </label>
             <input
-              type="text"
+              id="user-search"
+              type="search"
               value={search}
-              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-              placeholder="Rechercher par email ou nom d'utilisateur..."
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+              placeholder="Email ou nom d'utilisateur…"
+              className={fieldClass}
             />
           </div>
+          <label htmlFor="user-role" className="sr-only">
+            Rôle
+          </label>
           <select
+            id="user-role"
             value={roleFilter}
-            onChange={(e) => { setRoleFilter(e.target.value as '' | 'user' | 'admin'); setPage(1); }}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-700"
+            onChange={(e) => {
+              setRoleFilter(e.target.value as '' | 'user' | 'admin');
+              setPage(1);
+            }}
+            className={fieldBaseClass}
           >
             <option value="">Tous les rôles</option>
             <option value="user">Utilisateurs</option>
             <option value="admin">Administrateurs</option>
           </select>
-          <button
-            onClick={loadUsers}
-            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
-          >
-            🔍 Rechercher
-          </button>
+          <Button onClick={loadUsers} variant="primary" icon={<SearchIcon />}>
+            Rechercher
+          </Button>
         </div>
-      </div>
+      </Card>
 
-      {/* Action Error */}
       {actionError && (
-        <div className="flex items-start justify-between bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3">
-          <p className="text-sm">{actionError}</p>
-          <button
+        <div
+          role="alert"
+          className="flex items-start justify-between gap-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3"
+        >
+          <p className="text-sm text-rose-700">{actionError}</p>
+          <IconButton
+            label="Fermer"
             onClick={() => setActionError(null)}
-            className="ml-4 text-red-500 hover:text-red-700"
-            aria-label="Fermer"
-          >
-            ✕
-          </button>
+            icon={<CloseIcon />}
+            className="h-6 w-6 flex-shrink-0 text-rose-600 hover:bg-rose-100 hover:text-rose-800"
+          />
         </div>
       )}
 
-      {/* Users Table */}
-      <div className="bg-white rounded-xl shadow-md overflow-hidden">
+      <Card className="overflow-hidden">
         {loading ? (
-          <div className="flex items-center justify-center h-64">
+          <div className="flex h-64 items-center justify-center">
             <LoadingSpinner size="lg" />
           </div>
         ) : (
           <>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Utilisateur</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Solde</th>
-                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Rôle</th>
-                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Statut</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Inscription</th>
-                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
+                <TableHead>
+                  <th className={thClass}>Utilisateur</th>
+                  <th className={thClass}>Email</th>
+                  <th className={`${thClass} text-right`}>Solde</th>
+                  <th className={`${thClass} text-center`}>Rôle</th>
+                  <th className={`${thClass} text-center`}>Statut</th>
+                  <th className={thClass}>Inscription</th>
+                  <th className={`${thClass} text-right`}>Actions</th>
+                </TableHead>
+                <tbody className="divide-y divide-gray-100">
                   {users.map((user) => (
-                    <tr key={user.id} className={`hover:bg-gray-50 ${!user.isActive ? 'opacity-50' : ''}`}>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                            <span className="text-blue-600 font-semibold">
-                              {user.username?.charAt(0).toUpperCase() || 'U'}
-                            </span>
-                          </div>
+                    <tr
+                      key={user.id}
+                      className={`transition-colors hover:bg-gray-50 ${!user.isActive ? 'opacity-60' : ''}`}
+                    >
+                      <td className={tdClass}>
+                        <div className="flex items-center gap-3">
+                          <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-gray-100 text-sm font-medium text-gray-600">
+                            {user.username?.charAt(0).toUpperCase() || 'U'}
+                          </span>
                           <span className="font-medium text-gray-900">{user.username}</span>
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-gray-600">{user.email}</td>
-                      <td className="px-4 py-3 text-right">
-                        <span className="font-semibold text-green-600">{formatAmount(user.balance)}</span>
-                        <span className="text-gray-400 text-sm ml-1">FCFA</span>
+                      <td className={`${tdClass} text-gray-500`}>{user.email}</td>
+                      <td className={`${tdClass} whitespace-nowrap text-right font-medium tabular-nums text-gray-900`}>
+                        {formatAmount(user.balance)}
+                        <span className="ml-1 text-xs font-normal text-gray-400">FCFA</span>
                       </td>
-                      <td className="px-4 py-3 text-center">
+                      <td className={`${tdClass} text-center`}>
                         <button
+                          type="button"
                           onClick={() => openRoleModal(user)}
                           disabled={user.id === currentUserId}
-                          title={user.id === currentUserId ? 'Vous ne pouvez pas changer votre propre rôle' : 'Changer le rôle'}
-                          className={`px-2 py-1 rounded-full text-xs font-medium disabled:cursor-not-allowed disabled:opacity-60 ${
-                            user.role === 'admin'
-                              ? 'bg-purple-100 text-purple-800 enabled:hover:bg-purple-200'
-                              : 'bg-gray-100 text-gray-800 enabled:hover:bg-gray-200'
-                          }`}
+                          title={
+                            user.id === currentUserId
+                              ? 'Vous ne pouvez pas changer votre propre rôle'
+                              : 'Changer le rôle'
+                          }
+                          className="rounded-md transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
                         >
-                          {user.role === 'admin' ? '👑 Admin' : 'User'}
+                          {user.role === 'admin' ? (
+                            <Badge tone="info" icon={<ShieldIcon className="w-3.5 h-3.5" />}>
+                              Admin
+                            </Badge>
+                          ) : (
+                            <Badge>Utilisateur</Badge>
+                          )}
                         </button>
                       </td>
-                      <td className="px-4 py-3 text-center">
+                      <td className={`${tdClass} text-center`}>
                         <button
+                          type="button"
                           onClick={() => handleStatusToggle(user)}
                           disabled={statusPendingId === user.id}
                           title={user.isActive ? 'Désactiver le compte' : 'Activer le compte'}
-                          className={`px-2 py-1 rounded-full text-xs font-medium disabled:cursor-not-allowed disabled:opacity-60 ${
-                            user.isActive
-                              ? 'bg-green-100 text-green-800 enabled:hover:bg-green-200'
-                              : 'bg-red-100 text-red-800 enabled:hover:bg-red-200'
-                          }`}
+                          className="rounded-md transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
                         >
-                          {statusPendingId === user.id ? '...' : user.isActive ? 'Actif' : 'Inactif'}
+                          {statusPendingId === user.id ? (
+                            <Badge>…</Badge>
+                          ) : user.isActive ? (
+                            <Badge tone="success">Actif</Badge>
+                          ) : (
+                            <Badge tone="danger">Inactif</Badge>
+                          )}
                         </button>
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-500">
+                      <td className={`${tdClass} whitespace-nowrap text-gray-500`}>
                         {new Date(user.createdAt).toLocaleDateString('fr-FR')}
                       </td>
-                      <td className="px-4 py-3 text-center">
-                        <div className="flex items-center justify-center space-x-1">
-                          <button
+                      <td className={`${tdClass} text-right`}>
+                        <div className="flex items-center justify-end gap-1">
+                          <IconButton
+                            label={`Créditer ${user.username}`}
                             onClick={() => openBalanceModal(user, 'credit')}
-                            className="p-1 text-green-600 hover:bg-green-100 rounded text-sm"
-                            title="Créditer"
-                          >
-                            ➕
-                          </button>
-                          <button
+                            icon={<PlusIcon />}
+                          />
+                          <IconButton
+                            label={`Débiter ${user.username}`}
                             onClick={() => openBalanceModal(user, 'debit')}
-                            className="p-1 text-red-600 hover:bg-red-100 rounded text-sm"
-                            title="Débiter"
-                          >
-                            ➖
-                          </button>
+                            icon={<MinusIcon />}
+                          />
                         </div>
                       </td>
                     </tr>
@@ -276,159 +315,163 @@ export default function AdminUsers() {
               </table>
             </div>
 
-            {users.length === 0 && (
-              <div className="text-center py-8 text-gray-500">
-                Aucun utilisateur trouvé
-              </div>
-            )}
+            {users.length === 0 && <EmptyState>Aucun utilisateur trouvé</EmptyState>}
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200">
-                <button
-                  onClick={() => setPage(p => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                  className="px-3 py-1 border border-gray-300 rounded-lg disabled:opacity-50"
-                >
-                  ← Précédent
-                </button>
-                <span className="text-sm text-gray-600">
-                  Page {page} sur {totalPages}
-                </span>
-                <button
-                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                  disabled={page === totalPages}
-                  className="px-3 py-1 border border-gray-300 rounded-lg disabled:opacity-50"
-                >
-                  Suivant →
-                </button>
-              </div>
-            )}
+            <Pagination page={page} totalPages={totalPages} onChange={setPage} />
           </>
         )}
-      </div>
+      </Card>
 
-      {/* Role Modal */}
       {roleUser && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 p-6">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">
-              {roleUser.role === 'admin' ? 'Rétrograder en utilisateur' : 'Promouvoir en administrateur'}
-            </h3>
-            <p className="text-gray-600 mb-4">
-              Utilisateur: <strong>{roleUser.username}</strong> ({roleUser.email})
-              <br />
-              Rôle actuel: <strong>{roleUser.role === 'admin' ? 'Admin' : 'User'}</strong>
-              {' → '}
-              Nouveau rôle: <strong>{roleUser.role === 'admin' ? 'User' : 'Admin'}</strong>
+        <Modal
+          title={
+            roleUser.role === 'admin'
+              ? 'Rétrograder en utilisateur'
+              : 'Promouvoir en administrateur'
+          }
+          onClose={() => {
+            setRoleUser(null);
+            setRoleError(null);
+          }}
+        >
+          <dl className="mb-4 space-y-1.5 text-sm">
+            <div className="flex justify-between gap-4">
+              <dt className="text-gray-500">Utilisateur</dt>
+              <dd className="text-right font-medium text-gray-900">
+                {roleUser.username}
+                <span className="block text-xs font-normal text-gray-500">{roleUser.email}</span>
+              </dd>
+            </div>
+            <div className="flex items-center justify-between gap-4">
+              <dt className="text-gray-500">Rôle</dt>
+              <dd className="flex items-center gap-2">
+                <Badge>{roleUser.role === 'admin' ? 'Admin' : 'Utilisateur'}</Badge>
+                <ArrowRightIcon className="w-3.5 h-3.5 text-gray-400" />
+                <Badge tone="info">{roleUser.role === 'admin' ? 'Utilisateur' : 'Admin'}</Badge>
+              </dd>
+            </div>
+          </dl>
+
+          {roleUser.role !== 'admin' && (
+            <p className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+              Un administrateur a accès à tous les comptes, soldes et opérations.
             </p>
-            {roleUser.role !== 'admin' && (
-              <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
-                Un administrateur a accès à tous les comptes, soldes et opérations.
+          )}
+
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="role-reason">Raison (optionnel)</Label>
+              <input
+                id="role-reason"
+                type="text"
+                value={roleReason}
+                onChange={(e) => setRoleReason(e.target.value)}
+                className={fieldClass}
+                placeholder="Nouveau membre de l'équipe support…"
+              />
+            </div>
+            {roleError && (
+              <p role="alert" className="text-sm text-rose-700">
+                {roleError}
               </p>
             )}
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Raison (optionnel)</label>
-                <input
-                  type="text"
-                  value={roleReason}
-                  onChange={(e) => setRoleReason(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="Nouveau membre de l'équipe support, etc."
-                />
-              </div>
-              {roleError && (
-                <p className="text-sm text-red-600">{roleError}</p>
-              )}
-              <div className="flex space-x-3 pt-4">
-                <button
-                  type="button"
-                  onClick={() => { setRoleUser(null); setRoleError(null); }}
-                  disabled={roleSubmitting}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 disabled:opacity-50"
-                >
-                  Annuler
-                </button>
-                <button
-                  onClick={handleRoleChange}
-                  disabled={roleSubmitting}
-                  className={`flex-1 px-4 py-2 text-white rounded-lg disabled:opacity-50 ${
-                    roleUser.role === 'admin'
-                      ? 'bg-red-600 hover:bg-red-700'
-                      : 'bg-purple-600 hover:bg-purple-700'
-                  }`}
-                >
-                  {roleSubmitting ? 'En cours...' : 'Confirmer'}
-                </button>
-              </div>
+            <div className="flex gap-3 pt-2">
+              <Button
+                onClick={() => {
+                  setRoleUser(null);
+                  setRoleError(null);
+                }}
+                disabled={roleSubmitting}
+                className="flex-1"
+              >
+                Annuler
+              </Button>
+              <Button
+                variant={roleUser.role === 'admin' ? 'danger' : 'primary'}
+                onClick={handleRoleChange}
+                disabled={roleSubmitting}
+                className="flex-1"
+              >
+                {roleSubmitting ? 'En cours…' : 'Confirmer'}
+              </Button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
 
-      {/* Balance Modal */}
       {showBalanceModal && selectedUser && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 p-6">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">
-              {showBalanceModal === 'credit' ? '➕ Créditer' : '➖ Débiter'} le compte
-            </h3>
-            <p className="text-gray-600 mb-4">
-              Utilisateur: <strong>{selectedUser.username}</strong> ({selectedUser.email})
-              <br />
-              Solde actuel: <strong>{formatCurrency(selectedUser.balance)}</strong>
-            </p>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Montant (FCFA)</label>
-                <input
-                  type="number"
-                  value={balanceAmount}
-                  onChange={(e) => setBalanceAmount(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="1000"
-                  min="0"
-                  step="1"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Raison (optionnel)</label>
-                <input
-                  type="text"
-                  value={balanceReason}
-                  onChange={(e) => setBalanceReason(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="Bonus, remboursement, etc."
-                />
-              </div>
-              {balanceError && (
-                <p className="text-sm text-red-600">{balanceError}</p>
-              )}
-              <div className="flex space-x-3 pt-4">
-                <button
-                  type="button"
-                  onClick={() => { setShowBalanceModal(null); setSelectedUser(null); setBalanceError(null); }}
-                  disabled={balanceSubmitting}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 disabled:opacity-50"
-                >
-                  Annuler
-                </button>
-                <button
-                  onClick={handleBalanceAction}
-                  disabled={balanceSubmitting || !balanceAmount || parseFloat(balanceAmount) <= 0}
-                  className={`flex-1 px-4 py-2 text-white rounded-lg disabled:opacity-50 ${
-                    showBalanceModal === 'credit'
-                      ? 'bg-green-600 hover:bg-green-700'
-                      : 'bg-red-600 hover:bg-red-700'
-                  }`}
-                >
-                  {balanceSubmitting ? 'En cours...' : showBalanceModal === 'credit' ? 'Créditer' : 'Débiter'}
-                </button>
-              </div>
+        <Modal
+          title={showBalanceModal === 'credit' ? 'Créditer le compte' : 'Débiter le compte'}
+          onClose={closeBalanceModal}
+        >
+          <dl className="mb-4 space-y-1.5 text-sm">
+            <div className="flex justify-between gap-4">
+              <dt className="text-gray-500">Utilisateur</dt>
+              <dd className="text-right font-medium text-gray-900">
+                {selectedUser.username}
+                <span className="block text-xs font-normal text-gray-500">
+                  {selectedUser.email}
+                </span>
+              </dd>
+            </div>
+            <div className="flex justify-between gap-4">
+              <dt className="text-gray-500">Solde actuel</dt>
+              <dd className="font-medium tabular-nums text-gray-900">
+                {formatCurrency(selectedUser.balance)}
+              </dd>
+            </div>
+          </dl>
+
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="balance-amount">Montant (FCFA)</Label>
+              <input
+                id="balance-amount"
+                type="number"
+                value={balanceAmount}
+                onChange={(e) => setBalanceAmount(e.target.value)}
+                className={fieldClass}
+                placeholder="1000"
+                min="0"
+                step="1"
+              />
+            </div>
+            <div>
+              <Label htmlFor="balance-reason">Raison (optionnel)</Label>
+              <input
+                id="balance-reason"
+                type="text"
+                value={balanceReason}
+                onChange={(e) => setBalanceReason(e.target.value)}
+                className={fieldClass}
+                placeholder="Bonus, remboursement…"
+              />
+            </div>
+            {balanceError && (
+              <p role="alert" className="text-sm text-rose-700">
+                {balanceError}
+              </p>
+            )}
+            <div className="flex gap-3 pt-2">
+              <Button onClick={closeBalanceModal} disabled={balanceSubmitting} className="flex-1">
+                Annuler
+              </Button>
+              <Button
+                variant={showBalanceModal === 'credit' ? 'primary' : 'danger'}
+                onClick={handleBalanceAction}
+                disabled={balanceSubmitting || !balanceAmount || parseFloat(balanceAmount) <= 0}
+                className="flex-1"
+                icon={showBalanceModal === 'credit' ? <PlusIcon /> : <MinusIcon />}
+              >
+                {balanceSubmitting
+                  ? 'En cours…'
+                  : showBalanceModal === 'credit'
+                    ? 'Créditer'
+                    : 'Débiter'}
+              </Button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

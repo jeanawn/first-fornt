@@ -3,6 +3,20 @@ import { adminService } from '../../services/admin';
 import type { AdminOperation } from '../../services/admin';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { formatAmount } from '../../utils/currency';
+import {
+  Button,
+  Card,
+  EmptyState,
+  Label,
+  PageHeader,
+  Pagination,
+  TableHead,
+  fieldClass,
+  tdClass,
+  thClass,
+} from '../../components/admin/ui';
+import { RefreshIcon, RefundIcon } from '../../components/icons';
+import { OperationStatusBadge } from './labels';
 
 export default function AdminOperations() {
   const [operations, setOperations] = useState<AdminOperation[]>([]);
@@ -50,45 +64,22 @@ export default function AdminOperations() {
     }
   };
 
-  const getStatusBadge = (status: string) => {
-    const styles: Record<string, string> = {
-      SUCCESS: 'bg-green-100 text-green-800',
-      FAILED: 'bg-red-100 text-red-800',
-      PENDING: 'bg-yellow-100 text-yellow-800',
-      PROCESSING: 'bg-blue-100 text-blue-800',
-    };
-    const labels: Record<string, string> = {
-      SUCCESS: '✅ Succès',
-      FAILED: '❌ Échec',
-      PENDING: '⏳ En attente',
-      PROCESSING: '🔄 Traitement',
-    };
-    return (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium ${styles[status] || 'bg-gray-100'}`}>
-        {labels[status] || status}
-      </span>
-    );
-  };
-
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Opérations</h2>
-          <p className="text-gray-600">Historique des achats de numéros</p>
-        </div>
-      </div>
+      <PageHeader title="Opérations" description="Historique des achats de numéros" />
 
-      {/* Filters */}
-      <div className="bg-white rounded-xl shadow-md p-4">
-        <div className="flex flex-wrap gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Statut</label>
+      <Card className="p-4">
+        <div className="flex flex-wrap items-end gap-4">
+          <div className="w-full sm:w-56">
+            <Label htmlFor="op-status">Statut</Label>
             <select
+              id="op-status"
               value={statusFilter}
-              onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              onChange={(e) => {
+                setStatusFilter(e.target.value);
+                setPage(1);
+              }}
+              className={fieldClass}
             >
               <option value="">Tous les statuts</option>
               <option value="SUCCESS">Succès</option>
@@ -97,92 +88,82 @@ export default function AdminOperations() {
               <option value="PROCESSING">Traitement</option>
             </select>
           </div>
-          <div className="flex items-end">
-            <button
-              onClick={loadOperations}
-              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
-            >
-              🔄 Actualiser
-            </button>
-          </div>
+          <Button onClick={loadOperations} icon={<RefreshIcon />}>
+            Actualiser
+          </Button>
         </div>
-      </div>
+      </Card>
 
-      {/* Operations Table */}
-      <div className="bg-white rounded-xl shadow-md overflow-hidden">
+      <Card className="overflow-hidden">
         {loading ? (
-          <div className="flex items-center justify-center h-64">
+          <div className="flex h-64 items-center justify-center">
             <LoadingSpinner size="lg" />
           </div>
         ) : (
           <>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Utilisateur</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Service</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Numéro</th>
-                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Statut</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Prix</th>
-                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
+                <TableHead>
+                  <th className={thClass}>Date</th>
+                  <th className={thClass}>Utilisateur</th>
+                  <th className={thClass}>Service</th>
+                  <th className={thClass}>Numéro</th>
+                  <th className={`${thClass} text-center`}>Statut</th>
+                  <th className={`${thClass} text-right`}>Prix</th>
+                  <th className={`${thClass} text-right`}>Actions</th>
+                </TableHead>
+                <tbody className="divide-y divide-gray-100">
                   {operations.map((op) => (
-                    <tr key={op.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm text-gray-600">
+                    <tr key={op.id} className="transition-colors hover:bg-gray-50">
+                      <td className={`${tdClass} whitespace-nowrap text-gray-500`}>
                         {new Date(op.createdDate).toLocaleString('fr-FR', {
                           day: '2-digit',
                           month: '2-digit',
                           year: '2-digit',
                           hour: '2-digit',
-                          minute: '2-digit'
+                          minute: '2-digit',
                         })}
                       </td>
-                      <td className="px-4 py-3">
-                        <div>
-                          <span className="font-medium text-gray-900">{op.user?.username || 'N/A'}</span>
-                          <p className="text-xs text-gray-500">{op.user?.email}</p>
-                        </div>
+                      <td className={tdClass}>
+                        <span className="font-medium text-gray-900">{op.user?.username || '—'}</span>
+                        <p className="text-xs text-gray-500">{op.user?.email}</p>
                       </td>
-                      <td className="px-4 py-3">
-                        <div>
-                          <span className="font-medium">{op.servicePricing?.serviceCode || 'N/A'}</span>
-                          <p className="text-xs text-gray-500">{op.servicePricing?.countryCode}</p>
-                        </div>
+                      <td className={tdClass}>
+                        <span className="font-medium text-gray-900">
+                          {op.servicePricing?.serviceCode || '—'}
+                        </span>
+                        <p className="text-xs text-gray-500">{op.servicePricing?.countryCode}</p>
                       </td>
-                      <td className="px-4 py-3">
+                      <td className={tdClass}>
                         {op.number ? (
-                          <div>
-                            <span className="font-mono text-sm">{op.number}</span>
+                          <>
+                            <span className="font-mono text-sm text-gray-900">{op.number}</span>
                             {op.sms && (
-                              <p className="text-xs text-green-600 font-medium">SMS: {op.sms}</p>
+                              <p className="text-xs font-medium text-emerald-700">SMS: {op.sms}</p>
                             )}
-                          </div>
+                          </>
                         ) : (
-                          <span className="text-gray-400">-</span>
+                          <span className="text-gray-400">—</span>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-center">
-                        {getStatusBadge(op.status)}
+                      <td className={`${tdClass} text-center`}>
+                        <OperationStatusBadge status={op.status} />
                       </td>
-                      <td className="px-4 py-3 text-right">
-                        <span className="font-semibold">
-                          {formatAmount(op.servicePricing?.price)}
-                        </span>
-                        <span className="text-gray-400 text-sm ml-1">FCFA</span>
+                      <td className={`${tdClass} whitespace-nowrap text-right font-medium tabular-nums text-gray-900`}>
+                        {formatAmount(op.servicePricing?.price)}
+                        <span className="ml-1 text-xs font-normal text-gray-400">FCFA</span>
                       </td>
-                      <td className="px-4 py-3 text-center">
+                      <td className={`${tdClass} text-right`}>
                         {op.status !== 'FAILED' && (
-                          <button
+                          <Button
+                            variant="danger"
                             onClick={() => handleRefund(op.id)}
                             disabled={refundingId === op.id}
-                            className="px-2 py-1 text-xs bg-orange-100 text-orange-700 rounded hover:bg-orange-200 disabled:opacity-50"
+                            icon={<RefundIcon />}
+                            className="px-2.5 py-1.5 text-xs"
                           >
-                            {refundingId === op.id ? '...' : '💸 Rembourser'}
-                          </button>
+                            {refundingId === op.id ? 'En cours…' : 'Rembourser'}
+                          </Button>
                         )}
                       </td>
                     </tr>
@@ -191,37 +172,12 @@ export default function AdminOperations() {
               </table>
             </div>
 
-            {operations.length === 0 && (
-              <div className="text-center py-8 text-gray-500">
-                Aucune opération trouvée
-              </div>
-            )}
+            {operations.length === 0 && <EmptyState>Aucune opération trouvée</EmptyState>}
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200">
-                <button
-                  onClick={() => setPage(p => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                  className="px-3 py-1 border border-gray-300 rounded-lg disabled:opacity-50"
-                >
-                  ← Précédent
-                </button>
-                <span className="text-sm text-gray-600">
-                  Page {page} sur {totalPages}
-                </span>
-                <button
-                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                  disabled={page === totalPages}
-                  className="px-3 py-1 border border-gray-300 rounded-lg disabled:opacity-50"
-                >
-                  Suivant →
-                </button>
-              </div>
-            )}
+            <Pagination page={page} totalPages={totalPages} onChange={setPage} />
           </>
         )}
-      </div>
+      </Card>
     </div>
   );
 }

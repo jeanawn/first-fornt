@@ -1,6 +1,31 @@
 import { useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
 import { adminService } from '../../services/admin';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import {
+  Badge,
+  Button,
+  Card,
+  EmptyState,
+  PageHeader,
+  Pagination,
+} from '../../components/admin/ui';
+import type { Tone } from '../../components/admin/ui';
+import {
+  BanIcon,
+  CheckIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  CloseIcon,
+  DocumentIcon,
+  EditIcon,
+  MinusIcon,
+  PlusIcon,
+  RefreshIcon,
+  RefundIcon,
+  SparkIcon,
+  TrashIcon,
+} from '../../components/icons';
 
 interface AuditLog {
   id: string;
@@ -13,16 +38,18 @@ interface AuditLog {
   createdAt: string;
 }
 
-const ACTION_LABELS: Record<string, { label: string; color: string; icon: string }> = {
-  REFUND: { label: 'Remboursement', color: 'bg-orange-100 text-orange-800', icon: '💸' },
-  CREDIT: { label: 'Crédit', color: 'bg-green-100 text-green-800', icon: '➕' },
-  DEBIT: { label: 'Débit', color: 'bg-red-100 text-red-800', icon: '➖' },
-  USER_ACTIVATE: { label: 'Activation utilisateur', color: 'bg-blue-100 text-blue-800', icon: '✅' },
-  USER_DEACTIVATE: { label: 'Désactivation utilisateur', color: 'bg-gray-100 text-gray-800', icon: '🚫' },
-  PROVIDER_CREATE: { label: 'Création', color: 'bg-purple-100 text-purple-800', icon: '🆕' },
-  PROVIDER_UPDATE: { label: 'Modification', color: 'bg-indigo-100 text-indigo-800', icon: '✏️' },
-  PROVIDER_DELETE: { label: 'Suppression', color: 'bg-red-100 text-red-800', icon: '🗑️' },
-  OPERATION_CANCEL: { label: 'Annulation opération', color: 'bg-yellow-100 text-yellow-800', icon: '❌' },
+const iconClass = 'w-3.5 h-3.5';
+
+const ACTION_LABELS: Record<string, { label: string; tone: Tone; icon: ReactNode }> = {
+  REFUND: { label: 'Remboursement', tone: 'warning', icon: <RefundIcon className={iconClass} /> },
+  CREDIT: { label: 'Crédit', tone: 'success', icon: <PlusIcon className={iconClass} /> },
+  DEBIT: { label: 'Débit', tone: 'danger', icon: <MinusIcon className={iconClass} /> },
+  USER_ACTIVATE: { label: 'Activation utilisateur', tone: 'success', icon: <CheckIcon className={iconClass} /> },
+  USER_DEACTIVATE: { label: 'Désactivation utilisateur', tone: 'neutral', icon: <BanIcon className={iconClass} /> },
+  PROVIDER_CREATE: { label: 'Création', tone: 'info', icon: <SparkIcon className={iconClass} /> },
+  PROVIDER_UPDATE: { label: 'Modification', tone: 'info', icon: <EditIcon className={iconClass} /> },
+  PROVIDER_DELETE: { label: 'Suppression', tone: 'danger', icon: <TrashIcon className={iconClass} /> },
+  OPERATION_CANCEL: { label: 'Annulation opération', tone: 'danger', icon: <CloseIcon className={iconClass} /> },
 };
 
 export default function AdminAuditLogs() {
@@ -50,115 +77,91 @@ export default function AdminAuditLogs() {
   };
 
   const getActionBadge = (action: string) => {
-    const config = ACTION_LABELS[action] || { label: action, color: 'bg-gray-100 text-gray-800', icon: '📋' };
+    const config = ACTION_LABELS[action] || {
+      label: action,
+      tone: 'neutral' as Tone,
+      icon: <DocumentIcon className={iconClass} />,
+    };
     return (
-      <span className={`inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium ${config.color}`}>
-        <span>{config.icon}</span>
-        <span>{config.label}</span>
-      </span>
+      <Badge tone={config.tone} icon={config.icon}>
+        {config.label}
+      </Badge>
     );
   };
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Logs d'audit</h2>
-          <p className="text-gray-600">Historique des actions administratives</p>
-        </div>
-        <button
-          onClick={loadLogs}
-          className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
-        >
-          🔄 Actualiser
-        </button>
-      </div>
+      <PageHeader
+        title="Logs d'audit"
+        description="Historique des actions administratives"
+        actions={
+          <Button onClick={loadLogs} icon={<RefreshIcon />}>
+            Actualiser
+          </Button>
+        }
+      />
 
-      {/* Logs List */}
-      <div className="bg-white rounded-xl shadow-md overflow-hidden">
+      <Card className="overflow-hidden">
         {loading ? (
-          <div className="flex items-center justify-center h-64">
+          <div className="flex h-64 items-center justify-center">
             <LoadingSpinner size="lg" />
           </div>
         ) : (
           <>
-            <div className="divide-y divide-gray-200">
-              {logs.map((log) => (
-                <div key={log.id} className="p-4 hover:bg-gray-50">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-start space-x-4">
-                      <div className="flex-shrink-0">
-                        {getActionBadge(log.action)}
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-900">
-                          <span className="font-medium">{log.admin?.username || 'Système'}</span>
-                          {' '}a effectué une action
-                        </p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          {new Date(log.createdAt).toLocaleString('fr-FR')}
-                          {log.ipAddress && ` • IP: ${log.ipAddress}`}
-                        </p>
-                        {(log.targetUserId || log.targetOperationId) && (
-                          <p className="text-xs text-gray-400 mt-1">
-                            {log.targetUserId && `User: ${log.targetUserId.slice(0, 8)}...`}
-                            {log.targetOperationId && ` Op: ${log.targetOperationId.slice(0, 8)}...`}
+            <div className="divide-y divide-gray-100">
+              {logs.map((log) => {
+                const expanded = expandedLog === log.id;
+                const hasDetails = log.details && Object.keys(log.details).length > 0;
+                return (
+                  <div key={log.id} className="px-5 py-4 transition-colors hover:bg-gray-50">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex min-w-0 items-start gap-4">
+                        <div className="flex-shrink-0 pt-0.5">{getActionBadge(log.action)}</div>
+                        <div className="min-w-0">
+                          <p className="text-sm text-gray-900">
+                            <span className="font-medium">{log.admin?.username || 'Système'}</span>{' '}
+                            a effectué une action
                           </p>
-                        )}
+                          <p className="mt-1 text-xs text-gray-500">
+                            {new Date(log.createdAt).toLocaleString('fr-FR')}
+                            {log.ipAddress && ` · IP ${log.ipAddress}`}
+                          </p>
+                          {(log.targetUserId || log.targetOperationId) && (
+                            <p className="mt-1 font-mono text-xs text-gray-400">
+                              {log.targetUserId && `User ${log.targetUserId.slice(0, 8)}…`}
+                              {log.targetOperationId && ` Op ${log.targetOperationId.slice(0, 8)}…`}
+                            </p>
+                          )}
+                        </div>
                       </div>
+                      {hasDetails && (
+                        <Button
+                          variant="ghost"
+                          onClick={() => setExpandedLog(expanded ? null : log.id)}
+                          aria-expanded={expanded}
+                          className="flex-shrink-0 flex-row-reverse px-2 py-1 text-xs"
+                          icon={expanded ? <ChevronUpIcon /> : <ChevronDownIcon />}
+                        >
+                          {expanded ? 'Masquer' : 'Détails'}
+                        </Button>
+                      )}
                     </div>
-                    {log.details && Object.keys(log.details).length > 0 && (
-                      <button
-                        onClick={() => setExpandedLog(expandedLog === log.id ? null : log.id)}
-                        className="text-blue-600 hover:text-blue-800 text-sm"
-                      >
-                        {expandedLog === log.id ? '▲ Masquer' : '▼ Détails'}
-                      </button>
-                    )}
-                  </div>
-                  {expandedLog === log.id && log.details && (
-                    <div className="mt-3 p-3 bg-gray-50 rounded-lg">
-                      <pre className="text-xs text-gray-600 whitespace-pre-wrap overflow-auto max-h-40">
+                    {expanded && log.details && (
+                      <pre className="mt-3 max-h-40 overflow-auto rounded-lg border border-gray-200 bg-gray-50 p-3 text-xs text-gray-600 whitespace-pre-wrap">
                         {JSON.stringify(log.details, null, 2)}
                       </pre>
-                    </div>
-                  )}
-                </div>
-              ))}
+                    )}
+                  </div>
+                );
+              })}
             </div>
 
-            {logs.length === 0 && (
-              <div className="text-center py-8 text-gray-500">
-                Aucun log d'audit trouvé
-              </div>
-            )}
+            {logs.length === 0 && <EmptyState>Aucun log d'audit trouvé</EmptyState>}
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200">
-                <button
-                  onClick={() => setPage(p => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                  className="px-3 py-1 border border-gray-300 rounded-lg disabled:opacity-50"
-                >
-                  ← Précédent
-                </button>
-                <span className="text-sm text-gray-600">
-                  Page {page} sur {totalPages}
-                </span>
-                <button
-                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                  disabled={page === totalPages}
-                  className="px-3 py-1 border border-gray-300 rounded-lg disabled:opacity-50"
-                >
-                  Suivant →
-                </button>
-              </div>
-            )}
+            <Pagination page={page} totalPages={totalPages} onChange={setPage} />
           </>
         )}
-      </div>
+      </Card>
     </div>
   );
 }

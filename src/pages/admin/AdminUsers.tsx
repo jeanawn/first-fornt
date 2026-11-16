@@ -4,11 +4,13 @@ import type { AdminUser } from '../../services/admin';
 import { authService } from '../../services/auth';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { formatAmount, formatCurrency } from '../../utils/currency';
+import { useDebouncedValue } from '../../hooks/useDebouncedValue';
 import {
   Badge,
   Button,
   Card,
   EmptyState,
+  FeedbackBanner,
   IconButton,
   Label,
   Modal,
@@ -20,9 +22,9 @@ import {
   tdClass,
   thClass,
 } from '../../components/admin/ui';
+import { errorMessage, useFeedback } from '../../components/admin/useFeedback';
 import {
   ArrowRightIcon,
-  CloseIcon,
   MinusIcon,
   PlusIcon,
   SearchIcon,
@@ -33,6 +35,7 @@ export default function AdminUsers() {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const debouncedSearch = useDebouncedValue(search);
   const [roleFilter, setRoleFilter] = useState<'' | 'user' | 'admin'>('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -48,11 +51,16 @@ export default function AdminUsers() {
   const [roleSubmitting, setRoleSubmitting] = useState(false);
   const [roleError, setRoleError] = useState<string | null>(null);
   const [statusPendingId, setStatusPendingId] = useState<string | null>(null);
-  const [actionError, setActionError] = useState<string | null>(null);
+  const { feedback, showError, clear } = useFeedback();
 
   useEffect(() => {
     loadUsers();
-  }, [page, search, roleFilter]);
+  }, [page, debouncedSearch, roleFilter]);
+
+  // A new search term belongs on page 1, not on whatever page was open.
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch, roleFilter]);
 
   useEffect(() => {
     authService.getCurrentUser()
@@ -66,13 +74,14 @@ export default function AdminUsers() {
       const response = await adminService.getUsers({
         page,
         limit: 20,
-        search: search || undefined,
+        search: debouncedSearch || undefined,
         role: roleFilter || undefined,
       });
       setUsers(response.users);
       setTotalPages(response.totalPages);
     } catch (error) {
       console.error('Erreur chargement utilisateurs:', error);
+      showError(errorMessage(error, 'Impossible de charger les utilisateurs.'));
     } finally {
       setLoading(false);
     }
@@ -81,13 +90,16 @@ export default function AdminUsers() {
   const handleStatusToggle = async (user: AdminUser) => {
     try {
       setStatusPendingId(user.id);
-      setActionError(null);
+      clear();
       await adminService.updateUserStatus(user.id, !user.isActive);
       loadUsers();
     } catch (error) {
-      const message = (error as { message?: string })?.message
-        || `Erreur lors de ${user.isActive ? 'la désactivation' : "l'activation"} de ${user.username}`;
-      setActionError(message);
+      showError(
+        errorMessage(
+          error,
+          `Erreur lors de ${user.isActive ? 'la désactivation' : "l'activation"} de ${user.username}`
+        )
+      );
     } finally {
       setStatusPendingId(null);
     }
@@ -164,20 +176,18 @@ export default function AdminUsers() {
 
       <Card className="p-4">
         <div className="flex flex-wrap items-center gap-3">
-          <div className="min-w-[220px] flex-1">
+          <div className="relative min-w-[220px] flex-1">
             <label htmlFor="user-search" className="sr-only">
               Rechercher un utilisateur
             </label>
+            <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
             <input
               id="user-search"
               type="search"
               value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
+              onChange={(e) => setSearch(e.target.value)}
               placeholder="Email ou nom d'utilisateur…"
-              className={fieldClass}
+              className={`${fieldClass} pl-9`}
             />
           </div>
           <label htmlFor="user-role" className="sr-only">
@@ -186,36 +196,17 @@ export default function AdminUsers() {
           <select
             id="user-role"
             value={roleFilter}
-            onChange={(e) => {
-              setRoleFilter(e.target.value as '' | 'user' | 'admin');
-              setPage(1);
-            }}
+            onChange={(e) => setRoleFilter(e.target.value as '' | 'user' | 'admin')}
             className={fieldBaseClass}
           >
             <option value="">Tous les rôles</option>
             <option value="user">Utilisateurs</option>
             <option value="admin">Administrateurs</option>
           </select>
-          <Button onClick={loadUsers} variant="primary" icon={<SearchIcon />}>
-            Rechercher
-          </Button>
         </div>
       </Card>
 
-      {actionError && (
-        <div
-          role="alert"
-          className="flex items-start justify-between gap-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3"
-        >
-          <p className="text-sm text-rose-700">{actionError}</p>
-          <IconButton
-            label="Fermer"
-            onClick={() => setActionError(null)}
-            icon={<CloseIcon />}
-            className="h-6 w-6 flex-shrink-0 text-rose-600 hover:bg-rose-100 hover:text-rose-800"
-          />
-        </div>
-      )}
+      <FeedbackBanner feedback={feedback} onDismiss={clear} />
 
       <Card className="overflow-hidden">
         {loading ? (

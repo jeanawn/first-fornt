@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { FormEvent } from 'react';
 import { adminService } from '../../services/admin';
 import type { ServicePricing, ReferenceCountry, ReferenceService } from '../../services/admin';
@@ -14,6 +14,7 @@ import {
   Label,
   Modal,
   PageHeader,
+  Pagination,
   TableHead,
   fieldClass,
   tdClass,
@@ -34,6 +35,9 @@ export default function AdminServicePricing() {
   const [editingPricing, setEditingPricing] = useState<ServicePricing | null>(null);
   const [searchService, setSearchService] = useState('');
   const [searchCountry, setSearchCountry] = useState('');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<ServicePricing | null>(null);
@@ -57,9 +61,12 @@ export default function AdminServicePricing() {
   });
 
   useEffect(() => {
-    loadPricings();
     loadOptions();
   }, []);
+
+  useEffect(() => {
+    setPage(1);
+  }, [searchService, searchCountry]);
 
   const loadOptions = async () => {
     try {
@@ -78,11 +85,18 @@ export default function AdminServicePricing() {
     }
   };
 
-  const loadPricings = async () => {
+  const loadPricings = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await adminService.getServicePricings({ limit: 500 });
+      const response = await adminService.getServicePricings({
+        page,
+        limit: 20,
+        serviceCode: searchService || undefined,
+        countryCode: searchCountry || undefined,
+      });
       setPricings(response.pricings || []);
+      setTotalPages(response.totalPages || 1);
+      setTotal(response.total || 0);
       setError(null);
     } catch (error) {
       console.error('Erreur chargement tarifs:', error);
@@ -90,7 +104,13 @@ export default function AdminServicePricing() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, searchService, searchCountry]);
+
+  // Filtering and paging both happen server side: the table used to pull 500
+  // rows and sift them in the browser, which stops working as the catalogue grows.
+  useEffect(() => {
+    loadPricings();
+  }, [loadPricings]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -200,12 +220,6 @@ export default function AdminServicePricing() {
     return country?.flag;
   };
 
-  const filteredPricings = pricings.filter(p => {
-    const matchService = !searchService || p.serviceCode === searchService;
-    const matchCountry = !searchCountry || p.countryCode === searchCountry;
-    return matchService && matchCountry;
-  });
-
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
@@ -243,8 +257,8 @@ export default function AdminServicePricing() {
         title="Tarification des services"
         description={
           loadingOptions
-            ? `${pricings.length} tarifs configurés · chargement des options…`
-            : `${pricings.length} tarifs configurés`
+            ? `${total} tarifs configurés · chargement des options…`
+            : `${total} tarifs configurés`
         }
         actions={
           <Button
@@ -310,7 +324,7 @@ export default function AdminServicePricing() {
               <th className={`${thClass} text-right`}>Actions</th>
             </TableHead>
             <tbody className="divide-y divide-gray-100">
-              {filteredPricings.map((pricing) => (
+              {pricings.map((pricing) => (
                 <tr
                   key={pricing.id}
                   className={`transition-colors hover:bg-gray-50 ${!pricing.isActive ? 'opacity-60' : ''}`}
@@ -386,7 +400,9 @@ export default function AdminServicePricing() {
             </tbody>
           </table>
         </div>
-        {filteredPricings.length === 0 && <EmptyState>Aucun tarif trouvé</EmptyState>}
+        {pricings.length === 0 && <EmptyState>Aucun tarif trouvé</EmptyState>}
+
+        <Pagination page={page} totalPages={totalPages} onChange={setPage} />
       </Card>
 
       {deleteTarget && (

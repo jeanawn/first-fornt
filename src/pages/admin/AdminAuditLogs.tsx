@@ -7,10 +7,12 @@ import {
   Button,
   Card,
   EmptyState,
+  FeedbackBanner,
   PageHeader,
   Pagination,
 } from '../../components/admin/ui';
 import type { Tone } from '../../components/admin/ui';
+import { errorMessage, useFeedback } from '../../components/admin/useFeedback';
 import {
   BanIcon,
   CheckIcon,
@@ -58,6 +60,7 @@ export default function AdminAuditLogs() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [expandedLog, setExpandedLog] = useState<string | null>(null);
+  const { feedback, showError, clear } = useFeedback();
 
   useEffect(() => {
     loadLogs();
@@ -71,6 +74,7 @@ export default function AdminAuditLogs() {
       setTotalPages(response.totalPages);
     } catch (error) {
       console.error('Erreur chargement logs:', error);
+      showError(errorMessage(error, "Impossible de charger les logs d'audit."));
     } finally {
       setLoading(false);
     }
@@ -100,6 +104,8 @@ export default function AdminAuditLogs() {
           </Button>
         }
       />
+
+      <FeedbackBanner feedback={feedback} onDismiss={clear} />
 
       <Card className="overflow-hidden">
         {loading ? (

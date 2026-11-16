@@ -8,6 +8,7 @@ import {
   Button,
   Card,
   EmptyState,
+  FeedbackBanner,
   PageHeader,
   Pagination,
   TableHead,
@@ -16,6 +17,7 @@ import {
   tdClass,
   thClass,
 } from '../../components/admin/ui';
+import { errorMessage, useFeedback } from '../../components/admin/useFeedback';
 import { SearchIcon } from '../../components/icons';
 import { TransactionStatusBadge, TransactionTypeBadge } from './labels';
 
@@ -33,6 +35,7 @@ export default function AdminTransactions() {
   const [typeFilter, setTypeFilter] = useState<TransactionType | ''>('');
   const [statusFilter, setStatusFilter] = useState<TransactionStatus | ''>('');
   const [searchQuery, setSearchQuery] = useState('');
+  const { feedback, showError, clear } = useFeedback();
 
   useEffect(() => {
     loadTransactions();
@@ -53,6 +56,7 @@ export default function AdminTransactions() {
       setTotal(data.total);
     } catch (error) {
       console.error('Erreur chargement transactions:', error);
+      showError(errorMessage(error, 'Impossible de charger les transactions.'));
     } finally {
       setLoading(false);
     }
@@ -70,6 +74,8 @@ export default function AdminTransactions() {
         title="Transactions"
         description={`${total.toLocaleString('fr-FR')} transactions au total`}
       />
+
+      <FeedbackBanner feedback={feedback} onDismiss={clear} />
 
       <Card className="p-4">
         <form onSubmit={handleSearch} className="flex flex-wrap items-center gap-3">

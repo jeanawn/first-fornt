@@ -4,8 +4,9 @@ import { adminService } from '../../services/admin';
 import type { AdminStats, AdminTransaction } from '../../services/admin';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { CURRENCY_LABEL, formatAmount, formatCurrency, formatSignedCurrency } from '../../utils/currency';
-import { Card, EmptyState, TableHead, tdClass, thClass } from '../../components/admin/ui';
-import { ClockIcon, DocumentIcon, RefundIcon, UserIcon } from '../../components/icons';
+import { Button, Card, EmptyState, TableHead, tdClass, thClass } from '../../components/admin/ui';
+import { errorMessage } from '../../components/admin/useFeedback';
+import { ClockIcon, DocumentIcon, RefreshIcon, RefundIcon, UserIcon } from '../../components/icons';
 import { TransactionStatusBadge, TransactionTypeBadge } from './labels';
 
 type StatCard = {
@@ -20,6 +21,7 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [recentTransactions, setRecentTransactions] = useState<AdminTransaction[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     loadData();
@@ -27,6 +29,8 @@ export default function AdminDashboard() {
 
   const loadData = async () => {
     try {
+      setLoading(true);
+      setLoadError(null);
       const [globalStats, transactionsData] = await Promise.all([
         adminService.getGlobalStats(),
         adminService.getTransactions({ limit: 10 }),
@@ -35,6 +39,7 @@ export default function AdminDashboard() {
       setRecentTransactions(transactionsData.transactions);
     } catch (error) {
       console.error('Erreur chargement stats:', error);
+      setLoadError(errorMessage(error, 'Impossible de charger le tableau de bord.'));
     } finally {
       setLoading(false);
     }
@@ -51,7 +56,14 @@ export default function AdminDashboard() {
   if (!stats) {
     return (
       <Card className="p-12 text-center">
-        <p className="text-sm text-gray-600">Impossible de charger les statistiques.</p>
+        <p className="text-sm text-gray-700">
+          {loadError || 'Impossible de charger les statistiques.'}
+        </p>
+        <div className="mt-4 flex justify-center">
+          <Button onClick={loadData} icon={<RefreshIcon />}>
+            Réessayer
+          </Button>
+        </div>
       </Card>
     );
   }
@@ -105,6 +117,15 @@ export default function AdminDashboard() {
           </Card>
         ))}
       </div>
+
+      {loadError && (
+        <div
+          role="alert"
+          className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700"
+        >
+          {loadError}
+        </div>
+      )}
 
       <Card>
         <div className="border-b border-gray-200 px-5 py-4">

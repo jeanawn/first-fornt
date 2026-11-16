@@ -14,6 +14,7 @@ import {
   Label,
   Modal,
   PageHeader,
+  Pagination,
   TableHead,
   fieldClass,
   tdClass,
@@ -48,6 +49,7 @@ export default function AdminExchangeRates() {
   const [showModal, setShowModal] = useState(false);
   const [editingRate, setEditingRate] = useState<ExchangeRate | null>(null);
   const [showConverter, setShowConverter] = useState(false);
+  const [page, setPage] = useState(1);
   const [deleteTarget, setDeleteTarget] = useState<ExchangeRate | null>(null);
   const [deletePending, setDeletePending] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
@@ -166,6 +168,13 @@ export default function AdminExchangeRates() {
       showError(`Aucun taux disponible pour la paire ${converterFrom} vers ${converterTo}.`);
     }
   };
+
+  // GET /admin/exchange-rates has no paging and returns every pair, so the
+  // page is cut here. Moving it server side needs an API change.
+  const PER_PAGE = 20;
+  const totalPages = Math.max(1, Math.ceil(rates.length / PER_PAGE));
+  const currentPage = Math.min(page, totalPages);
+  const visibleRates = rates.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE);
 
   const resetForm = () => {
     setFormData({
@@ -286,7 +295,7 @@ export default function AdminExchangeRates() {
               <th className={`${thClass} text-right`}>Actions</th>
             </TableHead>
             <tbody className="divide-y divide-gray-100">
-              {rates.map((rate) => (
+              {visibleRates.map((rate) => (
                 <tr
                   key={rate.id}
                   className={`transition-colors hover:bg-gray-50 ${!rate.isActive ? 'opacity-60' : ''}`}
@@ -342,6 +351,8 @@ export default function AdminExchangeRates() {
           </table>
         </div>
         {rates.length === 0 && <EmptyState>Aucun taux de change configuré</EmptyState>}
+
+        <Pagination page={currentPage} totalPages={totalPages} onChange={setPage} />
       </Card>
 
       <Card className="p-5">

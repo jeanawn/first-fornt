@@ -172,3 +172,23 @@ export const SparkIcon = (p: IconProps) => (
     <circle cx="12" cy="12" r="2.5" />
   </Icon>
 );
+
+export const EyeIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z" />
+    <circle cx="12" cy="12" r="3" />
+  </Icon>
+);
+
+export const CopyIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <rect x="9" y="9" width="12" height="12" rx="2" />
+    <path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1" />
+  </Icon>
+);
+
+export const MessageIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M21 12a8 8 0 0 1-11.3 7.3L3 21l1.7-6.7A8 8 0 1 1 21 12Z" />
+  </Icon>
+);

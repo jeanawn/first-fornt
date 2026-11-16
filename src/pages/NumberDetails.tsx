@@ -283,7 +283,7 @@ export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: Nu
                 <div>
                   <h4 className="text-green-900 font-bold text-lg mb-2">Code reçu</h4>
                   <div className="bg-white rounded-xl p-4 border border-green-300">
-                    <p className="text-4xl font-mono font-bold text-green-800 mb-2">
+                    <p className="text-4xl font-mono font-bold text-green-800 mb-2 break-all select-all">
                       {phoneNumber.smsCode}
                     </p>
                     <button

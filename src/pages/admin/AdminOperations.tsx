@@ -9,7 +9,9 @@ import {
   ConfirmDialog,
   EmptyState,
   FeedbackBanner,
+  IconButton,
   Label,
+  Modal,
   PageHeader,
   Pagination,
   TableHead,
@@ -17,8 +19,9 @@ import {
   tdClass,
   thClass,
 } from '../../components/admin/ui';
+import { CopyableCode } from '../../components/admin/CopyableCode';
 import { errorMessage, useFeedback } from '../../components/admin/useFeedback';
-import { RefreshIcon, RefundIcon } from '../../components/icons';
+import { EyeIcon, RefreshIcon, RefundIcon } from '../../components/icons';
 import { OperationStatusBadge } from './labels';
 
 export default function AdminOperations() {
@@ -27,6 +30,7 @@ export default function AdminOperations() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [statusFilter, setStatusFilter] = useState('');
+  const [detailTarget, setDetailTarget] = useState<AdminOperation | null>(null);
   const [refundTarget, setRefundTarget] = useState<AdminOperation | null>(null);
   const [refundReason, setRefundReason] = useState('');
   const [refundPending, setRefundPending] = useState(false);
@@ -160,12 +164,19 @@ export default function AdminOperations() {
                       </td>
                       <td className={tdClass}>
                         {op.number ? (
-                          <>
+                          <button
+                            type="button"
+                            onClick={() => setDetailTarget(op)}
+                            title="Agrandir pour lire le code"
+                            className="block rounded-md text-left transition-colors hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
+                          >
                             <span className="font-mono text-sm text-gray-900">{op.number}</span>
                             {op.sms && (
-                              <p className="text-xs font-medium text-emerald-700">SMS: {op.sms}</p>
+                              <span className="block font-mono text-base font-semibold tracking-wide text-emerald-700">
+                                {op.sms}
+                              </span>
                             )}
-                          </>
+                          </button>
                         ) : (
                           <span className="text-gray-400">—</span>
                         )}
@@ -178,16 +189,23 @@ export default function AdminOperations() {
                         <span className="ml-1 text-xs font-normal text-gray-400">FCFA</span>
                       </td>
                       <td className={`${tdClass} text-right`}>
-                        {op.status !== 'FAILED' && (
-                          <Button
-                            variant="danger"
-                            onClick={() => openRefund(op)}
-                            icon={<RefundIcon />}
-                            className="px-2.5 py-1.5 text-xs"
-                          >
-                            Rembourser
-                          </Button>
-                        )}
+                        <div className="flex items-center justify-end gap-1">
+                          <IconButton
+                            label={`Agrandir l'opération de ${op.user?.username || 'cet utilisateur'}`}
+                            onClick={() => setDetailTarget(op)}
+                            icon={<EyeIcon />}
+                          />
+                          {op.status !== 'FAILED' && (
+                            <Button
+                              variant="danger"
+                              onClick={() => openRefund(op)}
+                              icon={<RefundIcon />}
+                              className="px-2.5 py-1.5 text-xs"
+                            >
+                              Rembourser
+                            </Button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -201,6 +219,93 @@ export default function AdminOperations() {
           </>
         )}
       </Card>
+
+      {detailTarget && (
+        <Modal title="Détail de l'opération" onClose={() => setDetailTarget(null)}>
+          <div className="space-y-4">
+            {detailTarget.sms ? (
+              <CopyableCode label="Code reçu" value={detailTarget.sms} />
+            ) : (
+              <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-4 text-center">
+                <p className="text-sm text-gray-500">
+                  {detailTarget.status === 'FAILED'
+                    ? "Aucun code : l'opération a échoué."
+                    : 'Aucun code reçu pour le moment.'}
+                </p>
+              </div>
+            )}
+
+            {detailTarget.number && (
+              <CopyableCode label="Numéro" value={detailTarget.number} size="md" />
+            )}
+
+            <dl className="divide-y divide-gray-100 rounded-lg border border-gray-200">
+              <div className="flex items-baseline justify-between gap-4 px-3 py-2">
+                <dt className="text-sm text-gray-500">Statut</dt>
+                <dd>
+                  <OperationStatusBadge status={detailTarget.status} />
+                </dd>
+              </div>
+              <div className="flex items-baseline justify-between gap-4 px-3 py-2">
+                <dt className="text-sm text-gray-500">Utilisateur</dt>
+                <dd className="text-right text-sm font-medium text-gray-900">
+                  {detailTarget.user?.username || '—'}
+                  <span className="block text-xs font-normal text-gray-500">
+                    {detailTarget.user?.email}
+                  </span>
+                </dd>
+              </div>
+              <div className="flex items-baseline justify-between gap-4 px-3 py-2">
+                <dt className="text-sm text-gray-500">Service</dt>
+                <dd className="text-right text-sm font-medium text-gray-900">
+                  {detailTarget.servicePricing?.serviceCode || '—'}
+                  <span className="block text-xs font-normal text-gray-500">
+                    {detailTarget.servicePricing?.countryCode}
+                  </span>
+                </dd>
+              </div>
+              <div className="flex items-baseline justify-between gap-4 px-3 py-2">
+                <dt className="text-sm text-gray-500">Prix</dt>
+                <dd className="text-sm font-medium tabular-nums text-gray-900">
+                  {formatCurrency(detailTarget.servicePricing?.price)}
+                </dd>
+              </div>
+              <div className="flex items-baseline justify-between gap-4 px-3 py-2">
+                <dt className="text-sm text-gray-500">Date</dt>
+                <dd className="text-sm text-gray-900">
+                  {new Date(detailTarget.createdDate).toLocaleString('fr-FR')}
+                </dd>
+              </div>
+              <div className="flex items-baseline justify-between gap-4 px-3 py-2">
+                <dt className="text-sm text-gray-500">Référence</dt>
+                <dd className="break-all text-right font-mono text-xs text-gray-500">
+                  {detailTarget.reference}
+                </dd>
+              </div>
+            </dl>
+
+            <div className="flex gap-3 pt-1">
+              <Button onClick={() => setDetailTarget(null)} className="flex-1">
+                Fermer
+              </Button>
+              {detailTarget.status !== 'FAILED' && (
+                <Button
+                  variant="danger"
+                  onClick={() => {
+                    const target = detailTarget;
+                    setDetailTarget(null);
+                    openRefund(target);
+                  }}
+                  icon={<RefundIcon />}
+                  className="flex-1"
+                >
+                  Rembourser
+                </Button>
+              )}
+            </div>
+          </div>
+        </Modal>
+      )}
 
       {refundTarget && (
         <ConfirmDialog

@@ -452,7 +452,7 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
                               )}
                             </button>
                           </div>
-                          <p className="font-mono text-lg font-bold text-green-800 bg-white/50 px-3 py-2 rounded-lg border">
+                          <p className="font-mono text-lg font-bold text-green-800 bg-white/50 px-3 py-2 rounded-lg border break-all select-all">
                             {operation.sms}
                           </p>
                         </div>

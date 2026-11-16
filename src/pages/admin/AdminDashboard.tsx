@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
 import { adminService } from '../../services/admin';
 import type { AdminStats, DailyStats, FinanceOverview, AdminTransaction } from '../../services/admin';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import { CURRENCY_LABEL, formatAmount, formatCurrency, formatSignedCurrency } from '../../utils/currency';
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<AdminStats | null>(null);
@@ -49,7 +51,16 @@ export default function AdminDashboard() {
     );
   }
 
-  const statCards = [
+  type StatCard = {
+    label: string;
+    value: number | string;
+    suffix?: string;
+    color: string;
+    subLabel: string;
+    icon: ReactNode;
+  };
+
+  const statCards: StatCard[] = [
     {
       label: 'Utilisateurs', value: stats.totalUsers, color: 'bg-blue-500', subLabel: `${stats.activeUsers} actifs`,
       icon: <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>,
@@ -63,7 +74,7 @@ export default function AdminDashboard() {
       icon: <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
     },
     {
-      label: 'Revenus', value: `${stats.totalRevenue.toFixed(0)}`, color: 'bg-purple-500', subLabel: `${stats.totalRefunds.toFixed(0)} remboursés`,
+      label: 'Revenus', value: formatAmount(stats.totalRevenue), suffix: CURRENCY_LABEL, color: 'bg-purple-500', subLabel: `${formatCurrency(stats.totalRefunds)} remboursés`,
       icon: <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
     },
   ];
@@ -78,7 +89,10 @@ export default function AdminDashboard() {
               <div className={`w-12 h-12 ${card.color} rounded-lg flex items-center justify-center`}>
                 {card.icon}
               </div>
-              <span className="text-3xl font-bold text-gray-900">{card.value}</span>
+              <span className="text-3xl font-bold text-gray-900">
+                {card.value}
+                {card.suffix && <span className="text-base font-medium text-gray-400 ml-1">{card.suffix}</span>}
+              </span>
             </div>
             <p className="text-gray-600 font-medium">{card.label}</p>
             <p className="text-sm text-gray-400">{card.subLabel}</p>
@@ -129,7 +143,7 @@ export default function AdminDashboard() {
                     />
                   </div>
                   <span className="text-sm font-medium text-gray-700 w-20 text-right">
-                    {day.revenue.toFixed(0)} cr
+                    {formatAmount(day.revenue)} FCFA
                   </span>
                 </div>
               );
@@ -162,7 +176,8 @@ export default function AdminDashboard() {
           </div>
           <div className="text-center p-4 bg-purple-50 rounded-lg">
             <p className="text-2xl font-bold text-purple-600">
-              {stats.successfulOperations > 0 ? (stats.totalRevenue / stats.successfulOperations).toFixed(0) : 0}
+              {formatAmount(stats.successfulOperations > 0 ? stats.totalRevenue / stats.successfulOperations : 0)}
+              <span className="text-sm font-medium text-purple-400 ml-1">{CURRENCY_LABEL}</span>
             </p>
             <p className="text-sm text-purple-700">Revenu moyen/Op</p>
           </div>
@@ -177,19 +192,19 @@ export default function AdminDashboard() {
             {/* CA Brut */}
             <div className="bg-green-600 rounded-xl p-6 text-white">
               <p className="text-sm opacity-80">Dépôts réussis</p>
-              <p className="text-3xl font-bold mt-2">{Number(finance.chiffreAffaires.deposits.total).toLocaleString()} FCFA</p>
+              <p className="text-3xl font-bold mt-2">{formatCurrency(finance.chiffreAffaires.deposits.total)}</p>
               <p className="text-sm opacity-80 mt-1">{finance.chiffreAffaires.deposits.count} transactions</p>
             </div>
             {/* Remboursements */}
             <div className="bg-red-600 rounded-xl p-6 text-white">
               <p className="text-sm opacity-80">Remboursements</p>
-              <p className="text-3xl font-bold mt-2">{Number(finance.chiffreAffaires.refunds.total).toLocaleString()} FCFA</p>
+              <p className="text-3xl font-bold mt-2">{formatCurrency(finance.chiffreAffaires.refunds.total)}</p>
               <p className="text-sm opacity-80 mt-1">{finance.chiffreAffaires.refunds.count} remboursements</p>
             </div>
             {/* CA Net */}
             <div className="bg-blue-600 rounded-xl p-6 text-white">
               <p className="text-sm opacity-80">Revenu Net</p>
-              <p className="text-3xl font-bold mt-2">{Number(finance.chiffreAffaires.netRevenue).toLocaleString()} FCFA</p>
+              <p className="text-3xl font-bold mt-2">{formatCurrency(finance.chiffreAffaires.netRevenue)}</p>
               <p className="text-sm opacity-80 mt-1">Taux succès: {finance.operations.successRate}%</p>
             </div>
           </div>
@@ -198,22 +213,22 @@ export default function AdminDashboard() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
             <div className="p-4 bg-yellow-50 rounded-lg">
               <p className="text-sm text-yellow-700">En attente</p>
-              <p className="text-xl font-bold text-yellow-800">{Number(finance.transactions.pending.total).toLocaleString()} FCFA</p>
+              <p className="text-xl font-bold text-yellow-800">{formatCurrency(finance.transactions.pending.total)}</p>
               <p className="text-xs text-yellow-600">{finance.transactions.pending.count} transactions</p>
             </div>
             <div className="p-4 bg-red-50 rounded-lg">
               <p className="text-sm text-red-700">Échouées</p>
-              <p className="text-xl font-bold text-red-800">{Number(finance.transactions.failed.total).toLocaleString()} FCFA</p>
+              <p className="text-xl font-bold text-red-800">{formatCurrency(finance.transactions.failed.total)}</p>
               <p className="text-xs text-red-600">{finance.transactions.failed.count} transactions</p>
             </div>
             <div className="p-4 bg-green-50 rounded-lg">
               <p className="text-sm text-green-700">Revenus SMS</p>
-              <p className="text-xl font-bold text-green-800">{Number(finance.operations.successful.revenue).toLocaleString()} FCFA</p>
+              <p className="text-xl font-bold text-green-800">{formatCurrency(finance.operations.successful.revenue)}</p>
               <p className="text-xs text-green-600">{finance.operations.successful.count} opérations</p>
             </div>
             <div className="p-4 bg-purple-50 rounded-lg">
               <p className="text-sm text-purple-700">Soldes utilisateurs</p>
-              <p className="text-xl font-bold text-purple-800">{Number(finance.userBalances.total).toLocaleString()} FCFA</p>
+              <p className="text-xl font-bold text-purple-800">{formatCurrency(finance.userBalances.total)}</p>
               <p className="text-xs text-purple-600">Total en compte</p>
             </div>
           </div>
@@ -259,7 +274,7 @@ export default function AdminDashboard() {
                   </td>
                   <td className="py-3 px-2 text-right font-medium">
                     <span className={tx.type === 'refund' ? 'text-red-600' : 'text-green-600'}>
-                      {tx.type === 'refund' ? '-' : '+'}${Number(tx.amount).toFixed(2)}
+                      {formatSignedCurrency(tx.amount, tx.type === 'refund')}
                     </span>
                   </td>
                   <td className="py-3 px-2 text-center">

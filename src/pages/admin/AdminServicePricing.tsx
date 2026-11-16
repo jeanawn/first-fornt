@@ -2,6 +2,12 @@ import { useState, useEffect } from 'react';
 import { adminService } from '../../services/admin';
 import type { ServicePricing, ReferenceCountry, ReferenceService } from '../../services/admin';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import { CURRENCY_LABEL, formatAmount } from '../../utils/currency';
+
+/** CFA zone currencies all display as FCFA; others keep their ISO code. */
+function currencyLabel(currency: string): string {
+  return currency === 'XOF' || currency === 'XAF' ? CURRENCY_LABEL : currency;
+}
 
 export default function AdminServicePricing() {
   const [pricings, setPricings] = useState<ServicePricing[]>([]);
@@ -23,7 +29,7 @@ export default function AdminServicePricing() {
     serviceCode: '',
     countryCode: '',
     price: '',
-    currency: 'USD',
+    currency: 'XOF',
     costPrice: '',
     margin: '',
     isActive: true,
@@ -143,7 +149,7 @@ export default function AdminServicePricing() {
       serviceCode: '',
       countryCode: '',
       price: '',
-      currency: 'USD',
+      currency: 'XOF',
       costPrice: '',
       margin: '',
       isActive: true,
@@ -293,11 +299,11 @@ export default function AdminServicePricing() {
                   </td>
                   <td className="px-4 py-3 text-right">
                     <span className="font-semibold text-green-600">
-                      {pricing.price} {pricing.currency}
+                      {formatAmount(pricing.price)} {currencyLabel(pricing.currency)}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right text-gray-600">
-                    {pricing.costPrice ? `${pricing.costPrice} ${pricing.currency}` : '-'}
+                    {pricing.costPrice ? `${formatAmount(pricing.costPrice)} ${currencyLabel(pricing.currency)}` : '-'}
                   </td>
                   <td className="px-4 py-3 text-right text-gray-600">
                     {pricing.margin ? `${pricing.margin}%` : '-'}
@@ -394,12 +400,12 @@ export default function AdminServicePricing() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">Prix de vente *</label>
                   <input
                     type="number"
-                    step="0.01"
+                    step="1"
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                     required
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    placeholder="1.50"
+                    placeholder="1500"
                   />
                 </div>
                 <div>
@@ -409,10 +415,10 @@ export default function AdminServicePricing() {
                     onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="USD">USD ($)</option>
-                    <option value="EUR">EUR (€)</option>
                     <option value="XOF">XOF (FCFA)</option>
                     <option value="XAF">XAF (FCFA)</option>
+                    <option value="USD">USD ($)</option>
+                    <option value="EUR">EUR (€)</option>
                     <option value="NGN">NGN (₦)</option>
                   </select>
                 </div>
@@ -423,11 +429,11 @@ export default function AdminServicePricing() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">Prix d'achat</label>
                   <input
                     type="number"
-                    step="0.01"
+                    step="1"
                     value={formData.costPrice}
                     onChange={(e) => setFormData({ ...formData, costPrice: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    placeholder="0.80"
+                    placeholder="800"
                   />
                 </div>
                 <div>

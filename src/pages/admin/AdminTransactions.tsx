@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { adminService } from '../../services/admin';
 import type { AdminTransaction } from '../../services/admin';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import { formatSignedCurrency } from '../../utils/currency';
 
 export default function AdminTransactions() {
   const [transactions, setTransactions] = useState<AdminTransaction[]>([]);
@@ -165,7 +166,7 @@ export default function AdminTransactions() {
                         <span className={`font-bold ${
                           tx.type === 'refund' || tx.type === 'withdraw' ? 'text-red-600' : 'text-green-600'
                         }`}>
-                          {tx.type === 'refund' || tx.type === 'withdraw' ? '-' : '+'}${Number(tx.amount).toFixed(2)}
+                          {formatSignedCurrency(tx.amount, tx.type === 'refund' || tx.type === 'withdraw')}
                         </span>
                       </td>
                       <td className="py-4 px-4 text-center">

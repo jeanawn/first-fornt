@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { adminService } from '../../services/admin';
 import type { AdminOperation } from '../../services/admin';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import { formatAmount } from '../../utils/currency';
 
 export default function AdminOperations() {
   const [operations, setOperations] = useState<AdminOperation[]>([]);
@@ -169,9 +170,9 @@ export default function AdminOperations() {
                       </td>
                       <td className="px-4 py-3 text-right">
                         <span className="font-semibold">
-                          {op.servicePricing?.price || 0}
+                          {formatAmount(op.servicePricing?.price)}
                         </span>
-                        <span className="text-gray-400 text-sm ml-1">cr</span>
+                        <span className="text-gray-400 text-sm ml-1">FCFA</span>
                       </td>
                       <td className="px-4 py-3 text-center">
                         {op.status !== 'FAILED' && (

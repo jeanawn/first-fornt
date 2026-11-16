@@ -3,6 +3,7 @@ import { adminService } from '../../services/admin';
 import type { AdminUser } from '../../services/admin';
 import { authService } from '../../services/auth';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import { formatAmount, formatCurrency } from '../../utils/currency';
 
 export default function AdminUsers() {
   const [users, setUsers] = useState<AdminUser[]>([]);
@@ -217,7 +218,7 @@ export default function AdminUsers() {
                       </td>
                       <td className="px-4 py-3 text-gray-600">{user.email}</td>
                       <td className="px-4 py-3 text-right">
-                        <span className="font-semibold text-green-600">{user.balance.toLocaleString()}</span>
+                        <span className="font-semibold text-green-600">{formatAmount(user.balance)}</span>
                         <span className="text-gray-400 text-sm ml-1">FCFA</span>
                       </td>
                       <td className="px-4 py-3 text-center">
@@ -376,18 +377,19 @@ export default function AdminUsers() {
             <p className="text-gray-600 mb-4">
               Utilisateur: <strong>{selectedUser.username}</strong> ({selectedUser.email})
               <br />
-              Solde actuel: <strong>{selectedUser.balance.toFixed(2)} $</strong>
+              Solde actuel: <strong>{formatCurrency(selectedUser.balance)}</strong>
             </p>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Montant</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Montant (FCFA)</label>
                 <input
                   type="number"
                   value={balanceAmount}
                   onChange={(e) => setBalanceAmount(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="100"
+                  placeholder="1000"
                   min="0"
+                  step="1"
                 />
               </div>
               <div>

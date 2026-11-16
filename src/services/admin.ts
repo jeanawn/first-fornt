@@ -13,16 +13,6 @@ export interface AdminStats {
   totalRefunds: number;
 }
 
-export interface DailyStats {
-  date: string;
-  newUsers: number;
-  operations: number;
-  successfulOperations: number;
-  failedOperations: number;
-  revenue: number;
-  refunds: number;
-}
-
 export interface ServicePricing {
   id: string;
   serviceCode: string;
@@ -123,41 +113,12 @@ export interface AdminTransaction {
   } | null;
 }
 
-// Finance Overview Types
-export interface FinanceOverview {
-  chiffreAffaires: {
-    deposits: { total: number; count: number };
-    refunds: { total: number; count: number };
-    netRevenue: number;
-  };
-  transactions: {
-    pending: { total: number; count: number };
-    failed: { total: number; count: number };
-  };
-  operations: {
-    successful: { revenue: number; count: number };
-    failed: { potentialRevenue: number; count: number };
-    successRate: string | number;
-  };
-  userBalances: {
-    total: number;
-  };
-  period: {
-    startDate: string;
-    endDate: string;
-  };
-}
-
 // ============ SERVICE ============
 
 class AdminService {
   // Stats
   async getGlobalStats(): Promise<AdminStats> {
     return apiService.get<AdminStats>('/admin/stats');
-  }
-
-  async getDailyStats(days = 30): Promise<DailyStats[]> {
-    return apiService.get<DailyStats[]>(`/admin/stats/daily?days=${days}`);
   }
 
   // Users
@@ -365,15 +326,6 @@ class AdminService {
 
   async getTransactionById(id: string): Promise<AdminTransaction> {
     return apiService.get<AdminTransaction>(`/admin/transactions/${id}`);
-  }
-
-  // Finance / Chiffre d'Affaires
-  async getFinanceOverview(startDate?: string, endDate?: string): Promise<FinanceOverview> {
-    const query = new URLSearchParams();
-    if (startDate) query.append('startDate', startDate);
-    if (endDate) query.append('endDate', endDate);
-
-    return apiService.get<FinanceOverview>(`/admin/finance/overview?${query.toString()}`);
   }
 }
 

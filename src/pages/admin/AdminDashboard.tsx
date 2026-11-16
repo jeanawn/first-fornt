@@ -1,14 +1,12 @@
 import { useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { adminService } from '../../services/admin';
-import type { AdminStats, DailyStats, FinanceOverview, AdminTransaction } from '../../services/admin';
+import type { AdminStats, AdminTransaction } from '../../services/admin';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { CURRENCY_LABEL, formatAmount, formatCurrency, formatSignedCurrency } from '../../utils/currency';
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<AdminStats | null>(null);
-  const [dailyStats, setDailyStats] = useState<DailyStats[]>([]);
-  const [finance, setFinance] = useState<FinanceOverview | null>(null);
   const [recentTransactions, setRecentTransactions] = useState<AdminTransaction[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -18,15 +16,11 @@ export default function AdminDashboard() {
 
   const loadData = async () => {
     try {
-      const [globalStats, daily, financeData, transactionsData] = await Promise.all([
+      const [globalStats, transactionsData] = await Promise.all([
         adminService.getGlobalStats(),
-        adminService.getDailyStats(7),
-        adminService.getFinanceOverview(),
         adminService.getTransactions({ limit: 10 }),
       ]);
       setStats(globalStats);
-      setDailyStats(daily);
-      setFinance(financeData);
       setRecentTransactions(transactionsData.transactions);
     } catch (error) {
       console.error('Erreur chargement stats:', error);
@@ -99,141 +93,6 @@ export default function AdminDashboard() {
           </div>
         ))}
       </div>
-
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Operations Chart */}
-        <div className="bg-white rounded-xl shadow-md p-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-4">Opérations (7 derniers jours)</h3>
-          <div className="space-y-3">
-            {dailyStats.slice(-7).map((day, index) => (
-              <div key={index} className="flex items-center space-x-4">
-                <span className="text-sm text-gray-500 w-20">
-                  {new Date(day.date).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric' })}
-                </span>
-                <div className="flex-1 bg-gray-200 rounded-full h-4 overflow-hidden">
-                  <div
-                    className="bg-green-500 h-full rounded-full"
-                    style={{ width: `${Math.min((day.successfulOperations / Math.max(day.operations, 1)) * 100, 100)}%` }}
-                  />
-                </div>
-                <span className="text-sm font-medium text-gray-700 w-16 text-right">
-                  {day.successfulOperations}/{day.operations}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Revenue Chart */}
-        <div className="bg-white rounded-xl shadow-md p-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-4">Revenus (7 derniers jours)</h3>
-          <div className="space-y-3">
-            {dailyStats.slice(-7).map((day, index) => {
-              const maxRevenue = Math.max(...dailyStats.map(d => d.revenue), 1);
-              return (
-                <div key={index} className="flex items-center space-x-4">
-                  <span className="text-sm text-gray-500 w-20">
-                    {new Date(day.date).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric' })}
-                  </span>
-                  <div className="flex-1 bg-gray-200 rounded-full h-4 overflow-hidden">
-                    <div
-                      className="bg-purple-500 h-full rounded-full"
-                      style={{ width: `${(day.revenue / maxRevenue) * 100}%` }}
-                    />
-                  </div>
-                  <span className="text-sm font-medium text-gray-700 w-20 text-right">
-                    {formatAmount(day.revenue)} FCFA
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      {/* Quick Stats */}
-      <div className="bg-white rounded-xl shadow-md p-6">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">Résumé rapide</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="text-center p-4 bg-green-50 rounded-lg">
-            <p className="text-2xl font-bold text-green-600">
-              {stats.totalOperations > 0 ? ((stats.successfulOperations / stats.totalOperations) * 100).toFixed(1) : 0}%
-            </p>
-            <p className="text-sm text-green-700">Taux de succès</p>
-          </div>
-          <div className="text-center p-4 bg-red-50 rounded-lg">
-            <p className="text-2xl font-bold text-red-600">
-              {stats.totalOperations > 0 ? ((stats.failedOperations / stats.totalOperations) * 100).toFixed(1) : 0}%
-            </p>
-            <p className="text-sm text-red-700">Taux d'échec</p>
-          </div>
-          <div className="text-center p-4 bg-blue-50 rounded-lg">
-            <p className="text-2xl font-bold text-blue-600">
-              {stats.totalUsers > 0 ? (stats.totalOperations / stats.totalUsers).toFixed(1) : 0}
-            </p>
-            <p className="text-sm text-blue-700">Op/Utilisateur</p>
-          </div>
-          <div className="text-center p-4 bg-purple-50 rounded-lg">
-            <p className="text-2xl font-bold text-purple-600">
-              {formatAmount(stats.successfulOperations > 0 ? stats.totalRevenue / stats.successfulOperations : 0)}
-              <span className="text-sm font-medium text-purple-400 ml-1">{CURRENCY_LABEL}</span>
-            </p>
-            <p className="text-sm text-purple-700">Revenu moyen/Op</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Finance Overview */}
-      {finance && (
-        <div className="bg-white rounded-xl shadow-md p-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-4">Chiffre d'Affaires</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* CA Brut */}
-            <div className="bg-green-600 rounded-xl p-6 text-white">
-              <p className="text-sm opacity-80">Dépôts réussis</p>
-              <p className="text-3xl font-bold mt-2">{formatCurrency(finance.chiffreAffaires.deposits.total)}</p>
-              <p className="text-sm opacity-80 mt-1">{finance.chiffreAffaires.deposits.count} transactions</p>
-            </div>
-            {/* Remboursements */}
-            <div className="bg-red-600 rounded-xl p-6 text-white">
-              <p className="text-sm opacity-80">Remboursements</p>
-              <p className="text-3xl font-bold mt-2">{formatCurrency(finance.chiffreAffaires.refunds.total)}</p>
-              <p className="text-sm opacity-80 mt-1">{finance.chiffreAffaires.refunds.count} remboursements</p>
-            </div>
-            {/* CA Net */}
-            <div className="bg-blue-600 rounded-xl p-6 text-white">
-              <p className="text-sm opacity-80">Revenu Net</p>
-              <p className="text-3xl font-bold mt-2">{formatCurrency(finance.chiffreAffaires.netRevenue)}</p>
-              <p className="text-sm opacity-80 mt-1">Taux succès: {finance.operations.successRate}%</p>
-            </div>
-          </div>
-
-          {/* Détails supplémentaires */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-            <div className="p-4 bg-yellow-50 rounded-lg">
-              <p className="text-sm text-yellow-700">En attente</p>
-              <p className="text-xl font-bold text-yellow-800">{formatCurrency(finance.transactions.pending.total)}</p>
-              <p className="text-xs text-yellow-600">{finance.transactions.pending.count} transactions</p>
-            </div>
-            <div className="p-4 bg-red-50 rounded-lg">
-              <p className="text-sm text-red-700">Échouées</p>
-              <p className="text-xl font-bold text-red-800">{formatCurrency(finance.transactions.failed.total)}</p>
-              <p className="text-xs text-red-600">{finance.transactions.failed.count} transactions</p>
-            </div>
-            <div className="p-4 bg-green-50 rounded-lg">
-              <p className="text-sm text-green-700">Revenus SMS</p>
-              <p className="text-xl font-bold text-green-800">{formatCurrency(finance.operations.successful.revenue)}</p>
-              <p className="text-xs text-green-600">{finance.operations.successful.count} opérations</p>
-            </div>
-            <div className="p-4 bg-purple-50 rounded-lg">
-              <p className="text-sm text-purple-700">Soldes utilisateurs</p>
-              <p className="text-xl font-bold text-purple-800">{formatCurrency(finance.userBalances.total)}</p>
-              <p className="text-xs text-purple-600">Total en compte</p>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Recent Transactions */}
       <div className="bg-white rounded-xl shadow-md p-6">

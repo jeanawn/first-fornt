@@ -18,6 +18,8 @@ import BottomNav from './components/BottomNav';
 import InstallPrompt from './components/InstallPrompt';
 import LoadingSpinner from './components/LoadingSpinner';
 
+import { clearAdminHash, isAdminHash } from './pages/admin/adminRoute';
+
 const AdminPanel = lazy(() => import('./pages/admin/AdminPanel'));
 import { authService } from './services/auth';
 import { operationsService } from './services/operations';
@@ -107,7 +109,10 @@ export default function App() {
           if (fedapayCallback) {
             setPendingFedapayDeposit({ depositId: fedapayCallback.id, paymentUrl: '' });
             setCurrentPage('payment-confirmation');
+          } else if (isAdminHash() && currentUser.role === 'admin') {
+            setCurrentPage('admin');
           } else {
+            clearAdminHash();
             setCurrentPage('dashboard');
           }
         } catch {
@@ -132,6 +137,11 @@ export default function App() {
     // Si l'état actuel correspond déjà (cas popstate), ne pas re-pousser
     if (window.history.state?.page === currentPage) return;
     window.history.pushState({ page: currentPage }, '');
+  }, [currentPage]);
+
+  // Backing out of the panel must not leave an admin hash on a user page.
+  useEffect(() => {
+    if (currentPage !== 'admin') clearAdminHash();
   }, [currentPage]);
 
   useEffect(() => {
@@ -407,6 +417,8 @@ export default function App() {
   };
 
   const handleLogout = async () => {
+    clearAdminHash();
+
     // Envoye avant l'appel serveur : la fonction se termine par un
     // rechargement complet qui couperait une requete encore en vol
     trackLogout();

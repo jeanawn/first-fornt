@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { FormEvent } from 'react';
 import { adminService } from '../../services/admin';
 import type { AdminTransaction } from '../../services/admin';
@@ -35,13 +35,10 @@ export default function AdminTransactions() {
   const [typeFilter, setTypeFilter] = useState<TransactionType | ''>('');
   const [statusFilter, setStatusFilter] = useState<TransactionStatus | ''>('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [submittedSearch, setSubmittedSearch] = useState('');
   const { feedback, showError, clear } = useFeedback();
 
-  useEffect(() => {
-    loadTransactions();
-  }, [page, typeFilter, statusFilter]);
-
-  const loadTransactions = async () => {
+  const loadTransactions = useCallback(async () => {
     setLoading(true);
     try {
       const data = await adminService.getTransactions({
@@ -49,7 +46,7 @@ export default function AdminTransactions() {
         limit: 20,
         type: typeFilter || undefined,
         status: statusFilter || undefined,
-        search: searchQuery || undefined,
+        search: submittedSearch || undefined,
       });
       setTransactions(data.transactions);
       setTotalPages(data.totalPages);
@@ -60,12 +57,16 @@ export default function AdminTransactions() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, typeFilter, statusFilter, submittedSearch, showError]);
+
+  useEffect(() => {
+    loadTransactions();
+  }, [loadTransactions]);
 
   const handleSearch = (e: FormEvent) => {
     e.preventDefault();
     setPage(1);
-    loadTransactions();
+    setSubmittedSearch(searchQuery);
   };
 
   return (

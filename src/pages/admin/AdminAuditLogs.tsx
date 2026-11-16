@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import { adminService } from '../../services/admin';
 import LoadingSpinner from '../../components/LoadingSpinner';
@@ -62,11 +62,7 @@ export default function AdminAuditLogs() {
   const [expandedLog, setExpandedLog] = useState<string | null>(null);
   const { feedback, showError, clear } = useFeedback();
 
-  useEffect(() => {
-    loadLogs();
-  }, [page]);
-
-  const loadLogs = async () => {
+  const loadLogs = useCallback(async () => {
     try {
       setLoading(true);
       const response = await adminService.getAuditLogs({ page, limit: 30 });
@@ -78,7 +74,11 @@ export default function AdminAuditLogs() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, showError]);
+
+  useEffect(() => {
+    loadLogs();
+  }, [loadLogs]);
 
   const getActionBadge = (action: string) => {
     const config = ACTION_LABELS[action] || {

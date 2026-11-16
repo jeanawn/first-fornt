@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { adminService } from '../../services/admin';
 import type { AdminUser } from '../../services/admin';
 import { authService } from '../../services/auth';
@@ -9,6 +9,7 @@ import {
   Badge,
   Button,
   Card,
+  ConfirmDialog,
   EmptyState,
   FeedbackBanner,
   IconButton,
@@ -50,12 +51,12 @@ export default function AdminUsers() {
   const [roleReason, setRoleReason] = useState('');
   const [roleSubmitting, setRoleSubmitting] = useState(false);
   const [roleError, setRoleError] = useState<string | null>(null);
-  const [statusPendingId, setStatusPendingId] = useState<string | null>(null);
-  const { feedback, showError, clear } = useFeedback();
+  const [statusTarget, setStatusTarget] = useState<AdminUser | null>(null);
+  const [statusPending, setStatusPending] = useState(false);
+  const [statusError, setStatusError] = useState<string | null>(null);
+  const { feedback, showSuccess, showError, clear } = useFeedback();
 
-  useEffect(() => {
-    loadUsers();
-  }, [page, debouncedSearch, roleFilter]);
+
 
   // A new search term belongs on page 1, not on whatever page was open.
   useEffect(() => {
@@ -68,7 +69,7 @@ export default function AdminUsers() {
       .catch(() => setCurrentUserId(null));
   }, []);
 
-  const loadUsers = async () => {
+  const loadUsers = useCallback(async () => {
     try {
       setLoading(true);
       const response = await adminService.getUsers({
@@ -85,23 +86,32 @@ export default function AdminUsers() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, debouncedSearch, roleFilter, showError]);
 
-  const handleStatusToggle = async (user: AdminUser) => {
+  useEffect(() => {
+    loadUsers();
+  }, [loadUsers]);
+
+  const handleStatusToggle = async () => {
+    if (!statusTarget) return;
+    const { id, username, isActive } = statusTarget;
+
     try {
-      setStatusPendingId(user.id);
-      clear();
-      await adminService.updateUserStatus(user.id, !user.isActive);
+      setStatusPending(true);
+      setStatusError(null);
+      await adminService.updateUserStatus(id, !isActive);
+      setStatusTarget(null);
+      showSuccess(`Compte de ${username} ${isActive ? 'désactivé' : 'activé'}.`);
       loadUsers();
     } catch (error) {
-      showError(
+      setStatusError(
         errorMessage(
           error,
-          `Erreur lors de ${user.isActive ? 'la désactivation' : "l'activation"} de ${user.username}`
+          `Erreur lors de ${isActive ? 'la désactivation' : "l'activation"} de ${username}`
         )
       );
     } finally {
-      setStatusPendingId(null);
+      setStatusPending(false);
     }
   };
 
@@ -269,14 +279,14 @@ export default function AdminUsers() {
                       <td className={`${tdClass} text-center`}>
                         <button
                           type="button"
-                          onClick={() => handleStatusToggle(user)}
-                          disabled={statusPendingId === user.id}
+                          onClick={() => {
+                            setStatusTarget(user);
+                            setStatusError(null);
+                          }}
                           title={user.isActive ? 'Désactiver le compte' : 'Activer le compte'}
-                          className="rounded-md transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+                          className="rounded-md transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
                         >
-                          {statusPendingId === user.id ? (
-                            <Badge>…</Badge>
-                          ) : user.isActive ? (
+                          {user.isActive ? (
                             <Badge tone="success">Actif</Badge>
                           ) : (
                             <Badge tone="danger">Inactif</Badge>
@@ -312,6 +322,31 @@ export default function AdminUsers() {
           </>
         )}
       </Card>
+
+      {statusTarget && (
+        <ConfirmDialog
+          title={statusTarget.isActive ? 'Désactiver ce compte' : 'Activer ce compte'}
+          summary={[
+            { label: 'Utilisateur', value: statusTarget.username },
+            { label: 'Email', value: statusTarget.email },
+            { label: 'Solde', value: formatCurrency(statusTarget.balance) },
+          ]}
+          question={
+            statusTarget.isActive
+              ? "Cet utilisateur ne pourra plus se connecter ni acheter de numéro. Son solde est conservé."
+              : 'Cet utilisateur pourra de nouveau se connecter et acheter des numéros.'
+          }
+          confirmLabel={statusTarget.isActive ? 'Désactiver' : 'Activer'}
+          variant={statusTarget.isActive ? 'danger' : 'primary'}
+          pending={statusPending}
+          error={statusError}
+          onConfirm={handleStatusToggle}
+          onCancel={() => {
+            setStatusTarget(null);
+            setStatusError(null);
+          }}
+        />
+      )}
 
       {roleUser && (
         <Modal

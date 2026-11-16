@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { adminService } from '../../services/admin';
 import type { AdminOperation } from '../../services/admin';
 import LoadingSpinner from '../../components/LoadingSpinner';
@@ -33,11 +33,7 @@ export default function AdminOperations() {
   const [refundError, setRefundError] = useState<string | null>(null);
   const { feedback, showSuccess, showError, clear } = useFeedback();
 
-  useEffect(() => {
-    loadOperations();
-  }, [page, statusFilter]);
-
-  const loadOperations = async () => {
+  const loadOperations = useCallback(async () => {
     try {
       setLoading(true);
       const response = await adminService.getOperations({
@@ -53,7 +49,11 @@ export default function AdminOperations() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, statusFilter, showError]);
+
+  useEffect(() => {
+    loadOperations();
+  }, [loadOperations]);
 
   const openRefund = (operation: AdminOperation) => {
     setRefundTarget(operation);

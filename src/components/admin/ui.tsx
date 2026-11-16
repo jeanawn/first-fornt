@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon, CloseIcon } from '../icons';
 import type { Feedback } from './useFeedback';
@@ -209,12 +209,55 @@ export function Modal({
   children: ReactNode;
   onClose: () => void;
 }) {
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  // Keyboard contract for a dialog: Escape closes it, Tab stays inside it, and
+  // whatever had focus before gets it back on close.
   useEffect(() => {
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+
+    const focusable = () =>
+      Array.from(
+        panelRef.current?.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        ) ?? []
+      ).filter((el) => el.offsetParent !== null || el === document.activeElement);
+
+    focusable()[0]?.focus();
+
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') {
+        onClose();
+        return;
+      }
+      if (e.key !== 'Tab') return;
+
+      const items = focusable();
+      if (items.length === 0) {
+        e.preventDefault();
+        return;
+      }
+      const first = items[0];
+      const last = items[items.length - 1];
+      const active = document.activeElement;
+
+      if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      } else if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (active instanceof HTMLElement && !panelRef.current?.contains(active)) {
+        e.preventDefault();
+        first.focus();
+      }
     };
+
     document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      previouslyFocused?.focus?.();
+    };
   }, [onClose]);
 
   return (
@@ -226,6 +269,7 @@ export function Modal({
       onClick={onClose}
     >
       <div
+        ref={panelRef}
         className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >

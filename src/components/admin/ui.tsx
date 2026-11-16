@@ -1,5 +1,7 @@
+import { useEffect } from 'react';
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
-import { ChevronLeftIcon, ChevronRightIcon } from '../icons';
+import { ChevronLeftIcon, ChevronRightIcon, CloseIcon } from '../icons';
+import type { Feedback } from './useFeedback';
 
 /**
  * Shared admin primitives. The admin area is a dense working tool, so the
@@ -207,6 +209,14 @@ export function Modal({
   children: ReactNode;
   onClose: () => void;
 }) {
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [onClose]);
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/40 p-4 backdrop-blur-[1px]"
@@ -225,5 +235,105 @@ export function Modal({
         <div className="px-5 py-4">{children}</div>
       </div>
     </div>
+  );
+}
+
+/* ── Feedback banner ── */
+
+export function FeedbackBanner({
+  feedback,
+  onDismiss,
+}: {
+  feedback: Feedback;
+  onDismiss: () => void;
+}) {
+  if (!feedback) return null;
+  const isError = feedback.kind === 'error';
+  return (
+    <div
+      role={isError ? 'alert' : 'status'}
+      className={`flex items-start justify-between gap-4 rounded-xl border px-4 py-3 ${
+        isError ? 'border-rose-200 bg-rose-50' : 'border-emerald-200 bg-emerald-50'
+      }`}
+    >
+      <p className={`text-sm ${isError ? 'text-rose-700' : 'text-emerald-700'}`}>
+        {feedback.message}
+      </p>
+      <IconButton
+        label="Fermer"
+        onClick={onDismiss}
+        icon={<CloseIcon />}
+        className={`h-6 w-6 flex-shrink-0 ${
+          isError
+            ? 'text-rose-600 hover:bg-rose-100 hover:text-rose-800'
+            : 'text-emerald-600 hover:bg-emerald-100 hover:text-emerald-800'
+        }`}
+      />
+    </div>
+  );
+}
+
+/* ── Confirm dialog ── */
+
+/**
+ * Stands in front of anything irreversible. `summary` restates what is about
+ * to happen with real values, so the decision is made on the facts and not on
+ * the memory of which row was clicked.
+ */
+export function ConfirmDialog({
+  title,
+  summary,
+  question,
+  confirmLabel,
+  variant = 'danger',
+  pending = false,
+  error,
+  children,
+  onConfirm,
+  onCancel,
+}: {
+  title: string;
+  summary?: { label: string; value: ReactNode }[];
+  question: ReactNode;
+  confirmLabel: string;
+  variant?: Variant;
+  pending?: boolean;
+  error?: string | null;
+  children?: ReactNode;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <Modal title={title} onClose={pending ? () => {} : onCancel}>
+      {summary && summary.length > 0 && (
+        <dl className="mb-4 divide-y divide-gray-100 rounded-lg border border-gray-200">
+          {summary.map((row) => (
+            <div key={row.label} className="flex items-baseline justify-between gap-4 px-3 py-2">
+              <dt className="text-sm text-gray-500">{row.label}</dt>
+              <dd className="text-right text-sm font-medium text-gray-900">{row.value}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
+
+      <p className="text-sm text-gray-700">{question}</p>
+
+      {children && <div className="mt-4">{children}</div>}
+
+      {error && (
+        <p role="alert" className="mt-4 text-sm text-rose-700">
+          {error}
+        </p>
+      )}
+
+      <div className="mt-5 flex gap-3">
+        <Button onClick={onCancel} disabled={pending} className="flex-1">
+          Annuler
+        </Button>
+        <Button variant={variant} onClick={onConfirm} disabled={pending} className="flex-1">
+          {pending ? 'En cours…' : confirmLabel}
+        </Button>
+      </div>
+    </Modal>
   );
 }

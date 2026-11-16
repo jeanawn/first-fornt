@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { FormEvent } from 'react';
 import { adminService } from '../../services/admin';
 import type { ExchangeRate } from '../../services/admin';
@@ -7,7 +7,9 @@ import {
   Badge,
   Button,
   Card,
+  ConfirmDialog,
   EmptyState,
+  FeedbackBanner,
   IconButton,
   Label,
   Modal,
@@ -17,6 +19,7 @@ import {
   tdClass,
   thClass,
 } from '../../components/admin/ui';
+import { errorMessage, useFeedback } from '../../components/admin/useFeedback';
 import {
   ArrowRightIcon,
   EditIcon,
@@ -45,6 +48,10 @@ export default function AdminExchangeRates() {
   const [showModal, setShowModal] = useState(false);
   const [editingRate, setEditingRate] = useState<ExchangeRate | null>(null);
   const [showConverter, setShowConverter] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<ExchangeRate | null>(null);
+  const [deletePending, setDeletePending] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const { feedback, showSuccess, showError, clear } = useFeedback();
 
   // Form state
   const [formData, setFormData] = useState({
@@ -60,20 +67,21 @@ export default function AdminExchangeRates() {
   const [converterTo, setConverterTo] = useState('XOF');
   const [convertedResult, setConvertedResult] = useState<number | null>(null);
 
-  useEffect(() => {
-    loadRates();
-  }, []);
-
-  const loadRates = async () => {
+  const loadRates = useCallback(async () => {
     try {
       const data = await adminService.getExchangeRates(true);
       setRates(data);
     } catch (error) {
       console.error('Erreur chargement taux:', error);
+      showError(errorMessage(error, 'Impossible de charger les taux de change.'));
     } finally {
       setLoading(false);
     }
-  };
+  }, [showError]);
+
+  useEffect(() => {
+    loadRates();
+  }, [loadRates]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -97,13 +105,11 @@ export default function AdminExchangeRates() {
       setShowModal(false);
       setEditingRate(null);
       resetForm();
+      showSuccess(editingRate ? 'Taux mis à jour.' : 'Taux créé.');
       loadRates();
     } catch (error: unknown) {
       console.error('Erreur sauvegarde:', error);
-      const errorMessage = error && typeof error === 'object' && 'message' in error
-        ? (error as { message: string }).message
-        : 'Erreur lors de la sauvegarde';
-      alert(errorMessage);
+      showError(errorMessage(error, 'Erreur lors de la sauvegarde du taux.'));
     }
   };
 
@@ -118,14 +124,21 @@ export default function AdminExchangeRates() {
     setShowModal(true);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Supprimer ce taux de change ?')) return;
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
     try {
-      await adminService.deleteExchangeRate(id);
+      setDeletePending(true);
+      setDeleteError(null);
+      await adminService.deleteExchangeRate(deleteTarget.id);
+      const pair = `${deleteTarget.fromCurrency} vers ${deleteTarget.toCurrency}`;
+      setDeleteTarget(null);
+      showSuccess(`Taux ${pair} supprimé.`);
       loadRates();
     } catch (error) {
       console.error('Erreur suppression:', error);
-      alert('Erreur lors de la suppression');
+      setDeleteError(errorMessage(error, 'La suppression a échoué. Réessayez.'));
+    } finally {
+      setDeletePending(false);
     }
   };
 
@@ -135,6 +148,7 @@ export default function AdminExchangeRates() {
       loadRates();
     } catch (error) {
       console.error('Erreur toggle:', error);
+      showError(errorMessage(error, 'Impossible de changer le statut de ce taux.'));
     }
   };
 
@@ -148,7 +162,8 @@ export default function AdminExchangeRates() {
       setConvertedResult(result.converted.amount);
     } catch (error) {
       console.error('Erreur conversion:', error);
-      alert('Taux de change non disponible pour cette paire');
+      setConvertedResult(null);
+      showError(`Aucun taux disponible pour la paire ${converterFrom} vers ${converterTo}.`);
     }
   };
 
@@ -197,6 +212,8 @@ export default function AdminExchangeRates() {
           </>
         }
       />
+
+      <FeedbackBanner feedback={feedback} onDismiss={clear} />
 
       {showConverter && (
         <Card className="p-5">
@@ -313,7 +330,7 @@ export default function AdminExchangeRates() {
                       />
                       <IconButton
                         label={`Supprimer ${rate.fromCurrency} vers ${rate.toCurrency}`}
-                        onClick={() => handleDelete(rate.id)}
+                        onClick={() => setDeleteTarget(rate)}
                         icon={<TrashIcon />}
                         className="hover:bg-rose-50 hover:text-rose-700"
                       />
@@ -346,6 +363,28 @@ export default function AdminExchangeRates() {
           </div>
         </div>
       </Card>
+
+      {deleteTarget && (
+        <ConfirmDialog
+          title="Supprimer ce taux de change"
+          summary={[
+            {
+              label: 'Paire',
+              value: `${deleteTarget.fromCurrency} vers ${deleteTarget.toCurrency}`,
+            },
+            { label: 'Taux', value: deleteTarget.rate },
+          ]}
+          question="Les prix libellés dans cette devise ne pourront plus être convertis. Pour le suspendre temporairement, désactivez-le plutôt que de le supprimer."
+          confirmLabel="Supprimer"
+          pending={deletePending}
+          error={deleteError}
+          onConfirm={handleDelete}
+          onCancel={() => {
+            setDeleteTarget(null);
+            setDeleteError(null);
+          }}
+        />
+      )}
 
       {showModal && (
         <Modal

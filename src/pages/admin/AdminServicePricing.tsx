@@ -8,6 +8,7 @@ import {
   Badge,
   Button,
   Card,
+  ConfirmDialog,
   EmptyState,
   IconButton,
   Label,
@@ -19,6 +20,7 @@ import {
   thClass,
 } from '../../components/admin/ui';
 import { CloseIcon, EditIcon, PlusIcon, TrashIcon } from '../../components/icons';
+import { errorMessage } from '../../components/admin/useFeedback';
 
 /** CFA zone currencies all display as FCFA; others keep their ISO code. */
 function currencyLabel(currency: string): string {
@@ -34,6 +36,9 @@ export default function AdminServicePricing() {
   const [searchCountry, setSearchCountry] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<ServicePricing | null>(null);
+  const [deletePending, setDeletePending] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   // Liste des pays et services disponibles
   const [countries, setCountries] = useState<ReferenceCountry[]>([]);
@@ -140,14 +145,21 @@ export default function AdminServicePricing() {
     setShowModal(true);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Supprimer ce tarif ?')) return;
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
     try {
-      await adminService.deleteServicePricing(id);
+      setDeletePending(true);
+      setDeleteError(null);
+      await adminService.deleteServicePricing(deleteTarget.id);
+      setDeleteTarget(null);
+      setSuccessMessage('Tarif supprimé.');
+      setTimeout(() => setSuccessMessage(null), 4000);
       loadPricings();
     } catch (error) {
       console.error('Erreur suppression:', error);
-      alert('Erreur lors de la suppression');
+      setDeleteError(errorMessage(error, 'La suppression a échoué. Réessayez.'));
+    } finally {
+      setDeletePending(false);
     }
   };
 
@@ -363,7 +375,7 @@ export default function AdminServicePricing() {
                       />
                       <IconButton
                         label={`Supprimer le tarif ${getServiceName(pricing.serviceCode)}`}
-                        onClick={() => handleDelete(pricing.id)}
+                        onClick={() => setDeleteTarget(pricing)}
                         icon={<TrashIcon />}
                         className="hover:bg-rose-50 hover:text-rose-700"
                       />
@@ -376,6 +388,29 @@ export default function AdminServicePricing() {
         </div>
         {filteredPricings.length === 0 && <EmptyState>Aucun tarif trouvé</EmptyState>}
       </Card>
+
+      {deleteTarget && (
+        <ConfirmDialog
+          title="Supprimer ce tarif"
+          summary={[
+            { label: 'Service', value: getServiceName(deleteTarget.serviceCode) },
+            { label: 'Pays', value: getCountryName(deleteTarget.countryCode) },
+            {
+              label: 'Prix',
+              value: `${formatAmount(deleteTarget.price)} ${currencyLabel(deleteTarget.currency)}`,
+            },
+          ]}
+          question="Ce service ne sera plus vendable pour ce pays. Pour le retirer temporairement, désactivez-le plutôt que de le supprimer."
+          confirmLabel="Supprimer"
+          pending={deletePending}
+          error={deleteError}
+          onConfirm={handleDelete}
+          onCancel={() => {
+            setDeleteTarget(null);
+            setDeleteError(null);
+          }}
+        />
+      )}
 
       {showModal && (
         <Modal

@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import { adminService } from '../../services/admin';
 import type { AdminOperation } from '../../services/admin';
 import LoadingSpinner from '../../components/LoadingSpinner';
-import { formatAmount } from '../../utils/currency';
+import { formatAmount, formatCurrency } from '../../utils/currency';
 import {
   Button,
   Card,
+  ConfirmDialog,
   EmptyState,
+  FeedbackBanner,
   Label,
   PageHeader,
   Pagination,
@@ -15,6 +17,7 @@ import {
   tdClass,
   thClass,
 } from '../../components/admin/ui';
+import { errorMessage, useFeedback } from '../../components/admin/useFeedback';
 import { RefreshIcon, RefundIcon } from '../../components/icons';
 import { OperationStatusBadge } from './labels';
 
@@ -24,7 +27,11 @@ export default function AdminOperations() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [statusFilter, setStatusFilter] = useState('');
-  const [refundingId, setRefundingId] = useState<string | null>(null);
+  const [refundTarget, setRefundTarget] = useState<AdminOperation | null>(null);
+  const [refundReason, setRefundReason] = useState('');
+  const [refundPending, setRefundPending] = useState(false);
+  const [refundError, setRefundError] = useState<string | null>(null);
+  const { feedback, showSuccess, showError, clear } = useFeedback();
 
   useEffect(() => {
     loadOperations();
@@ -42,31 +49,48 @@ export default function AdminOperations() {
       setTotalPages(response.totalPages);
     } catch (error) {
       console.error('Erreur chargement opérations:', error);
+      showError(errorMessage(error, 'Impossible de charger les opérations.'));
     } finally {
       setLoading(false);
     }
   };
 
-  const handleRefund = async (operationId: string) => {
-    const reason = prompt('Raison du remboursement (optionnel):');
-    if (reason === null) return; // Cancelled
+  const openRefund = (operation: AdminOperation) => {
+    setRefundTarget(operation);
+    setRefundReason('');
+    setRefundError(null);
+  };
+
+  const closeRefund = () => {
+    setRefundTarget(null);
+    setRefundReason('');
+    setRefundError(null);
+  };
+
+  const handleRefund = async () => {
+    if (!refundTarget) return;
 
     try {
-      setRefundingId(operationId);
-      await adminService.refundOperation(operationId, reason || undefined);
+      setRefundPending(true);
+      setRefundError(null);
+      await adminService.refundOperation(refundTarget.id, refundReason || undefined);
+      const username = refundTarget.user?.username || "l'utilisateur";
+      closeRefund();
+      showSuccess(`Opération remboursée à ${username}.`);
       loadOperations();
-      alert('Remboursement effectué avec succès');
     } catch (error) {
       console.error('Erreur remboursement:', error);
-      alert('Erreur lors du remboursement');
+      setRefundError(errorMessage(error, 'Le remboursement a échoué. Réessayez.'));
     } finally {
-      setRefundingId(null);
+      setRefundPending(false);
     }
   };
 
   return (
     <div className="space-y-6">
       <PageHeader title="Opérations" description="Historique des achats de numéros" />
+
+      <FeedbackBanner feedback={feedback} onDismiss={clear} />
 
       <Card className="p-4">
         <div className="flex flex-wrap items-end gap-4">
@@ -157,12 +181,11 @@ export default function AdminOperations() {
                         {op.status !== 'FAILED' && (
                           <Button
                             variant="danger"
-                            onClick={() => handleRefund(op.id)}
-                            disabled={refundingId === op.id}
+                            onClick={() => openRefund(op)}
                             icon={<RefundIcon />}
                             className="px-2.5 py-1.5 text-xs"
                           >
-                            {refundingId === op.id ? 'En cours…' : 'Rembourser'}
+                            Rembourser
                           </Button>
                         )}
                       </td>
@@ -178,6 +201,39 @@ export default function AdminOperations() {
           </>
         )}
       </Card>
+
+      {refundTarget && (
+        <ConfirmDialog
+          title="Rembourser cette opération"
+          summary={[
+            { label: 'Utilisateur', value: refundTarget.user?.username || '—' },
+            {
+              label: 'Service',
+              value: `${refundTarget.servicePricing?.serviceCode || '—'} · ${
+                refundTarget.servicePricing?.countryCode || '—'
+              }`,
+            },
+            { label: 'Numéro', value: refundTarget.number || '—' },
+            { label: 'Montant', value: formatCurrency(refundTarget.servicePricing?.price) },
+          ]}
+          question="Le montant sera recrédité sur le solde de cet utilisateur. Cette action est définitive."
+          confirmLabel="Rembourser"
+          pending={refundPending}
+          error={refundError}
+          onConfirm={handleRefund}
+          onCancel={closeRefund}
+        >
+          <Label htmlFor="refund-reason">Raison (optionnel)</Label>
+          <input
+            id="refund-reason"
+            type="text"
+            value={refundReason}
+            onChange={(e) => setRefundReason(e.target.value)}
+            className={fieldClass}
+            placeholder="Numéro non reçu, SMS non délivré…"
+          />
+        </ConfirmDialog>
+      )}
     </div>
   );
 }

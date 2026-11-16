@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -67,97 +67,144 @@ const NAV_ITEMS = [
 ];
 
 export default function AdminLayout({ children, currentPage, onNavigate, onLogout }: AdminLayoutProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  // Two independent things: the desktop rail can be collapsed, and below `lg`
+  // the sidebar is an overlay drawer that must not steal space from the table.
+  const [collapsed, setCollapsed] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setDrawerOpen(false);
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [drawerOpen]);
+
+  const handleNavigate = (page: string) => {
+    onNavigate(page);
+    setDrawerOpen(false);
+  };
+
+  // Rendered at every width, hidden by CSS on the collapsed desktop rail, so
+  // the drawer always shows full labels whatever the desktop state is.
+  const labelClass = collapsed ? 'lg:hidden' : '';
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar */}
-      <div className={`${sidebarOpen ? 'w-64' : 'w-16'} bg-gray-900 text-white transition-all duration-300 flex flex-col flex-shrink-0`}>
-        {/* Logo */}
-        <div className="p-4 border-b border-gray-800">
-          <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0 ring-1 ring-white/15">
+    <div className="min-h-screen bg-gray-50 lg:flex">
+      {drawerOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-gray-900/40 lg:hidden"
+          onClick={() => setDrawerOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      <div
+        className={`fixed inset-y-0 left-0 z-40 flex w-72 flex-shrink-0 flex-col bg-gray-900 text-white transition-transform duration-200 lg:static lg:translate-x-0 lg:transition-all ${
+          drawerOpen ? 'translate-x-0' : '-translate-x-full'
+        } ${collapsed ? 'lg:w-16' : 'lg:w-64'}`}
+      >
+        <div className="flex items-center justify-between gap-2 border-b border-gray-800 p-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-white/10 ring-1 ring-white/15">
               <svg className="w-5 h-5 text-white" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
             </div>
-            {sidebarOpen && (
-              <div>
-                <h1 className="font-bold text-base leading-tight">Admin Panel</h1>
-                <p className="text-xs text-gray-400">Xaary</p>
-              </div>
-            )}
+            <div className={labelClass}>
+              <h1 className="text-base font-bold leading-tight">Admin Panel</h1>
+              <p className="text-xs text-gray-400">Xaary</p>
+            </div>
           </div>
+          <button
+            type="button"
+            onClick={() => setDrawerOpen(false)}
+            aria-label="Fermer le menu"
+            className="-mr-1 rounded-lg p-2 text-gray-400 transition-colors hover:bg-white/5 hover:text-white lg:hidden"
+          >
+            <svg className="w-5 h-5" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 p-3 space-y-1">
+        <nav className="flex-1 space-y-1 overflow-y-auto p-3">
           {NAV_ITEMS.map((item) => (
             <button
               key={item.id}
-              onClick={() => onNavigate(item.id)}
+              onClick={() => handleNavigate(item.id)}
               type="button"
-              aria-current={currentPage === item.id ? "page" : undefined}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${
+              aria-current={currentPage === item.id ? 'page' : undefined}
+              className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 transition-all duration-200 ${
                 currentPage === item.id
                   ? 'bg-white/10 text-white'
                   : 'text-gray-400 hover:bg-white/5 hover:text-gray-100'
               }`}
             >
               <span className="flex-shrink-0">{item.icon}</span>
-              {sidebarOpen && <span className="font-medium text-sm">{item.label}</span>}
+              <span className={`text-sm font-medium ${labelClass}`}>{item.label}</span>
             </button>
           ))}
         </nav>
 
-        {/* Toggle & Logout */}
-        <div className="p-3 border-t border-gray-800 space-y-1">
+        <div className="space-y-1 border-t border-gray-800 p-3">
           <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
+            onClick={() => setCollapsed(!collapsed)}
             type="button"
-            aria-label={sidebarOpen ? "Réduire le menu" : "Déployer le menu"}
-            className="w-full flex items-center justify-center px-3 py-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
+            aria-label={collapsed ? 'Déployer le menu' : 'Réduire le menu'}
+            className="hidden w-full items-center justify-center rounded-lg px-3 py-2 text-gray-400 transition-colors hover:bg-white/5 hover:text-white lg:flex"
           >
-            {sidebarOpen ? (
+            {collapsed ? (
               <svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             ) : (
               <svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             )}
           </button>
           <button
             onClick={onLogout}
             type="button"
-            className="w-full flex items-center gap-3 px-3 py-2.5 text-gray-400 hover:bg-white/5 hover:text-rose-300 rounded-lg transition-colors"
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-gray-400 transition-colors hover:bg-white/5 hover:text-rose-300"
           >
             <svg className="w-5 h-5 flex-shrink-0" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
-            {sidebarOpen && <span className="text-sm font-medium">Déconnexion</span>}
+            <span className={`text-sm font-medium ${labelClass}`}>Déconnexion</span>
           </button>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0">
-        <header className="bg-white border-b border-gray-200 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-base font-semibold tracking-tight text-gray-900">
-              {NAV_ITEMS.find(item => item.id === currentPage)?.label || 'Admin'}
-            </h2>
-            <span className="text-sm text-gray-400">
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="border-b border-gray-200 bg-white px-4 py-3 lg:px-6 lg:py-4">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setDrawerOpen(true)}
+                aria-label="Ouvrir le menu"
+                aria-expanded={drawerOpen}
+                className="-ml-2 rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 lg:hidden"
+              >
+                <svg className="w-5 h-5" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+              <h2 className="truncate text-base font-semibold tracking-tight text-gray-900">
+                {NAV_ITEMS.find((item) => item.id === currentPage)?.label || 'Admin'}
+              </h2>
+            </div>
+            <span className="hidden flex-shrink-0 text-sm text-gray-400 sm:inline">
               {new Date().toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
             </span>
           </div>
         </header>
 
-        <main className="flex-1 p-6 overflow-auto">
-          {children}
-        </main>
+        <main className="flex-1 overflow-auto p-4 lg:p-6">{children}</main>
       </div>
     </div>
   );

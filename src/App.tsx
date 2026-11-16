@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -12,12 +12,13 @@ import OperationDetails from './pages/OperationDetails';
 import PaymentConfirmation from './pages/PaymentConfirmation';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
-import { AdminPanel } from './pages/admin';
 import ErrorNotification from './components/ErrorNotification';
 import { ToastContainer, useToast } from './components/Toast';
 import BottomNav from './components/BottomNav';
 import InstallPrompt from './components/InstallPrompt';
 import LoadingSpinner from './components/LoadingSpinner';
+
+const AdminPanel = lazy(() => import('./pages/admin/AdminPanel'));
 import { authService } from './services/auth';
 import { operationsService } from './services/operations';
 import { notificationSound } from './utils/notificationSound';
@@ -510,9 +511,15 @@ export default function App() {
     // Admin Panel - uniquement pour les admins
     if (currentPage === 'admin' && user.role === 'admin') {
       return (
-        <AdminPanel
-          onLogout={handleLogout}
-        />
+        <Suspense
+          fallback={
+            <div className="flex min-h-screen items-center justify-center bg-gray-50">
+              <LoadingSpinner size="lg" />
+            </div>
+          }
+        >
+          <AdminPanel onLogout={handleLogout} />
+        </Suspense>
       );
     }
 

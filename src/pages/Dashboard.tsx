@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { isCorruptedSmsCode, readableSmsCode } from '../utils/smsCode';
 import type { User, Transaction } from '../types';
 import Layout from '../components/Layout';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -427,7 +428,15 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
                           </p>
                         </div>
                       </div>
-                      {operation.status.toLowerCase() === 'success' && operation.sms && (
+                      {operation.status.toLowerCase() === 'success' &&
+                        isCorruptedSmsCode(operation.sms) && (
+                          <div className="bg-amber-50 rounded-lg p-3 mt-3 border border-amber-200">
+                            <p className="text-xs font-medium text-amber-800">
+                              Code illisible. Contactez le support pour un remboursement.
+                            </p>
+                          </div>
+                        )}
+                      {operation.status.toLowerCase() === 'success' && readableSmsCode(operation.sms) && (
                         <div className="bg-green-100 rounded-lg p-3 mt-3 border border-green-200">
                           <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-1.5">
@@ -437,7 +446,7 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
                               <p className="text-xs font-medium text-green-800">SMS reçu</p>
                             </div>
                             <button
-                              onClick={() => copySmsToClipboard(operation.sms!, operation.id)}
+                              onClick={() => copySmsToClipboard(readableSmsCode(operation.sms)!, operation.id)}
                               className="p-1 text-green-700 hover:bg-green-200 rounded-lg transition-colors"
                               title="Copier le SMS"
                             >
@@ -453,7 +462,7 @@ export default function Dashboard({ user, onRecharge, onBuyNumber, onLogout, onV
                             </button>
                           </div>
                           <p className="font-mono text-lg font-bold text-green-800 bg-white/50 px-3 py-2 rounded-lg border break-all select-all">
-                            {operation.sms}
+                            {readableSmsCode(operation.sms)}
                           </p>
                         </div>
                       )}

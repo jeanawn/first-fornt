@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { isCorruptedSmsCode, readableSmsCode } from '../utils/smsCode';
 import Layout from '../components/Layout';
 import LoadingSpinner from '../components/LoadingSpinner';
 import usePersistentTimer from '../hooks/usePersistentTimer';
@@ -28,6 +29,8 @@ export default function OperationDetails({ operationId, onBack }: OperationDetai
   const [operation, setOperation] = useState<Operation | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState<'number' | 'sms' | null>(null);
+  const smsCode = readableSmsCode(operation?.sms);
+  const smsCorrupted = isCorruptedSmsCode(operation?.sms);
 
   // Timer persistant pour l'opération
   const { timeRemaining, isExpired, clearTimer } = usePersistentTimer(
@@ -330,7 +333,7 @@ export default function OperationDetails({ operationId, onBack }: OperationDetai
         </div>
 
         {/* Code SMS (si disponible et statut SUCCESS) */}
-        {operation.sms && operation.status.toLowerCase() !== 'failed' ? (
+        {smsCode && operation.status.toLowerCase() !== 'failed' ? (
           <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
             <div className="flex items-center space-x-3 mb-6">
               <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
@@ -355,10 +358,10 @@ export default function OperationDetails({ operationId, onBack }: OperationDetai
                   <h4 className="text-green-900 font-bold text-lg mb-2">Code reçu</h4>
                   <div className="bg-white rounded-xl p-4 border border-green-300">
                     <p className="text-4xl font-mono font-bold text-green-800 mb-2 break-all select-all">
-                      {operation.sms}
+                      {smsCode}
                     </p>
                     <button
-                      onClick={() => copyToClipboard(operation.sms!, 'sms')}
+                      onClick={() => copyToClipboard(smsCode, 'sms')}
                       className="w-full bg-green-500 text-white font-semibold py-3 px-4 rounded-xl hover:bg-green-600 transition-all duration-200 hover:scale-105 active:scale-95"
                     >
                       <div className="flex items-center justify-center space-x-2">
@@ -382,6 +385,16 @@ export default function OperationDetails({ operationId, onBack }: OperationDetai
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        ) : smsCorrupted ? (
+          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <div className="bg-amber-50 rounded-2xl p-6 border-2 border-amber-200 text-center space-y-2">
+              <h4 className="text-amber-900 font-bold text-lg">Code illisible</h4>
+              <p className="text-amber-800 text-sm">
+                Le code reçu n'a pas pu être lu et ne peut pas être récupéré. Contactez le
+                support pour obtenir un remboursement de cette opération.
+              </p>
             </div>
           </div>
         ) : (operation.status.toLowerCase() === 'pending' || operation.status.toLowerCase() === 'processing') ? (

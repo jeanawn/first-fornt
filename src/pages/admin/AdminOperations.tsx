@@ -3,6 +3,7 @@ import { adminService } from '../../services/admin';
 import type { AdminOperation } from '../../services/admin';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { formatAmount, formatCurrency } from '../../utils/currency';
+import { isCorruptedSmsCode, readableSmsCode } from '../../utils/smsCode';
 import {
   Button,
   Card,
@@ -132,7 +133,6 @@ export default function AdminOperations() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <TableHead>
-                  <th className={thClass}>Date</th>
                   <th className={thClass}>Utilisateur</th>
                   <th className={thClass}>Service</th>
                   <th className={thClass}>Numéro</th>
@@ -143,15 +143,6 @@ export default function AdminOperations() {
                 <tbody className="divide-y divide-gray-100">
                   {operations.map((op) => (
                     <tr key={op.id} className="transition-colors hover:bg-gray-50">
-                      <td className={`${tdClass} whitespace-nowrap text-gray-500`}>
-                        {new Date(op.createdDate).toLocaleString('fr-FR', {
-                          day: '2-digit',
-                          month: '2-digit',
-                          year: '2-digit',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
-                      </td>
                       <td className={tdClass}>
                         <span className="font-medium text-gray-900">{op.user?.username || '—'}</span>
                         <p className="text-xs text-gray-500">{op.user?.email}</p>
@@ -171,9 +162,14 @@ export default function AdminOperations() {
                             className="block rounded-md text-left transition-colors hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
                           >
                             <span className="font-mono text-sm text-gray-900">{op.number}</span>
-                            {op.sms && (
+                            {readableSmsCode(op.sms) && (
                               <span className="block font-mono text-base font-semibold tracking-wide text-emerald-700">
-                                {op.sms}
+                                {readableSmsCode(op.sms)}
+                              </span>
+                            )}
+                            {isCorruptedSmsCode(op.sms) && (
+                              <span className="block text-xs font-medium text-rose-700">
+                                Code illisible
                               </span>
                             )}
                           </button>
@@ -223,8 +219,17 @@ export default function AdminOperations() {
       {detailTarget && (
         <Modal title="Détail de l'opération" onClose={() => setDetailTarget(null)}>
           <div className="space-y-4">
-            {detailTarget.sms ? (
-              <CopyableCode label="Code reçu" value={detailTarget.sms} />
+            {readableSmsCode(detailTarget.sms) ? (
+              <CopyableCode label="Code reçu" value={readableSmsCode(detailTarget.sms)!} />
+            ) : isCorruptedSmsCode(detailTarget.sms) ? (
+              <div className="rounded-lg border border-rose-200 bg-rose-50 p-4">
+                <p className="text-sm font-medium text-rose-700">Code illisible</p>
+                <p className="mt-1 text-sm text-rose-700">
+                  Le fournisseur a renvoyé une valeur que le système n'a pas su lire, et le
+                  code réel n'a pas été conservé. Il est irrécupérable : remboursez
+                  l'opération.
+                </p>
+              </div>
             ) : (
               <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-4 text-center">
                 <p className="text-sm text-gray-500">

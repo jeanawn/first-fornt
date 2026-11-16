@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { isCorruptedSmsCode, readableSmsCode } from '../utils/smsCode';
 import Layout from '../components/Layout';
 import ImageWithFallback from '../components/ImageWithFallback';
 import usePersistentTimer from '../hooks/usePersistentTimer';
@@ -35,6 +36,8 @@ interface NumberDetailsProps {
 export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: NumberDetailsProps) {
   usePageTitle(PAGE_TITLES.numberDetails);
   const [copied, setCopied] = useState<'number' | 'sms' | null>(null);
+  const smsCode = readableSmsCode(phoneNumber.smsCode);
+  const smsCorrupted = isCorruptedSmsCode(phoneNumber.smsCode);
 
   // Utilisation du hook persistant pour le timer
   const { timeRemaining, clearTimer } = usePersistentTimer(
@@ -256,11 +259,13 @@ export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: Nu
             <div className="flex-1">
               <h3 className="text-xl font-bold text-gray-900">Code SMS</h3>
               <p className="text-gray-600 text-sm">
-                {phoneNumber.smsCode
+                {smsCode
                   ? 'Code de vérification reçu'
-                  : phoneNumber.status === 'FAILED'
-                    ? 'Code non reçu'
-                    : 'En attente de réception'}
+                  : smsCorrupted
+                    ? 'Code illisible'
+                    : phoneNumber.status === 'FAILED'
+                      ? 'Code non reçu'
+                      : 'En attente de réception'}
               </p>
             </div>
             {!phoneNumber.smsCode && (phoneNumber.status === 'PENDING' || phoneNumber.status === 'PROCESSING') && (
@@ -272,7 +277,7 @@ export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: Nu
             )}
           </div>
 
-          {phoneNumber.smsCode && phoneNumber.status !== 'FAILED' ? (
+          {smsCode && phoneNumber.status !== 'FAILED' ? (
             <div className="bg-green-50 rounded-2xl p-6 border-2 border-green-200">
               <div className="text-center space-y-4">
                 <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto">
@@ -284,10 +289,10 @@ export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: Nu
                   <h4 className="text-green-900 font-bold text-lg mb-2">Code reçu</h4>
                   <div className="bg-white rounded-xl p-4 border border-green-300">
                     <p className="text-4xl font-mono font-bold text-green-800 mb-2 break-all select-all">
-                      {phoneNumber.smsCode}
+                      {smsCode}
                     </p>
                     <button
-                      onClick={() => copyToClipboard(phoneNumber.smsCode!, 'sms')}
+                      onClick={() => copyToClipboard(smsCode, 'sms')}
                       className="w-full bg-green-500 text-white font-semibold py-3 px-4 rounded-xl hover:bg-green-600 transition-all duration-200 hover:scale-105 active:scale-95"
                     >
                       <div className="flex items-center justify-center space-x-2">
@@ -310,6 +315,16 @@ export default function NumberDetails({ phoneNumber, onBack, onRefreshCode }: Nu
                     </button>
                   </div>
                 </div>
+              </div>
+            </div>
+          ) : smsCorrupted ? (
+            <div className="bg-amber-50 rounded-2xl p-6 border-2 border-amber-200">
+              <div className="text-center space-y-2">
+                <h4 className="text-amber-900 font-bold text-lg">Code illisible</h4>
+                <p className="text-amber-800 text-sm">
+                  Le code reçu n'a pas pu être lu et ne peut pas être récupéré. Contactez le
+                  support pour obtenir un remboursement de cette opération.
+                </p>
               </div>
             </div>
           ) : phoneNumber.status === 'FAILED' ? (
